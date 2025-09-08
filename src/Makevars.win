@@ -1,0 +1,4 @@
+CXX_STD = CXX20
+PKG_CPPFLAGS = -I../inst/include -std=c++20 -include kuzuR.h -DKUZU_STATIC_DEFINE
+PKG_CXXFLAGS = -DKUZU_STATIC_DEFINE
+PKG_LIBS = -L. -lkuzu_shared
