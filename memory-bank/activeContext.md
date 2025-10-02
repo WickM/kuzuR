@@ -28,6 +28,17 @@ The primary focus of this session was the implementation and subsequent refactor
 -   The highest priority is creating a vignette to document the new graph conversion feature.
 -   Consider adding support for more graph libraries if needed.
 
+### Kuzu Python API Feature Implementation
+Based on the [Kuzu Python API Documentation](./kuzu_python_api.md), the following functions should be reviewed and implemented:
+
+-   **Review for Implementation:**
+    -   `AsyncConnection.__init__`: Investigate if an asynchronous connection model is beneficial for the kuzuR package.
+
+-   **To Be Implemented:**
+    -   `QueryResult.get_column_data_types`: Implement a wrapper for this function.
+    -   `QueryResult.get_column_names`: Implement a wrapper for this function.
+    -   `QueryResult.get_schema`: Implement a wrapper for this function.
+
 ## Important Patterns and Preferences
 
 -   **Problem-Solving:** When encountering a persistent bug or a lack of clarity about an external library's object structure, do not guess repeatedly. After two failed attempts, prioritize asking the user for help, for example by requesting the output of a command like `str()` to reveal an object's structure.
