@@ -10,11 +10,11 @@
 #' install_kuzu()
 #' }
 install_kuzu <- function() {
-  pkgs <- c("kuzu", "pandas")
+  pkgs <- c("kuzu", "pandas", "networkx")
   installed_status <- sapply(pkgs, reticulate::py_module_available)
   
   if (all(installed_status)) {
-    message("The 'kuzu' and 'pandas' Python packages are already installed and available.")
+    message("The 'kuzu', 'pandas', and 'networkx' Python packages are already installed and available.")
     return(invisible(NULL))
   }
 

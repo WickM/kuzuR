@@ -8,10 +8,14 @@ Description: An R package providing an interface to the Kuzu graph database engi
     enabling graph database operations and Cypher query execution from R.
 License: MIT + file LICENSE
 Imports:
-    reticulate
+    reticulate,
+    dplyr,
+    igraph
 Suggests:
     testthat (>= 3.0.0),
-    tibble
+    tibble,
+    tidygraph,
+    g6R
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
