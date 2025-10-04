@@ -1,125 +1,155 @@
-library(testthat)
-library(kuzuR)
-
-# Helper function to skip tests if kuzu is not available
-skip_if_no_kuzu <- function() {
-  if (!reticulate::py_module_available("kuzu")) {
-    skip("kuzu Python package not available for testing")
-  }
-}
-
-test_that("Database and connection objects can be created", {
-  skip_if_no_kuzu()
+test_that("Database and connection objects are created", {
+  db <- kuzu_database(":memory:")
+  expect_s3_class(db, "kuzu.database.Database")
   
-  # Test in-memory database
-  db_mem <- kuzu_database(":memory:")
-  expect_s3_class(db_mem, "kuzu.database.Database")
-  conn_mem <- kuzu_connection(db_mem)
-  expect_s3_class(conn_mem, "kuzu.connection.Connection")
+  conn <- kuzu_connection(db)
+  expect_s3_class(conn, "kuzu.connection.Connection")
   
-  # Test on-disk database
-  db_disk_path <- tempfile()
-  db_disk <- kuzu_database(db_disk_path)
-  expect_s3_class(db_disk, "kuzu.database.Database")
-  conn_disk <- kuzu_connection(db_disk)
-  expect_s3_class(conn_disk, "kuzu.connection.Connection")
-  
-  # Clean up the on-disk database
-  rm(db_disk, conn_disk)
-  gc() # Garbage collect to release file handles
-  unlink(db_disk_path, recursive = TRUE)
+  rm(db, conn)
 })
 
-test_that("Schema and data manipulation queries execute correctly", {
-  skip_if_no_kuzu()
+test_that("Queries execute and results can be converted", {
   db <- kuzu_database(":memory:")
   conn <- kuzu_connection(db)
   
-  # Create schema
-  expect_no_error(kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))"))
-  expect_no_error(kuzu_execute(conn, "CREATE REL TABLE Follows(FROM User TO User, since INT64)"))
+  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
   
-  # Insert data
-  expect_no_error(kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})"))
-  expect_no_error(kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})"))
-  expect_no_error(kuzu_execute(conn, "MATCH (a:User), (b:User) WHERE a.name = 'Alice' AND b.name = 'Bob' CREATE (a)-[:Follows {since: 2023}]->(b)"))
+  result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+  expect_s3_class(result, "kuzu.query_result.QueryResult")
+  
+  df <- as.data.frame(result)
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 1)
+  expect_equal(df$a.name, "Alice")
+  
+  rm(db, conn, result, df)
 })
 
-test_that("Query results are handled and converted correctly", {
-  skip_if_no_kuzu()
+test_that("Result schema functions work correctly", {
   db <- kuzu_database(":memory:")
   conn <- kuzu_connection(db)
+  
+  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
+  
+  result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+  
+  # Test kuzu_get_column_names
+  col_names <- kuzu_get_column_names(result)
+  expect_type(col_names, "character")
+  expect_equal(col_names, c("a.name", "a.age"))
+  
+  # Test kuzu_get_column_data_types
+  col_types <- kuzu_get_column_data_types(result)
+  expect_type(col_types, "character")
+  expect_equal(col_types, c("STRING", "INT64"))
+  
+  # Test kuzu_get_schema
+  schema <- kuzu_get_schema(result)
+  expect_type(schema, "list")
+  expect_equal(schema, list("a.name" = "STRING", "a.age" = "INT64"))
+  
+  rm(db, conn, result, col_names, col_types, schema)
+})
+
+test_that("as_tibble.kuzu.query_result.QueryResult works correctly", {
+  skip_if_not_installed("tibble")
+  db <- kuzu_database(":memory:")
+  conn <- kuzu_connection(db)
+
+  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
+
+  result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+
+  tbl <- tibble::as_tibble(result)
+  expect_s3_class(tbl, "tbl_df")
+  expect_equal(nrow(tbl), 1)
+  expect_equal(tbl$a.name, "Alice")
+
+  rm(db, conn, result, tbl)
+})
+
+test_that("kuzu_get_all, kuzu_get_n, and kuzu_get_next work correctly", {
+  db <- kuzu_database(":memory:")
+  conn <- kuzu_connection(db)
+
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
   kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})")
-  
-  result <- kuzu_execute(conn, "MATCH (u:User) RETURN u.name, u.age ORDER BY u.name")
-  
-  # Test as.data.frame conversion
-  df <- as.data.frame(result)
-  expect_s3_class(df, "data.frame")
-  expect_equal(nrow(df), 2)
-  expect_equal(names(df), c("u.name", "u.age"))
-  expect_equal(df$u.name, c("Alice", "Bob"))
-  
-  # Test as_tibble conversion
-  if (requireNamespace("tibble", quietly = TRUE)) {
-    tbl <- tibble::as_tibble(result)
-    expect_s3_class(tbl, "tbl_df")
-    expect_equal(nrow(tbl), 2)
-    expect_equal(names(tbl), c("u.name", "u.age"))
-    expect_equal(tbl$u.name, c("Alice", "Bob"))
-  }
-  
-  # Test as_tibble conversion
-  if (requireNamespace("tibble", quietly = TRUE)) {
-    tbl <- tibble::as_tibble(result)
-    expect_s3_class(tbl, "tbl_df")
-    expect_equal(nrow(tbl), 2)
-    expect_equal(names(tbl), c("u.name", "u.age"))
-    expect_equal(tbl$u.name, c("Alice", "Bob"))
-  }
-  
+  kuzu_execute(conn, "CREATE (:User {name: 'Charlie', age: 35})")
+
+  result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age ORDER BY a.name")
+
   # Test kuzu_get_all
-  result <- kuzu_execute(conn, "MATCH (u:User) RETURN u.name, u.age ORDER BY u.name")
-  all_res <- kuzu_get_all(result)
-  expect_type(all_res, "list")
-  expect_length(all_res, 2)
-  expect_equal(all_res[[1]], list("Alice", 25L))
-  
-  # Test kuzu_get_n and kuzu_get_next
-  result <- kuzu_execute(conn, "MATCH (u:User) RETURN u.name, u.age ORDER BY u.name")
-  n_res <- kuzu_get_n(result, 1)
-  expect_length(n_res, 1)
-  expect_equal(n_res[[1]], list("Alice", 25L))
-  
-  next_res <- kuzu_get_next(result)
-  expect_equal(next_res, list("Bob", 30L))
+  all_results <- kuzu_get_all(result)
+  expect_type(all_results, "list")
+  expect_length(all_results, 3)
+  expect_equal(all_results[[1]]$a.name, "Alice")
+  expect_equal(all_results[[3]]$a.name, "Charlie")
+
+  # Test kuzu_get_n (needs a fresh result object)
+  result_n <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age ORDER BY a.name")
+  first_two <- kuzu_get_n(result_n, 2)
+  expect_type(first_two, "list")
+  expect_length(first_two, 2)
+  expect_equal(first_two[[1]]$a.name, "Alice")
+  expect_equal(first_two[[2]]$a.name, "Bob")
+
+  # Test kuzu_get_next (needs a fresh result object)
+  result_next <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age ORDER BY a.name")
+  expect_true(result_next$has_next())
+  row1 <- kuzu_get_next(result_next)
+  expect_type(row1, "list")
+  expect_equal(row1$a.name, "Alice")
+
+  expect_true(result_next$has_next())
+  row2 <- kuzu_get_next(result_next)
+  expect_type(row2, "list")
+  expect_equal(row2$a.name, "Bob")
+
+  expect_true(result_next$has_next())
+  row3 <- kuzu_get_next(result_next)
+  expect_type(row3, "list")
+  expect_equal(row3$a.name, "Charlie")
+
+  expect_false(result_next$has_next()) # No more rows
+  row_null <- kuzu_get_next(result_next)
+  expect_null(row_null)
+
+  rm(db, conn, result, result_n, result_next, all_results, first_two, row1, row2, row3, row_null)
 })
 
-test_that("Data can be copied from a data.frame and a tibble", {
-  skip_if_no_kuzu()
+test_that("kuzu_copy_from_df works correctly", {
   db <- kuzu_database(":memory:")
   conn <- kuzu_connection(db)
-  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
-  
-  # Test with data.frame
-  users_df <- data.frame(name = c("Carol", "Dan"), age = c(35, 40))
-  expect_no_error(kuzu_copy_from_df(conn, "User", users_df))
-  
-  result_df <- kuzu_execute(conn, "MATCH (u:User) WHERE u.name IN ['Carol', 'Dan'] RETURN count(u)")
-  count_df <- as.data.frame(result_df)
-  expect_equal(count_df[[1]], 2L)
-  
-  # Test with tibble, if tibble is installed
+
+  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, PRIMARY KEY (id))")
+
+  products_df <- data.frame(id = c(1, 2), name = c("Laptop", "Mouse"))
+  kuzu_copy_from_df(conn, "Product", products_df)
+
+  result <- kuzu_execute(conn, "MATCH (p:Product) RETURN p.id, p.name ORDER BY p.id")
+  df_check <- as.data.frame(result)
+
+  expect_equal(nrow(df_check), 2)
+  expect_equal(df_check$p.id, c(1, 2))
+  expect_equal(df_check$p.name, c("Laptop", "Mouse"))
+
+  # Test with tibble if available
   if (requireNamespace("tibble", quietly = TRUE)) {
-    users_tbl <- tibble::tibble(name = c("Eve", "Frank"), age = c(45, 50))
-    expect_no_error(kuzu_copy_from_df(conn, "User", users_tbl))
-    
-    result_tbl <- kuzu_execute(conn, "MATCH (u:User) WHERE u.name IN ['Eve', 'Frank'] RETURN count(u)")
-    count_tbl <- as.data.frame(result_tbl)
-    expect_equal(count_tbl[[1]], 2L)
-  } else {
-    skip("tibble package not installed, skipping tibble test")
+    kuzu_execute(conn, "CREATE NODE TABLE Item(id INT64, description STRING, PRIMARY KEY (id))")
+    items_tbl <- tibble::tibble(id = c(3, 4), description = c("Keyboard", "Monitor"))
+    kuzu_copy_from_df(conn, "Item", items_tbl)
+
+    result_item <- kuzu_execute(conn, "MATCH (i:Item) RETURN i.id, i.description ORDER BY i.id")
+    df_item_check <- as.data.frame(result_item)
+
+    expect_equal(nrow(df_item_check), 2)
+    expect_equal(df_item_check$i.id, c(3, 4))
+    expect_equal(df_item_check$i.description, c("Keyboard", "Monitor"))
   }
+
+  rm(db, conn, products_df, result, df_check)
 })

@@ -67,3 +67,7 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
   # 7. Clean up
   rm(db, conn, query_res, g_igraph, g_tidy, g_g6R)
 })
+
+test_that("as_networkx throws error for invalid input", {
+  expect_error(as_networkx("not a query result"), "Input must be a kuzu_query_result object.")
+})

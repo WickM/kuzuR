@@ -157,7 +157,11 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
 #' all_results <- kuzu_get_all(result)
 #' }
 kuzu_get_all <- function(result) {
-  result$get_all()
+  col_names <- result$get_column_names()
+  all_rows_values <- result$get_all()
+  lapply(all_rows_values, function(row) {
+    stats::setNames(row, col_names)
+  })
 }
 
 #' Retrieve the First N Rows from a Query Result
@@ -179,7 +183,12 @@ kuzu_get_all <- function(result) {
 #' first_row <- kuzu_get_n(result, 1)
 #' }
 kuzu_get_n <- function(result, n) {
-  result$get_n(n)
+  col_names <- result$get_column_names()
+  # Convert n to integer for reticulate
+  n_rows_values <- result$get_n(as.integer(n))
+  lapply(n_rows_values, function(row) {
+    stats::setNames(row, col_names)
+  })
 }
 
 #' Retrieve the Next Row from a Query Result
@@ -202,7 +211,12 @@ kuzu_get_n <- function(result, n) {
 #' row2 <- kuzu_get_next(result)
 #' }
 kuzu_get_next <- function(result) {
-  result$get_next()
+  if (!result$has_next()) {
+    return(NULL)
+  }
+  col_names <- result$get_column_names()
+  row_values <- result$get_next()
+  stats::setNames(row_values, col_names)
 }
 
 #' Load Data from a Data Frame or Tibble into a Kuzu Table
@@ -245,4 +259,64 @@ kuzu_copy_from_df <- function(conn, table_name, df) {
   # Explicitly import pandas to avoid potential importlib issues
   reticulate::py_run_string("import pandas as pd; conn.execute(query)", convert = FALSE)
   invisible(NULL)
+}
+
+#' Get Column Data Types from a Query Result
+#'
+#' Retrieves the data types of the columns in a Kuzu query result.
+#'
+#' @param result A Kuzu query result object.
+#' @return A character vector of column data types.
+#' @export
+#' @examples
+#' \dontrun{
+#' db <- kuzu_database(":memory:")
+#' conn <- kuzu_connection(db)
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+#' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
+#' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+#' kuzu_get_column_data_types(result)
+#' }
+kuzu_get_column_data_types <- function(result) {
+  result$get_column_data_types()
+}
+
+#' Get Column Names from a Query Result
+#'
+#' Retrieves the names of the columns in a Kuzu query result.
+#'
+#' @param result A Kuzu query result object.
+#' @return A character vector of column names.
+#' @export
+#' @examples
+#' \dontrun{
+#' db <- kuzu_database(":memory:")
+#' conn <- kuzu_connection(db)
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+#' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
+#' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+#' kuzu_get_column_names(result)
+#' }
+kuzu_get_column_names <- function(result) {
+  result$get_column_names()
+}
+
+#' Get Schema from a Query Result
+#'
+#' Retrieves the schema (column names and data types) of a Kuzu query result.
+#'
+#' @param result A Kuzu query result object.
+#' @return A named list where names are column names and values are data types.
+#' @export
+#' @examples
+#' \dontrun{
+#' db <- kuzu_database(":memory:")
+#' conn <- kuzu_connection(db)
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+#' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
+#' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+#' kuzu_get_schema(result)
+#' }
+kuzu_get_schema <- function(result) {
+  result$get_schema()
 }

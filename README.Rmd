@@ -16,42 +16,121 @@ knitr::opts_chunk$set(
 # kuzuR
 
 <!-- badges: start -->
+
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/kuzuR)](https://CRAN.R-project.org/package=kuzuR)
+
 <!-- badges: end -->
 
-The goal of kuzuR is to ...
+## Overview
+
+`kuzuR` provides an R interface to the [Kuzu Graph Database](https://kuzudb.com/), a high-performance, embedded graph database. The package acts as a wrapper around the official Python `kuzu` client, using the `reticulate` package to bridge the two languages. This allows you to interact with Kuzu seamlessly within your R environment, integrating its powerful graph computation capabilities into your existing data analysis workflows.
+
+The primary goal of `kuzuR` is to provide an idiomatic R experience for: - Creating and managing Kuzu database instances. - Executing Cypher queries. - Loading data from and retrieving results into R data frames and tibbles. - Converting graph query results directly into R-native graph objects like `igraph` and `tidygraph`.
 
 ## Installation
 
-You can install the development version of kuzuR from [GitHub](https://github.com/) with:
+`kuzuR` requires a working Python installation. Once Python is available, you can install the package and its Python dependencies in two steps.
+
+1.  **Install the R package** from GitHub:
 
 ``` r
 # install.packages("pak")
 pak::pak("WickM/kuzuR")
 ```
 
-## Example
+2.  **Install Python dependencies:** Use the built-in helper function to install `kuzu`, `pandas`, and `networkx` into a dedicated environment.
 
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
+``` r
 library(kuzuR)
-## basic example code
+install_kuzu()
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+## Usage
 
-```{r cars}
-summary(cars)
+Here is a complete example demonstrating how to create a database, define a schema, load data, and run queries.
+
+```{r example, message=FALSE, warning=FALSE, fig.show='hold', fig.cap="Plot of the graph structure created from Kuzu query results."}
+library(kuzuR)
+library(igraph)
+library(tidygraph)
+library(g6R)
+
+# 1. Create a database in a temporary directory
+db_path <- tempfile()
+db <- kuzu_database(db_path)
+con <- kuzu_connection(db)
+
+# 2. Define a schema
+# Create a 'Person' node table with a STRING name and INT64 age
+schema_query_1 <- "CREATE NODE TABLE Person (
+  name STRING,
+  age INT64,
+  PRIMARY KEY (name)
+)"
+kuzu_execute(con, schema_query_1)
+
+# Create a 'Knows' relationship table
+schema_query_2 <- "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"
+kuzu_execute(con, schema_query_2)
+
+# 3. Load data from R data frames
+# Create node data
+nodes <- data.frame(
+  name = c("Alice", "Bob", "Carol"),
+  age = c(30, 40, 50)
+)
+
+# Create edge data
+edges <- data.frame(
+  from_person = c("Alice", "Bob"),
+  to_person = c("Bob", "Carol"),
+  since = c(2010, 2015)
+)
+
+# Use kuzu_copy_from_df to load the data
+kuzu_copy_from_df(con, "Person", nodes)
+# Rename columns to match Kuzu's expected FROM/TO for relationships
+names(edges) <- c("FROM", "TO", "since")
+kuzu_copy_from_df(con, "Knows", edges)
+
+# 4. Execute Cypher queries
+# Retrieve data as a data frame
+query_result <- kuzu_execute(con, "MATCH (p:Person) RETURN p.name, p.age")
+as.data.frame(query_result)
+
+# 5. Convert graph results to R objects
+# The same query result can be converted into different graph formats.
+graph_result <- kuzu_execute(con, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a, k, b")
+
+# a) Convert to an igraph object
+g_igraph <- as_igraph(graph_result)
+print(g_igraph)
+plot(g_igraph)
+
+# b) Convert to a tidygraph object
+g_tidy <- as_tidygraph(graph_result)
+print(g_tidy)
+
+# c) Convert to a g6R object for interactive plotting
+# Note: This will render as an interactive plot in HTML outputs.
+g_g6 <- as_g6R(graph_result)
+g_g6
+
+# 6. Inspecting Query Results
+# You can inspect the schema of a query result without converting it to a data frame.
+# Get column names
+kuzu_get_column_names(query_result)
+
+# Get column data types
+kuzu_get_column_data_types(query_result)
+
+# Get the full schema as a named list
+kuzu_get_schema(query_result)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+## Learning and Getting Help
 
-You can also embed plots, for example:
+This package is currently **experimental**. The core API is subject to change as we work towards a stable release.
 
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+-   For more detailed examples and workflows, please see the package vignettes (coming soon).
+-   If you encounter a bug or have a feature request, please file an issue on [GitHub](https://github.com/WickM/kuzuR/issues).
