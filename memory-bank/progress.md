@@ -19,8 +19,8 @@
 
 ## Current Status
 
-The project is at an **experimental** or **alpha** stage. The core functionality is present, but it lacks the robustness, testing, and comprehensive documentation expected of a mature package.
+The project is at an **alpha** stage. The core functionality is present and is now supported by a comprehensive test suite, significantly increasing its robustness. The next major step towards a beta release is improving user-facing documentation, particularly vignettes.
 
 ## Known Issues
 
--   None identified. The iterative debugging process for the graph conversion feature has made it quite robust.
+-   None identified. All outstanding bugs were resolved during the test suite enhancement process.

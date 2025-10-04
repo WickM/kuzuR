@@ -2,26 +2,20 @@
 
 ## Current Work Focus
 
-The primary focus of this session was the implementation and subsequent refactoring of a major new feature: converting Kuzu query results into R-native graph objects.
+The primary focus of this session was to fix a series of test failures and significantly improve the overall test coverage of the package.
 
 ## Recent Changes
 
-**1. Feature Implementation: Graph Conversion**
--   **Initial Implementation:** First created a feature to convert Kuzu data to `igraph`, `tidygraph`, and `g6R` objects by manually querying and assembling nodes and edges.
--   **Iterative Debugging:** This initial approach proved fragile. Based on user feedback and test failures, we debugged a series of cascading errors related to Cypher syntax (`CALL ... WHERE`), internal ID access (`_id`), and object structure assumptions.
--   **Final Design (Major Refactor):** In response to the failures, the entire feature was redesigned to be more robust and align with best practices, following explicit user guidance.
-    -   The new design is centered on `kuzu_execute()` -> `as_networkx()` -> `as.data.frame()`, which uses the official Python `get_as_networkx()` method.
-    -   This delegates the complex conversion logic to the Kuzu and `networkx` libraries and provides a clean, stable foundation.
--   **Testing:** Implemented a new test suite (`tests/testthat/test-graph.R`) and iteratively corrected it to accurately validate the final, correct implementation.
+**1. Test Suite Bug Fixes**
+-   **Corrected Data Retrieval:** Fixed a bug in `kuzu_get_all()`, `kuzu_get_n()`, and `kuzu_get_next()` where the functions were returning unnamed lists instead of named lists, causing test failures. The functions now correctly associate column names with the returned data.
+-   **Handled Iterator Exhaustion:** Added a check in `kuzu_get_next()` to prevent a `RuntimeError` that occurred when the function was called on an exhausted query result iterator.
 
-**2. Documentation & Process Improvement**
--   **Improved Documentation:** Significantly improved the `roxygen2` documentation for the new functions, providing detailed explanations and runnable examples.
--   **Memory Bank Update:** Updated all memory bank files to reflect the new feature, the superior S3-based design pattern, the `networkx` dependency, and updated project status.
--   **New Directive:** Added a new core principle to the memory bank: "When encountering a persistent bug... prioritize asking the user for help".
--   **Dependency Management:** Corrected the handling of Python dependencies, moving `networkx` from `DESCRIPTION` to the `install_kuzu()` helper function.
--   **Housekeeping:** Added the `memory-bank/` directory to `.Rbuildignore`.
--   **Clarification (from user feedback):** Updated `techContext.md` and `systemPatterns.md` to document the C++ toolchain incompatibility (MSVC vs. MinGW) that necessitated the use of the `reticulate` wrapper pattern.
--   Initialized the `memory-bank` directory and all core files.
+**2. Test Coverage Maximization**
+-   **Increased Coverage to 100%:** Wrote a comprehensive suite of new tests to bring the coverage of `R/kuzu.R`, `R/install.R`, `R/zzz.R`, and `R/graph.R` to 100%.
+-   **Error Path Testing:** The new tests specifically target error conditions, such as when required R packages (`tibble`) or Python modules (`pandas`) are not installed.
+-   **Mocking for Robustness:** Used the `mockery` package to simulate different environments and user inputs, allowing for thorough testing of installation logic (`install_kuzu`) and package loading hooks (`.onLoad`) without side effects.
+-   **New Test File:** Created `tests/testthat/test-utils.R` to house tests for utility functions, keeping the test suite organized.
+-   **Iterative Debugging:** Debugged and corrected a series of issues within the new test suite itself, including problems with mock object configuration and testing locked bindings in the `.onLoad` function.
 
 ## Next Steps
 
@@ -33,11 +27,6 @@ Based on the [Kuzu Python API Documentation](./kuzu_python_api.md), the followin
 
 -   **Review for Implementation:**
     -   `AsyncConnection.__init__`: Investigate if an asynchronous connection model is beneficial for the kuzuR package.
-
--   **To Be Implemented:**
-    -   `QueryResult.get_column_data_types`: Implement a wrapper for this function.
-    -   `QueryResult.get_column_names`: Implement a wrapper for this function.
-    -   `QueryResult.get_schema`: Implement a wrapper for this function.
 
 ## Important Patterns and Preferences
 
