@@ -2,41 +2,29 @@
 
 ## Current Work Focus
 
-The primary focus of this session was to improve the documentation for the data loading functions in `R/kuz_load_data.R`, specifically addressing the `kuzu_merge_df` function and ensuring all provided links were correctly integrated. Additionally, syntax errors within the file were identified and corrected.
+The primary focus of this session was to review and update the memory bank files to ensure they accurately reflect the project's current state, including function documentation, test status, and outstanding tasks.
 
 ## Recent Changes
 
-**1. Documentation Enhancement for Data Loading Functions:**
--   **`kuzu_copy_from_df`:** Updated documentation to include details on handling relationship tables and corrected example code for argument order.
--   **`kuzu_copy_from_csv`, `kuzu_copy_from_json`, `kuzu_copy_from_parquet`:** Ensured documentation included relevant links and notes on their wrapper functionality.
--   **`kuzu_merge_df`:** Significantly enhanced documentation to:
-    -   Clarify its purpose and reliance on Python's reticulate.
-    -   Provide a detailed note on the syntactically incorrect query and the need for further development.
-    -   Include an example of a hypothetical merge query structure, specifying the expected format for the `merge_query` parameter.
-    -   Add a second example demonstrating a different merge query structure.
--   **General Documentation:** Incorporated all provided Kuzu import links into the respective function documentation.
-
-**2. File Integrity and Syntax Correction:**
--   **`R/kuz_load_data.R`:** Addressed and corrected several syntax errors identified in the file, ensuring the R code is valid.
-
-**3. Memory Bank Update:**
--   Updated `memory-bank/activeContext.md` to reflect the completion of the documentation task and the associated file updates.
+**1. Memory Bank Review and Update:**
+-   Read all memory bank files (`projectbrief.md`, `productContext.md`, `activeContext.md`, `systemPatterns.md`, `techContext.md`, `progress.md`, `kuzu_python_api.md`).
+-   Analyzed the content of each file to ensure consistency and accuracy.
+-   Updated `activeContext.md` to reflect the current status of tasks and TODOs based on the `progress.md` file and the user's request. Specifically, the test status for import functions has been clarified.
 
 ## Next Steps
 
-The immediate next steps involve addressing the remaining items on the CRAN submission checklist, which include:
-1.  **#TODO: Write Tests for import functions:** Ensure test coverage for import functions is near 100%.
-2.  **#TODO: Pass `R CMD check --as-cran`:** Run the check locally and resolve all errors, warnings, and notes.
-3.  **#TODO: Create "g6R Visualization" Vignette:** Focus on using `g6R` for interactive visualization of Kuzu graph data.
-4.  **#TODO: Update `DESCRIPTION` File:** Add `URL` and `BugReports` fields, and clean up `Imports` and `Suggests`.
-5.  **#TODO: Write a `NEWS.md` File:** Document changes for the `0.1.0` release.
-6.  **#TODO: Review and Enhance Documentation:** Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
-7.  **#TODO: Verify `LICENSE` File:** Confirm the `LICENSE` file contains the full MIT license text.
-8.  **#TODO: Ensure Package Description Acknowledges Original Authors:** State clearly in `DESCRIPTION` and `README.md` that `kuzuR` builds upon the work of Kuzu and g6R authors.
-9.  **#TODO: Email Kuzu and g6R Authors:** Inform them about the `kuzuR` package before CRAN submission.
-10. **#TODO: Create GitHub Pages for Documentation:** Set up GitHub Pages for hosting package documentation using `pkgdown` and GitHub Actions.
-11. **#TODO CSV:** Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
-12. **#TODO UDF:** (No specific details provided in the context).
+The immediate next steps involve addressing the remaining items on the CRAN submission checklist and continuing development as outlined:
+1.  **`#TODO: Pass R CMD check --as-cran`**: Run the check locally and resolve all errors, warnings, and notes.
+2.  **`#TODO: Create "g6R Visualization" Vignette`**: Focus on using `g6R` for interactive visualization of Kuzu graph data.
+3.  **`#TODO: Update DESCRIPTION File`**: Add `URL` and `BugReports` fields, and clean up `Imports` and `Suggests`.
+4.  **`#TODO: Write a NEWS.md File`**: Document changes for the `0.1.0` release.
+5.  **`#TODO: Review and Enhance Documentation`**: Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
+6.  **`#TODO: Verify LICENSE File`**: Confirm the `LICENSE` file contains the full MIT license text.
+7.  **`#TODO: Ensure Package Description Acknowledges Original Authors`**: State clearly in `DESCRIPTION` and `README.md` that `kuzuR` builds upon the work of Kuzu and g6R authors.
+8.  **`#TODO: Email Kuzu and g6R Authors`**: Inform them about the `kuzuR` package before CRAN submission.
+9.  **`#TODO: Create GitHub Pages for Documentation`**: Set up GitHub Pages for hosting package documentation using `pkgdown` and GitHub Actions.
+10. **`#TODO CSV`**: Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
+11. **`#TODO UDF`**: (No specific details provided in the context).
 
 ## Kuzu Python API Feature Implementation
 Based on the [Kuzu Python API Documentation](./kuzu_python_api.md), the following functions should be reviewed and implemented:
