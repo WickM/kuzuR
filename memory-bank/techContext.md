@@ -29,3 +29,17 @@ Attempting to link the MSVC-compiled Kuzu library against an `Rcpp`-based packag
 -   **Performance Overhead:** The `reticulate` bridge introduces a layer of overhead compared to a theoretical native C++ implementation. Data serialization between R and Python is the primary performance consideration.
 -   **Python Dependency:** The package is not self-contained. Its functionality is entirely dependent on an external Python environment and the `kuzu`, `pandas`, and `networkx` libraries.
 -   **Error Handling:** Errors can originate from R, Python, or the Kuzu database itself. Stack traces can be complex, spanning multiple languages.
+
+## Reticulate Introspection Issues with Kuzu
+
+During development, a persistent `SystemError` was encountered when calling `kuzu`'s Python functions from R:
+
+`SystemError: <function Parameter.kind ...> returned a result with an exception set`
+
+This error indicates that `reticulate` is unable to correctly inspect the function signatures of the compiled `kuzu` Python library. Several `reticulate` calling conventions were tested to resolve this:
+
+1.  **Direct Call (`kuzu$Database(...)`):** This was the first attempt at a cleaner implementation. It failed with the introspection error.
+2.  **`reticulate::py_call(kuzu$Database, ...)`:** This more explicit method also failed with the same error, suggesting the issue occurs at a very low level of function inspection.
+3.  **`reticulate::py_run_string(...)`:** This was the original implementation. It works because it bypasses `reticulate`'s R-level function signature inspection. The entire operation (importing `kuzu`, calling the function, and assigning the result) is handled within a single Python execution block.
+
+**Conclusion:** Due to this low-level incompatibility between `reticulate` and the `kuzu` Python library, the `py_run_string` method is the only reliable way to call `kuzu`'s core functions like `Database()` and `Connection()`. While less elegant, it is a necessary workaround to avoid the `SystemError`.
