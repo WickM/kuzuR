@@ -4,15 +4,15 @@
 \alias{kuzu_copy_from_df}
 \title{Load Data from a Data Frame or Tibble into a Kuzu Table}
 \usage{
-kuzu_copy_from_df(conn, table_name, df)
+kuzu_copy_from_df(conn, df, table_name, rel_mapping = NULL)
 }
 \arguments{
 \item{conn}{A Kuzu connection object.}
 
-\item{table_name}{A string specifying the name of the destination table in Kuzu.}
-
 \item{df}{A \code{data.frame} or \code{tibble} containing the data to load. Column
 names in the data frame should match the property names in the Kuzu table.}
+
+\item{table_name}{A string specifying the name of the destination table in Kuzu.}
 }
 \value{
 This function is called for its side effect of loading data and does

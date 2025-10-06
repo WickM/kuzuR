@@ -2,71 +2,44 @@
 
 ## Current Work Focus
 
-The primary focus of this session was to fix a series of test failures and significantly improve the overall test coverage of the package.
+The primary focus of this session was to improve the documentation for the data loading functions in `R/kuz_load_data.R`, specifically addressing the `kuzu_merge_df` function and ensuring all provided links were correctly integrated. Additionally, syntax errors within the file were identified and corrected.
 
 ## Recent Changes
 
-**1. Test Suite Bug Fixes**
--   **Corrected Data Retrieval:** Fixed a bug in `kuzu_get_all()`, `kuzu_get_n()`, and `kuzu_get_next()` where the functions were returning unnamed lists instead of named lists, causing test failures. The functions now correctly associate column names with the returned data.
--   **Handled Iterator Exhaustion:** Added a check in `kuzu_get_next()` to prevent a `RuntimeError` that occurred when the function was called on an exhausted query result iterator.
+**1. Documentation Enhancement for Data Loading Functions:**
+-   **`kuzu_copy_from_df`:** Updated documentation to include details on handling relationship tables and corrected example code for argument order.
+-   **`kuzu_copy_from_csv`, `kuzu_copy_from_json`, `kuzu_copy_from_parquet`:** Ensured documentation included relevant links and notes on their wrapper functionality.
+-   **`kuzu_merge_df`:** Significantly enhanced documentation to:
+    -   Clarify its purpose and reliance on Python's reticulate.
+    -   Provide a detailed note on the syntactically incorrect query and the need for further development.
+    -   Include an example of a hypothetical merge query structure, specifying the expected format for the `merge_query` parameter.
+    -   Add a second example demonstrating a different merge query structure.
+-   **General Documentation:** Incorporated all provided Kuzu import links into the respective function documentation.
 
-**2. Test Coverage Maximization**
--   **Increased Coverage to 100%:** Wrote a comprehensive suite of new tests to bring the coverage of `R/kuzu.R`, `R/install.R`, `R/zzz.R`, and `R/graph.R` to 100%.
--   **Error Path Testing:** The new tests specifically target error conditions, such as when required R packages (`tibble`) or Python modules (`pandas`) are not installed.
--   **Mocking for Robustness:** Used the `mockery` package to simulate different environments and user inputs, allowing for thorough testing of installation logic (`install_kuzu`) and package loading hooks (`.onLoad`) without side effects.
--   **New Test File:** Created `tests/testthat/test-utils.R` to house tests for utility functions, keeping the test suite organized.
--   **Iterative Debugging:** Debugged and corrected a series of issues within the new test suite itself, including problems with mock object configuration and testing locked bindings in the `.onLoad` function.
+**2. File Integrity and Syntax Correction:**
+-   **`R/kuz_load_data.R`:** Addressed and corrected several syntax errors identified in the file, ensuring the R code is valid.
+
+**3. Memory Bank Update:**
+-   Updated `memory-bank/activeContext.md` to reflect the completion of the documentation task and the associated file updates.
 
 ## Next Steps
 
-### CRAN Submission Checklist
-The following tasks must be completed before the package is ready for submission to CRAN:
+The immediate next steps involve addressing the remaining items on the CRAN submission checklist, which include:
+1.  **#TODO: Write Tests for import functions:** Ensure test coverage for import functions is near 100%.
+2.  **#TODO: Pass `R CMD check --as-cran`:** Run the check locally and resolve all errors, warnings, and notes.
+3.  **#TODO: Create "g6R Visualization" Vignette:** Focus on using `g6R` for interactive visualization of Kuzu graph data.
+4.  **#TODO: Update `DESCRIPTION` File:** Add `URL` and `BugReports` fields, and clean up `Imports` and `Suggests`.
+5.  **#TODO: Write a `NEWS.md` File:** Document changes for the `0.1.0` release.
+6.  **#TODO: Review and Enhance Documentation:** Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
+7.  **#TODO: Verify `LICENSE` File:** Confirm the `LICENSE` file contains the full MIT license text.
+8.  **#TODO: Ensure Package Description Acknowledges Original Authors:** State clearly in `DESCRIPTION` and `README.md` that `kuzuR` builds upon the work of Kuzu and g6R authors.
+9.  **#TODO: Email Kuzu and g6R Authors:** Inform them about the `kuzuR` package before CRAN submission.
+10. **#TODO: Create GitHub Pages for Documentation:** Set up GitHub Pages for hosting package documentation using `pkgdown` and GitHub Actions.
+11. **#TODO CSV:** Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
+12. **#TODO UDF:** (No specific details provided in the context).
 
-1.  **#TODO: Pass `R CMD check --as-cran`:**
-    -   Run the check locally and resolve all errors, warnings, and notes.
-    -   Pay special attention to undeclared dependencies, documentation mismatches, and example errors.
-
-2.  **#TODO: Create "Installation and Basic Usage" Vignette:**
-    -   This vignette should cover how to install the `kuzuR` package and its Python dependencies.
-    -   It should also demonstrate basic usage, including connecting to a database, creating a schema, loading data, and executing simple Cypher queries, similar to the Python examples in the Kuzu documentation.
-
-3.  **#TODO: Create "Graph Library Integrations" Vignette:**
-    -   This vignette should showcase how to convert Kuzu query results into different R graph library objects (e.g., `igraph`, `tidygraph`).
-    -   It should provide examples for each supported library, demonstrating the conversion process and basic graph analysis.
-
-4.  **#TODO: Create "g6R Visualization" Vignette:**
-    -   This vignette should specifically focus on using `g6R` for interactive visualization of Kuzu graph data.
-    -   It should provide detailed examples of converting Kuzu results to `g6R` objects and customizing their appearance.
-
-5.  **#TODO: Update `DESCRIPTION` File:**
-    -   Add `URL` and `BugReports` fields, pointing to the GitHub repository.
-    -   Review and clean up the `Imports` and `Suggests` fields. The `dplyr` dependency appears to be unused and should be removed.
-
-6.  **#TODO: Write a `NEWS.md` File:**
-    -   Create a `NEWS.md` file to document changes in the upcoming `0.1.0` release.
-
-7.  **#TODO: Review and Enhance Documentation:**
-    -   Ensure all exported functions have complete and runnable examples in their `@examples` tag.
-    -   Review all function documentation for clarity and accuracy.
-
-8.  **#TODO: Verify `LICENSE` File:**
-    -   Confirm that the `LICENSE` file contains the full, standard MIT license text.
-
-9.  **#TODO: Ensure Package Description Acknowledges Original Authors:**
-    -   Clearly state in the `DESCRIPTION` file and `README.md` that the major work on Kuzu and G6R was done by their respective authors, and `kuzuR` stands on their shoulders.
-
-10. **#TODO: Create Hex Sticker for the Package:**
-    -   Design and create a hex sticker for `kuzuR` before CRAN submission.
-
-11. **#TODO: Email Kuzu and g6R Authors:**
-    -   After implementing the mentioned features and before CRAN submission, email the authors of Kuzu and g6R to inform them about the `kuzuR` package and ask them to consider mentioning it.
-
-12. **#TODO: Create GitHub Pages for Documentation:**
-    -   Set up GitHub Pages to host the package documentation, similar to `ggplot2.tidyverse.org`. This will involve configuring `pkgdown` and GitHub Actions for automatic deployment.
-
-### Kuzu Python API Feature Implementation
+## Kuzu Python API Feature Implementation
 Based on the [Kuzu Python API Documentation](./kuzu_python_api.md), the following functions should be reviewed and implemented:
-
 -   **Review for Implementation:**
     -   `AsyncConnection.__init__`: Investigate if an asynchronous connection model is beneficial for the kuzuR package.
 
@@ -130,82 +103,3 @@ The core idea is to create an R function within `kuzuR` that acts as an `ellmer`
 *   **LLM Costs and Latency:** If an internal LLM call is used for Cypher generation, it will incur additional costs and latency.
 *   **Schema Awareness:** The LLM used for Cypher generation will need to be aware of the Kuzu database schema to generate correct queries. This can be provided as part of the prompt.
 *   **Security:** Ensure that the generated Cypher queries do not pose security risks (e.g., injection attacks) if user input is directly used in query construction.
-
-## Important Patterns and Preferences
-
--   **Task Tracking:** When outlining tasks, always prepend them with "#TODO:" for clear visibility and tracking.
--   **Problem-Solving:** When encountering a persistent bug or a lack of clarity about an external library's object structure, do not guess repeatedly. After two failed attempts, prioritize asking the user for help, for example by requesting the output of a command like `str()` to reveal an object's structure.
--   **Function Design:** Focus on function separation. Avoid creating "do-everything" functions. Instead, compose small, single-purpose functions into a larger workflow. This promotes modularity, reusability, and easier testing.
--   **Architecture:** The project follows a `reticulate`-based wrapper pattern. All new R functions that interface with the database should follow this established pattern of calling Python via `py_run_string`.
--   **Documentation:** Functions must be documented with high-quality `roxygen2`-style comments. Descriptions should be clear, detailed, and adhere to R's documentation best practices. Every exported function should include a runnable example in its `@examples` tag.
--   **User Experience:** The primary goal is a seamless R user experience. Abstractions should hide Python-specific details wherever possible. S3 methods should be used for type conversion to familiar R objects (`data.frame`, `tibble`).
-
-### Interactive Kuzu Graph Explorer with Shiny and Natural Language Querying (Post-CRAN Submission)
-The following plan outlines the implementation of an interactive R Shiny application for exploring and manipulating Kuzu graph data, including natural language querying capabilities via `ellmer`. This will be undertaken after the initial CRAN submission.
-
-**1. Overall Concept:**
-The goal is to create a user-friendly web interface within `kuzuR` that allows users to:
-*   Connect to a Kuzu database.
-*   Visualize graph data (nodes and edges) interactively using `g6R`.
-*   Perform dynamic searches and filtering on the graph.
-*   Input natural language queries, which will be translated to Cypher via the `ellmer` RAG tool and executed against the Kuzu database, with results displayed in the graph.
-*   Potentially edit graph data (add/remove nodes/edges, modify properties) through the UI.
-
-**2. Key Components and Implementation Ideas:**
-
-*   **Shiny Application Structure:**
-    *   The application would reside in a new directory, e.g., `inst/shinyapp/`, within the `kuzuR` package. This allows users to launch it easily via `shiny::runApp(system.file("shinyapp", package = "kuzuR"))`.
-    *   **`ui.R` (User Interface):**
-        *   Utilize `bslib::page_fluid()` or `bslib::page_navbar()` with a `bs_theme(version = 5)` for a modern Bootstrap 5 theme.
-        *   **Database Connection Panel:** Input fields for the Kuzu database path.
-        *   **Natural Language Query Input:** A prominent text area or input box where users can type natural language questions (e.g., "Show me all persons over 30 who are friends with John."). Include a submit button.
-        *   **Graph Visualization Output:** A dedicated area to display the interactive graph using `g6R`.
-        *   **Search/Filter Controls (Complementary to NLQ):** Text input for keyword search, dropdowns for selecting node/edge labels, and input fields for property-based filtering.
-        *   **Cypher Query Console (Optional):** An input box for users to type and execute custom Cypher queries, with an output area for results (e.g., the raw Cypher generated by the NLQ, or direct user input).
-        *   **Graph Manipulation Controls (Optional, Advanced):** Buttons for adding nodes/edges, editing properties, or deleting elements.
-    *   **`server.R` (Server Logic):**
-        *   **Database Connection Management:** Reactive logic to establish and manage the `kuzuR` connection.
-        *   **Natural Language Query Processing:**
-            *   Observe the natural language query input and its submit button.
-            *   When a query is submitted, call the `kuzu_rag_query` function (the `ellmer` tool) with the user's natural language input.
-            *   Pass the user-specified `ellmer` chat object (or the default one) to `kuzu_rag_query` for internal Cypher generation.
-            *   The `kuzu_rag_query` function will return the graph data (or a summary) based on the generated Cypher.
-        *   **Data Fetching:** Functions to execute Cypher queries (either generated by the RAG tool, from direct Cypher input, or from search/filter controls) to retrieve graph data.
-        *   **Data Transformation:** Convert `kuzuR` query results into `g6R` compatible formats (e.g., using `as_g6R()`).
-        *   **Visualization Rendering:** Render the interactive graph using `g6R`, updating reactively based on NLQ results or other filters.
-        *   **Search Logic:** Dynamically construct and execute Cypher queries based on user input in the search/filter controls.
-        *   **Editing Logic (Optional):** Translate UI actions into appropriate Cypher `CREATE`, `SET`, or `DELETE` statements.
-        *   **Error Handling:** Implement robust error handling for database operations and user input, displaying messages to the user in the Shiny app.
-
-*   **Graph Visualization Library:**
-    *   **`g6R`**: Confirmed as the chosen library for interactive graph visualization.
-
-*   **Search and Filtering Functionality:** (Will be complemented by the Natural Language Query input.)
-
-*   **Graph Editing Functionality (Consider as a later phase due to complexity):** (No change)
-
-*   **Integration with `kuzuR` Package:**
-    *   The Shiny application will be a consumer of `kuzuR`'s core functions, including the `kuzu_rag_query` function (the `ellmer` tool).
-    *   `shiny`, `bslib`, `g6R`, and `ellmer` should all be added as `Suggests` dependencies in the `DESCRIPTION` file.
-    *   A new R function, `kuzu_launch_explorer()`, will be added to `kuzuR` to provide a convenient way to launch the Shiny app. This function will now accept an optional `ellmer_chat_object` argument:
-        ```R
-        kuzu_launch_explorer <- function(db_path = NULL, ellmer_chat_object = NULL) {
-          # ... (Shiny app setup) ...
-          # Pass ellmer_chat_object to the server logic,
-          # which then passes it to kuzu_rag_query
-          # If ellmer_chat_object is NULL, kuzu_rag_query will use its default.
-        }
-        ```
-    *   Within the Shiny app's `server.R`, the `ellmer_chat_object` passed to `kuzu_launch_explorer` will be made available to the reactive context (e.g., via `options()` or a reactive value) and then used when calling the `kuzu_rag_query` function for Cypher generation.
-
-**3. Benefits:**
-*   **Enhanced User Accessibility:** Provides a visual, interactive way to explore Kuzu graphs without needing deep Cypher knowledge.
-*   **Rapid Prototyping & Exploration:** Facilitates quick understanding and analysis of graph data.
-*   **Demonstrates `kuzuR` Capabilities:** Showcases the power of `kuzuR` in a compelling, interactive format.
-*   **Educational Tool:** Can serve as a learning tool for understanding graph structures and Cypher queries.
-
-**4. Considerations:**
-*   **Performance:** For very large graphs, rendering and interactivity in Shiny can become a bottleneck. Strategies like pagination, sampling, or server-side rendering might be needed.
-*   **Complexity of Editing:** Implementing robust and safe graph editing through a UI is challenging and requires careful validation and error handling.
-*   **Dependency Management:** Ensure `shiny`, `bslib`, `g6R`, and `ellmer` are properly handled as `Suggests` dependencies.
-*   **Security:** If editing is enabled, ensure proper input sanitization to prevent Cypher injection vulnerabilities.

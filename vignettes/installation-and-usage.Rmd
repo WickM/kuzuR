@@ -1,0 +1,133 @@
+---
+title: "Installation and Basic Usage"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Installation and Basic Usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+This vignette provides a step-by-step guide to installing the `kuzuR` package and its dependencies, and demonstrates its basic usage for connecting to a Kuzu database, creating a schema, loading data, and executing simple queries.
+
+## Installation
+
+First, you need to install the `kuzuR` package from GitHub. #TODO add CRAN
+
+```{r, eval=FALSE}
+# install.packages("devtools")
+devtools::install_github("WickM/kuzuR")
+```
+
+`kuzuR` relies on the official Python `kuzu` library. To manage the Python dependencies, `kuzuR` provides a helper function `install_kuzu()`. This function will install the necessary Python packages into a dedicated environment using `reticulate`.
+
+```{r, eval=FALSE}
+library(kuzuR)
+install_kuzu()
+```
+
+## Basic Usage
+
+Once the package and its dependencies are installed, you can start using `kuzuR` to interact with a Kuzu database.
+
+### 1. Load the library
+
+```{r}
+library(kuzuR)
+```
+
+### 2. Create a Database and Connection
+
+First, specify a path for your database and create a database object. Then, establish a connection to it. #TODO add mention of in memory or path
+Copy nodes before relationships: In order to copy a relationship table R from a Parquet file RFile, the nodes that appear in RFile need to already exist in the database (either imported in bulk or inserted through Cypher data manipulation commands).
+
+```{r}
+db_path <- tempfile()
+db <- kuzu_database(db_path)
+#  db <- kuzu_database(":memory:")
+con <- kuzu_connection(db)
+```
+
+### 3. Define a Schema
+
+Let's create a simple schema with a `Person` node table and a `Knows` relationship table.
+
+#TODO Add R typte
+
+| **Python type** | **Kuzu `LogicalTypeID`** |
+|-----------------|--------------------------|
+| `bool`          | `BOOL`                   |
+| `int`           | `INT64`                  |
+| `float`         | `DOUBLE`                 |
+| `str`           | `STRING`                 |
+| `datetime`      | `TIMESTAMP`              |
+| `date`          | `DATE`                   |
+| `timedelta`     | `INTERVAL`               |
+| `uuid`          | `UUID`                   |
+| `list`          | `LIST`                   |
+| `dict`          | `MAP`                    |
+
+```{r}
+kuzu_execute(con, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
+kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
+```
+
+### 4. Load Data
+
+You can load data into your tables from R data frames using `kuzu_copy_from_df()`.
+
+```{r}
+# Create data frames for nodes and relationships
+persons <- data.frame(
+  name = c("Alice", "Bob", "Carol"),
+  age = c(35, 45, 25)
+)
+
+knows <- data.frame(
+  from_person = c("Alice", "Bob"),
+  to_person = c("Bob", "Carol"),
+  since = c(2010, 2015)
+)
+
+# Load data into Kuzu
+kuzu_copy_from_df(con, persons, "Person")
+kuzu_copy_from_df(con, knows, "Knows")
+```
+
+### 5. Execute Queries
+
+Now you can execute Cypher queries and retrieve the results.
+
+```{r}
+#TODO add diferent result methodes
+#todo add glue and stick to ("COPY Person FROM ... method) 
+"COPY Person FROM {persons}"
+"COPY Person FROM {c://.csv}"
+"COPY Person FROM {c://.json}"
+"COPY Person FROM {c://.json}"
+
+
+
+# Find all persons
+result <- kuzu_execute(con, "MATCH (p:Person) RETURN p.name, p.age")
+kuzu_execute(con, "INSTALL duckdb;")
+as.data.frame(result)
+
+kuzu_get_all(result)
+```
+
+```{r}
+# Find relationships
+result_rel <- kuzu_execute(con, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a.name, k.since, b.name")
+as.data.frame(result_rel)
+```
+
+This concludes the basic introduction to `kuzuR`. For more advanced topics, such as graph library integrations, please see the other vignettes.

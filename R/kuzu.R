@@ -42,6 +42,8 @@ kuzu_connection <- function(db) {
   reticulate::py$conn
 }
 
+#TODO combine kuzu_connection +kuzu_database into one function like in SQLITE
+
 #' Execute a Cypher Query
 #'
 #' Submits a Cypher query to the Kuzu database for execution. This function
@@ -219,47 +221,7 @@ kuzu_get_next <- function(result) {
   stats::setNames(row_values, col_names)
 }
 
-#' Load Data from a Data Frame or Tibble into a Kuzu Table
-#'
-#' Efficiently copies data from an R `data.frame` or `tibble` into a specified
-#' table in the Kuzu database.
-#'
-#' @param conn A Kuzu connection object.
-#' @param table_name A string specifying the name of the destination table in Kuzu.
-#' @param df A `data.frame` or `tibble` containing the data to load. Column
-#'   names in the data frame should match the property names in the Kuzu table.
-#' @return This function is called for its side effect of loading data and does
-#'   not return a value.
-#' @export
-#' @examples
-#' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
-#'
-#' # Load from a data.frame
-#' users_df <- data.frame(name = c("Carol", "Dan"), age = c(35, 40))
-#' kuzu_copy_from_df(conn, "User", users_df)
-#'
-#' # Load from a tibble (if 'tibble' package is installed)
-#' if (requireNamespace("tibble", quietly = TRUE)) {
-#'   users_tbl <- tibble::tibble(name = c("Eve", "Frank"), age = c(45, 50))
-#'   kuzu_copy_from_df(conn, "User", users_tbl)
-#' }
-#'
-#' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
-#' as.data.frame(result)
-#' }
-kuzu_copy_from_df <- function(conn, table_name, df) {
-  main <- reticulate::import_main()
-  main$conn <- conn
-  main$df <- df
-  query <- paste0("COPY ", table_name, " FROM df")
-  main$query <- query
-  # Explicitly import pandas to avoid potential importlib issues
-  reticulate::py_run_string("import pandas as pd; conn.execute(query)", convert = FALSE)
-  invisible(NULL)
-}
+#TODO UDF
 
 #' Get Column Data Types from a Query Result
 #'

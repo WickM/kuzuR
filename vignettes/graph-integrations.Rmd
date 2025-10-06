@@ -1,0 +1,117 @@
+---
+title: "Graph Library Integrations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Graph Library Integrations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+This vignette demonstrates how to convert Kuzu query results into various R graph library objects, including `igraph`, `tidygraph`, and `g6R`. It showcases the seamless integration of `kuzuR` with popular R packages for graph analysis and visualization.
+
+## Prerequisites
+
+Ensure you have the necessary packages installed:
+
+```{r, eval=FALSE}
+# install.packages("igraph")
+# install.packages("tidygraph")
+# install.packages("g6R")
+# install.packages("kuzuR") # If not already installed
+```
+
+## Converting to `igraph`
+
+The `igraph` package is a powerful tool for graph manipulation and analysis in R. `kuzuR` provides a direct conversion function `as_igraph()` to transform Kuzu query results into `igraph` objects.
+
+### Example: Loading and Converting Graph Data
+
+First, let's set up a Kuzu database and load some sample graph data.
+
+```{r}
+library(kuzuR)
+library(igraph)
+
+# Create a database and connection
+db_path <- tempfile()
+db <- kuzu_database(db_path)
+con <- kuzu_connection(db)
+
+# Create schema for nodes and relationships
+kuzu_execute(con, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
+kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
+
+# Prepare data frames
+persons_data <- data.frame(
+  name = c("Alice", "Bob", "Carol"),
+  age = c(35, 45, 25)
+)
+
+knows_data <- data.frame(
+  from_person = c("Alice", "Bob"),
+  to_person = c("Bob", "Carol"),
+  since = c(2010, 2015)
+)
+
+# Load data into Kuzu
+kuzu_copy_from_df(con, persons_data, "Person")
+kuzu_copy_from_df(con, knows_data, "Knows")
+```
+
+Now, let's execute a query that returns graph data and convert it to an `igraph` object.
+
+```{r}
+# Query to get all persons and their relationships
+graph_query_result <- kuzu_execute(con, "MATCH (p1:Person)-[k:Knows]->(p2:Person) RETURN p1, p2, k.since")
+
+# Convert the Kuzu result to an igraph object
+igraph_graph <- as_igraph(graph_query_result)
+
+# Print the igraph object summary
+print(igraph_graph)
+```
+
+You can now perform standard `igraph` operations on `igraph_graph`.
+
+## Converting to `tidygraph`
+
+The `tidygraph` package offers a tidy data approach to graph manipulation, integrating seamlessly with the tidyverse. `kuzuR` supports conversion to `tidygraph` objects via `as_tidygraph()`.
+
+### Example: Converting to `tidygraph`
+
+Using the same Kuzu query result, we can convert it to a `tidygraph` object.
+
+```{r}
+# Convert the Kuzu result to a tidygraph object
+tidygraph_graph <- as_tidygraph(graph_query_result)
+
+# Print the tidygraph object summary
+print(tidygraph_graph)
+```
+
+## Converting to `g6R`
+
+`g6R` is used for interactive graph visualization. `kuzuR` provides `as_g6R()` for direct conversion, allowing you to visualize your Kuzu graph data interactively.
+
+### Example: Converting to `g6R`
+
+Let's convert the Kuzu query result to a `g6R` object for visualization.
+
+```{r}
+# Convert the Kuzu result to a g6R object
+g6r_graph <- as_g6R(graph_query_result)
+
+# Display the g6R object (this will render an interactive visualization)
+print(g6r_graph)
+```
+
+This concludes the vignette on graph library integrations. For more advanced usage and specific examples, please refer to the documentation of each respective library.

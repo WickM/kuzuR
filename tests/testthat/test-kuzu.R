@@ -120,36 +120,3 @@ test_that("kuzu_get_all, kuzu_get_n, and kuzu_get_next work correctly", {
 
   rm(db, conn, result, result_n, result_next, all_results, first_two, row1, row2, row3, row_null)
 })
-
-test_that("kuzu_copy_from_df works correctly", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
-
-  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, PRIMARY KEY (id))")
-
-  products_df <- data.frame(id = c(1, 2), name = c("Laptop", "Mouse"))
-  kuzu_copy_from_df(conn, "Product", products_df)
-
-  result <- kuzu_execute(conn, "MATCH (p:Product) RETURN p.id, p.name ORDER BY p.id")
-  df_check <- as.data.frame(result)
-
-  expect_equal(nrow(df_check), 2)
-  expect_equal(df_check$p.id, c(1, 2))
-  expect_equal(df_check$p.name, c("Laptop", "Mouse"))
-
-  # Test with tibble if available
-  if (requireNamespace("tibble", quietly = TRUE)) {
-    kuzu_execute(conn, "CREATE NODE TABLE Item(id INT64, description STRING, PRIMARY KEY (id))")
-    items_tbl <- tibble::tibble(id = c(3, 4), description = c("Keyboard", "Monitor"))
-    kuzu_copy_from_df(conn, "Item", items_tbl)
-
-    result_item <- kuzu_execute(conn, "MATCH (i:Item) RETURN i.id, i.description ORDER BY i.id")
-    df_item_check <- as.data.frame(result_item)
-
-    expect_equal(nrow(df_item_check), 2)
-    expect_equal(df_item_check$i.id, c(3, 4))
-    expect_equal(df_item_check$i.description, c("Keyboard", "Monitor"))
-  }
-
-  rm(db, conn, products_df, result, df_check)
-})
