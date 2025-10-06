@@ -21,7 +21,7 @@ The immediate next steps involve addressing the remaining items on the CRAN subm
 5.  **`#TODO: Review and Enhance Documentation`**: Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
 6.  **`#TODO: Verify LICENSE File`**: Confirm the `LICENSE` file contains the full MIT license text.
 7.  **`#TODO: Ensure Package Description Acknowledges Original Authors`**: State clearly in `DESCRIPTION` and `README.md` that `kuzuR` builds upon the work of Kuzu and g6R authors.
-8.  **`#TODO: Email Kuzu and g6R Authors`**: Inform them about the `kuzuR` package before CRAN submission.
+8.  **`#TODO: Email Kuzu and G6R Authors`**: Inform them about the `kuzuR` package before CRAN submission.
 9.  **`#TODO: Create GitHub Pages for Documentation`**: Set up GitHub Pages for hosting package documentation using `pkgdown` and GitHub Actions.
 10. **`#TODO CSV`**: Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
 11. **`#TODO UDF`**: (No specific details provided in the context).
@@ -110,3 +110,40 @@ The core idea is to create an R function within `kuzuR` that acts as an `ellmer`
 *   **LLM Costs and Latency:** If an internal LLM call is used for Cypher generation, it will incur additional costs and latency.
 *   **Schema Awareness:** The LLM used for Cypher generation will need to be aware of the Kuzu database schema to generate correct queries. This can be provided as part of the prompt.
 *   **Security:** Ensure that the generated Cypher queries do not pose security risks (e.g., injection attacks) if user input is directly used in query construction.
+
+## Plan for OverflowError and C++ Toolchain Incompatibility Version Tracking
+
+To effectively trace the `OverflowError` and C++ Toolchain Incompatibility issues, a dedicated file `memory-bank/overflow_toolchain_versions.md` has been created. This file will serve as a log for all version testing performed.
+
+**Intended Content for `memory-bank/overflow_toolchain_versions.md`:**
+
+```markdown
+# OverflowError and C++ Toolchain Incompatibility - Version Testing Log
+
+This file tracks the different versions tested in an effort to resolve the `OverflowError` and C++ Toolchain Incompatibility issues.
+
+## Current Understanding
+
+**Error Description:**
+A significant `OverflowError: Python int too large to convert to C long` has been reported, occurring within `reticulate::py_get_formals`. This error is accompanied by a `SystemError` related to `Parameter.kind` introspection.
+
+**Environment Details:**
+*   **R version:** 4.4.1 (2024-06-14 ucrt)
+*   **Rtools version:** 4.4 (using GCC 13/MinGW-w64)
+*   **`reticulate` version:** 1.43.0
+*   **Python version:** 3.11.5
+*   **`kuzu` Python library version:** 0.11.2
+
+**Hypothesis:**
+The error is strongly suspected to be caused by a C++ toolchain incompatibility. Kuzu's C++ core is believed to be compiled with C++20, while Rtools 4.4 (GCC 13) might not fully support or align with C++20 by default, leading to ABI mismatches when `reticulate` attempts to bridge between R and the Python `kuzu` library. This incompatibility can manifest as incorrect function signature introspection and improper handling of large integer types, resulting in the observed `OverflowError`.
+
+**Proposed Solution (for future reference):**
+Upgrade R to version 4.5 (when stable) and Rtools to 4.5 (which uses GCC 14, offering better C++20 compatibility). Also, update `reticulate` and the `kuzu` Python library to their latest stable versions.
+
+## Version Testing Log
+
+*(This section will be populated as new versions are tested and results are recorded.)*
+```
+
+**Next Steps:**
+1.  Begin testing different versions of R, Rtools, `reticulate`, and the `kuzu` Python library, documenting the results in `memory-bank/overflow_toolchain_versions.md`.

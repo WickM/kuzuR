@@ -24,7 +24,26 @@ install_kuzu <- function() {
   if (interactive()) {
     question <- "Would you like to install them now? (This will use reticulate::py_install)"
     if (utils::askYesNo(question, default = TRUE)) {
-      reticulate::py_install(pkgs, pip = TRUE)
+      # Ask user if they want to create a new environment or use an existing one
+      env_choice <- readline(prompt="Install into a new environment? (y/n, default is 'n' for current/specified env): ")
+      
+      if (tolower(env_choice) == "y") {
+        new_env_name <- readline(prompt="Enter the name for the new environment: ")
+        if (new_env_name != "") {
+          reticulate::py_install(pkgs, pip = TRUE, envname = new_env_name, create_env = TRUE)
+        } else {
+          message("New environment name cannot be empty. Installation cancelled.")
+        }
+      } else {
+        # User chose not to create a new environment, prompt for existing env name or use default
+        existing_env_name <- readline(prompt="Enter the name of the existing environment to use (leave blank for default): ")
+        if (existing_env_name != "") {
+          reticulate::py_install(pkgs, pip = TRUE, envname = existing_env_name)
+        } else {
+          # Use default environment if blank is provided
+          reticulate::py_install(pkgs, pip = TRUE) 
+        }
+      }
     } else {
       message("Installation cancelled by user.")
     }
