@@ -23,4 +23,4 @@ The project is at an **alpha** stage. The core functionality is present and is n
 
 ## Known Issues
 
--   None identified. All outstanding bugs were resolved during the test suite enhancement process.
+-   **OverflowError with `reticulate` and Kuzu:** An `OverflowError: Python int too large to convert to C long` has been reported, occurring during `reticulate`'s interaction with the Kuzu Python library. This is suspected to be due to a C++ toolchain incompatibility between Kuzu's compilation (believed to be C++20) and the Rtools 4.4 environment (GCC 13). Investigation is ongoing, with a proposed solution of upgrading R and Rtools to versions compatible with C++20 (e.g., R 4.5 and Rtools 4.5 with GCC 14).
