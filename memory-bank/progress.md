@@ -7,7 +7,8 @@
     -   Supports `igraph`, `tidygraph`, and `g6R`.
     -   This feature is now covered by a `testthat` suite.
 -   **Core Database Operations:**
-    -   Database creation, connection management, query execution (`kuzu_database`, `kuzu_connection`, `kuzu_execute`).
+    -   Simplified database connection and management (`kuzu_connection`).
+    -   Query execution (`kuzu_execute`).
     -   Data loading from `data.frame`s (`kuzu_copy_from_df`).
     -   Result retrieval and conversion to `data.frame` and `tibble`.
 
@@ -20,7 +21,3 @@
 ## Current Status
 
 The project is at an **alpha** stage. The core functionality is present and is now supported by a comprehensive test suite, significantly increasing its robustness. The next major step towards a beta release is improving user-facing documentation, particularly vignettes.
-
-## Known Issues
-
--   **OverflowError with `reticulate` and Kuzu:** An `OverflowError: Python int too large to convert to C long` has been reported, occurring during `reticulate`'s interaction with the Kuzu Python library. This is suspected to be due to a C++ toolchain incompatibility between Kuzu's compilation (believed to be C++20) and the Rtools 4.4 environment (GCC 13). Investigation is ongoing, with a proposed solution of upgrading R and Rtools to versions compatible with C++20 (e.g., R 4.5 and Rtools 4.5 with GCC 14).

@@ -26,24 +26,17 @@ The immediate next steps involve addressing the remaining items on the CRAN subm
 10. **`#TODO CSV`**: Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
 11. **`#TODO UDF`**: (No specific details provided in the context).
 
-## Active Decisions and Considerations
+## Resolved Issues
 
-### OverflowError and C++ Toolchain Incompatibility
+### OverflowError and `reticulate` Introspection
 
-A significant `OverflowError: Python int too large to convert to C long` has been reported, occurring within `reticulate::py_get_formals`. This error is accompanied by a `SystemError` related to `Parameter.kind` introspection.
+**Status:** RESOLVED
 
-**Environment Details:**
-*   **R version:** 4.4.1 (2024-06-14 ucrt)
-*   **Rtools version:** 4.4 (using GCC 13/MinGW-w64)
-*   **`reticulate` version:** 1.43.0
-*   **Python version:** 3.11.5
-*   **`kuzu` Python library version:** 0.11.2
+**Description:**
+A significant `OverflowError: Python int too large to convert to C long` was previously encountered. This error was tied to a `SystemError` related to `reticulate`'s inability to correctly inspect the function signatures of the compiled `kuzu` Python library. The error manifested when the `kuzu_database` object was passed from R back to Python to create a connection.
 
-**Hypothesis:**
-The error is strongly suspected to be caused by a C++ toolchain incompatibility. Kuzu's C++ core is believed to be compiled with C++20, while Rtools 4.4 (GCC 13) might not fully support or align with C++20 by default, leading to ABI mismatches when `reticulate` attempts to bridge between R and the Python `kuzu` library. This incompatibility can manifest as incorrect function signature introspection and improper handling of large integer types, resulting in the observed `OverflowError`.
-
-**Proposed Solution (for future reference):**
-Upgrade R to version 4.5 (when stable) and Rtools to 4.5 (which uses GCC 14, offering better C++20 compatibility). Also, update `reticulate` and the `kuzu` Python library to their latest stable versions.
+**Resolution:**
+The issue was resolved by merging the `kuzu_database()` and `kuzu_connection()` functions into a single `kuzu_connection(path)` function. By combining the database creation and connection steps into a single `reticulate::py_run_string()` call, the need to pass the Python `database` object back and forth between R and Python was eliminated. This new approach avoids the problematic introspection step entirely, thus resolving the `OverflowError`. The initial hypothesis of a C++ toolchain incompatibility was incorrect; the problem was rooted in the way `reticulate` handled the Python object.
 
 ## Kuzu Python API Feature Implementation
 Based on the [Kuzu Python API Documentation](./kuzu_python_api.md), the following functions should be reviewed and implemented:

@@ -17,7 +17,7 @@ This wrapper pattern bypasses the C++ integration problem by leveraging the stab
 
 ### 1. R-to-Python Function Mapping
 
-Each primary R function in `kuzuR` (e.g., `kuzu_database`, `kuzu_connection`, `kuzu_execute`) serves as a thin client for its corresponding Python function. The implementation pattern is consistent:
+Each primary R function in `kuzuR` (e.g., `kuzu_connection`, `kuzu_execute`) serves as a thin client for its corresponding Python function. The implementation pattern is consistent:
 -   An R function is defined.
 -   It accepts R arguments.
 -   It uses `reticulate::import_main()` to get a handle to the main Python namespace.
@@ -25,13 +25,13 @@ Each primary R function in `kuzuR` (e.g., `kuzu_database`, `kuzu_connection`, `k
 -   It executes a Python code string using `reticulate::py_run_string()` that calls the target Python function.
 -   It retrieves the resulting Python object from the main namespace using `reticulate::py$object_name`.
 
-**Example (`kuzu_database`):**
+**Example (`kuzu_connection`):**
 ```r
-kuzu_database <- function(path) {
+kuzu_connection <- function(path) {
   main <- reticulate::import_main()
   main$path <- path
-  reticulate::py_run_string("import kuzu; db = kuzu.Database(path)", convert = FALSE)
-  reticulate::py$db
+  reticulate::py_run_string("import kuzu; db = kuzu.Database(path); conn = kuzu.Connection(db)", convert = FALSE)
+  reticulate::py$conn
 }
 ```
 

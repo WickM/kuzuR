@@ -4,21 +4,26 @@
 \alias{kuzu_connection}
 \title{Create a Connection to a Kuzu Database}
 \usage{
-kuzu_connection(db)
+kuzu_connection(path)
 }
 \arguments{
-\item{db}{A Kuzu database object, as returned by \code{kuzu_database()}.}
+\item{path}{A string specifying the file path for the database. For an
+in-memory database, use \code{":memory:"}.}
 }
 \value{
 A Python object representing the connection to the Kuzu database.
 }
 \description{
-Creates a new connection to an existing Kuzu database instance. Multiple
-connections can be established to the same database.
+Establishes a connection to a Kuzu database. If the database does not exist
+at the specified path, it will be created. This function combines the
+database initialization and connection steps into a single call.
 }
 \examples{
 \dontrun{
-db <- kuzu_database(":memory:")
-conn <- kuzu_connection(db)
+# Create an in-memory database and connection
+conn <- kuzu_connection(":memory:")
+
+# Create or connect to an on-disk database
+conn_disk <- kuzu_connection("my_kuzu_db")
 }
 }

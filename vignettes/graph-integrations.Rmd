@@ -41,10 +41,9 @@ First, let's set up a Kuzu database and load some sample graph data.
 library(kuzuR)
 library(igraph)
 
-# Create a database and connection
+# Create a connection
 db_path <- tempfile()
-db <- kuzu_database(db_path)
-con <- kuzu_connection(db)
+con <- kuzu_connection(db_path)
 
 # Create schema for nodes and relationships
 kuzu_execute(con, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")

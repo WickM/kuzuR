@@ -1,16 +1,11 @@
-test_that("Database and connection objects are created", {
-  db <- kuzu_database(":memory:")
-  expect_s3_class(db, "kuzu.database.Database")
-  
-  conn <- kuzu_connection(db)
+test_that("Connection object is created", {
+  conn <- kuzu_connection(":memory:")
   expect_s3_class(conn, "kuzu.connection.Connection")
-  
-  rm(db, conn)
+  rm(conn)
 })
 
 test_that("Queries execute and results can be converted", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
   
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
@@ -23,12 +18,11 @@ test_that("Queries execute and results can be converted", {
   expect_equal(nrow(df), 1)
   expect_equal(df$a.name, "Alice")
   
-  rm(db, conn, result, df)
+  rm(conn, result, df)
 })
 
 test_that("Result schema functions work correctly", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
   
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
@@ -50,13 +44,12 @@ test_that("Result schema functions work correctly", {
   expect_type(schema, "list")
   expect_equal(schema, list("a.name" = "STRING", "a.age" = "INT64"))
   
-  rm(db, conn, result, col_names, col_types, schema)
+  rm(conn, result, col_names, col_types, schema)
 })
 
 test_that("as_tibble.kuzu.query_result.QueryResult works correctly", {
   skip_if_not_installed("tibble")
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
@@ -68,12 +61,11 @@ test_that("as_tibble.kuzu.query_result.QueryResult works correctly", {
   expect_equal(nrow(tbl), 1)
   expect_equal(tbl$a.name, "Alice")
 
-  rm(db, conn, result, tbl)
+  rm(conn, result, tbl)
 })
 
 test_that("kuzu_get_all, kuzu_get_n, and kuzu_get_next work correctly", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
@@ -118,5 +110,5 @@ test_that("kuzu_get_all, kuzu_get_n, and kuzu_get_next work correctly", {
   row_null <- kuzu_get_next(result_next)
   expect_null(row_null)
 
-  rm(db, conn, result, result_n, result_next, all_results, first_two, row1, row2, row3, row_null)
+  rm(conn, result, result_n, result_next, all_results, first_two, row1, row2, row3, row_null)
 })

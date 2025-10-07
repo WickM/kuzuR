@@ -21,8 +21,7 @@ Provides an S3 method to convert a Kuzu query result object into a
 \examples{
 \dontrun{
 if (requireNamespace("tibble", quietly = TRUE)) {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
   result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")

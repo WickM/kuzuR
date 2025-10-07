@@ -30,16 +30,20 @@ Attempting to link the MSVC-compiled Kuzu library against an `Rcpp`-based packag
 -   **Python Dependency:** The package is not self-contained. Its functionality is entirely dependent on an external Python environment and the `kuzu`, `pandas`, and `networkx` libraries.
 -   **Error Handling:** Errors can originate from R, Python, or the Kuzu database itself. Stack traces can be complex, spanning multiple languages.
 
-## Reticulate Introspection Issues with Kuzu
+## Reticulate Introspection Issues with Kuzu (Resolved)
 
-During development, a persistent `SystemError` was encountered when calling `kuzu`'s Python functions from R:
+During development, a persistent `SystemError` was encountered when calling `kuzu`'s Python functions from R, which was also associated with an `OverflowError: Python int too large to convert to C long`.
 
-`SystemError: <function Parameter.kind ...> returned a result with an exception set`
+**Error:** `SystemError: <function Parameter.kind ...> returned a result with an exception set`
 
-This error indicates that `reticulate` is unable to correctly inspect the function signatures of the compiled `kuzu` Python library. Several `reticulate` calling conventions were tested to resolve this:
+This error indicated that `reticulate` was unable to correctly inspect the function signatures of the compiled `kuzu` Python library. The problem was most apparent when a Python object created in R (like the `kuzu_database` object) was passed back into a subsequent Python call (like `kuzu_connection`). This round-trip of the object triggered the introspection error.
 
-1.  **Direct Call (`kuzu$Database(...)`):** This was the first attempt at a cleaner implementation. It failed with the introspection error.
-2.  **`reticulate::py_call(kuzu$Database, ...)`:** This more explicit method also failed with the same error, suggesting the issue occurs at a very low level of function inspection.
-3.  **`reticulate::py_run_string(...)`:** This was the original implementation. It works because it bypasses `reticulate`'s R-level function signature inspection. The entire operation (importing `kuzu`, calling the function, and assigning the result) is handled within a single Python execution block.
+Several `reticulate` calling conventions were tested:
+1.  **Direct Call (`kuzu$Database(...)`):** Failed with the introspection error.
+2.  **`reticulate::py_call(kuzu$Database, ...)`:** Also failed with the same error.
+3.  **`reticulate::py_run_string(...)`:** This method worked because it bypasses `reticulate`'s R-level function signature inspection.
 
-**Conclusion:** Due to this low-level incompatibility between `reticulate` and the `kuzu` Python library, the `py_run_string` method is the only reliable way to call `kuzu`'s core functions like `Database()` and `Connection()`. While less elegant, it is a necessary workaround to avoid the `SystemError`.
+**Resolution:**
+The issue was fully resolved by merging the `kuzu_database()` and `kuzu_connection()` functions. The new `kuzu_connection(path)` function performs both the database creation and connection establishment within a single `py_run_string` execution. This eliminates the need to pass a Python object from R back into another Python call, thereby avoiding the introspection issue and resolving both the `SystemError` and the `OverflowError`.
+
+**Conclusion:** The `py_run_string` method, combined with a single-function approach for connection, is the definitive pattern for interacting with the Kuzu Python library via `reticulate`, ensuring stability and avoiding low-level introspection errors.

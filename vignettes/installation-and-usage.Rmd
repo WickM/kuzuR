@@ -44,16 +44,17 @@ Once the package and its dependencies are installed, you can start using `kuzuR`
 library(kuzuR)
 ```
 
-### 2. Create a Database and Connection
+### 2. Create a Connection
 
-First, specify a path for your database and create a database object. Then, establish a connection to it. #TODO add mention of in memory or path
-Copy nodes before relationships: In order to copy a relationship table R from a Parquet file RFile, the nodes that appear in RFile need to already exist in the database (either imported in bulk or inserted through Cypher data manipulation commands).
+To get started, you need to create a connection to a Kuzu database. You can either connect to an on-disk database by providing a path or create a temporary in-memory database. If the database at the specified path does not exist, it will be created for you.
 
 ```{r}
+# Create a temporary on-disk database
 db_path <- tempfile()
-db <- kuzu_database(db_path)
-#  db <- kuzu_database(":memory:")
-con <- kuzu_connection(db)
+con <- kuzu_connection(db_path)
+
+# Alternatively, create an in-memory database (data is lost when R session ends)
+# con <- kuzu_connection(":memory:")
 ```
 
 ### 3. Define a Schema

@@ -1,48 +1,27 @@
-#' Initialize a Kuzu Database
+#' Create a Connection to a Kuzu Database
 #'
 #' Establishes a connection to a Kuzu database. If the database does not exist
-#' at the specified path, it will be created.
+#' at the specified path, it will be created. This function combines the
+#' database initialization and connection steps into a single call.
 #'
 #' @param path A string specifying the file path for the database. For an
 #'   in-memory database, use `":memory:"`.
-#' @return A Python object representing the Kuzu database instance.
-#' @export
-#' @examples
-#' \dontrun{
-#' # Create an in-memory database
-#' db <- kuzu_database(":memory:")
-#'
-#' # Create or connect to an on-disk database
-#' db_disk <- kuzu_database("my_kuzu_db")
-#' }
-kuzu_database <- function(path) {
-  main <- reticulate::import_main()
-  main$path <- path
-  reticulate::py_run_string("import kuzu; db = kuzu.Database(path)", convert = FALSE)
-  reticulate::py$db
-}
-
-#' Create a Connection to a Kuzu Database
-#'
-#' Creates a new connection to an existing Kuzu database instance. Multiple
-#' connections can be established to the same database.
-#'
-#' @param db A Kuzu database object, as returned by `kuzu_database()`.
 #' @return A Python object representing the connection to the Kuzu database.
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' # Create an in-memory database and connection
+#' conn <- kuzu_connection(":memory:")
+#'
+#' # Create or connect to an on-disk database
+#' conn_disk <- kuzu_connection("my_kuzu_db")
 #' }
-kuzu_connection <- function(db) {
+kuzu_connection <- function(path) {
   main <- reticulate::import_main()
-  main$db <- db
-  reticulate::py_run_string("import kuzu; conn = kuzu.Connection(db)", convert = FALSE)
+  main$path <- path
+  reticulate::py_run_string("import kuzu; db = kuzu.Database(path); conn = kuzu.Connection(db)", convert = FALSE)
   reticulate::py$conn
 }
-
-#TODO combine kuzu_connection +kuzu_database into one function like in SQLITE
 
 #' Execute a Cypher Query
 #'
@@ -56,8 +35,7 @@ kuzu_connection <- function(db) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #'
 #' # Create a node table
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
@@ -88,8 +66,7 @@ kuzu_execute <- function(conn, query) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -120,8 +97,7 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @examples
 #' \dontrun{
 #' if (requireNamespace("tibble", quietly = TRUE)) {
-#'   db <- kuzu_database(":memory:")
-#'   conn <- kuzu_connection(db)
+#'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #'   result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -151,8 +127,7 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -176,8 +151,7 @@ kuzu_get_all <- function(result) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})")
@@ -203,8 +177,7 @@ kuzu_get_n <- function(result, n) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})")
@@ -232,8 +205,7 @@ kuzu_get_next <- function(result) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -252,8 +224,7 @@ kuzu_get_column_data_types <- function(result) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -272,8 +243,7 @@ kuzu_get_column_names <- function(result) {
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")

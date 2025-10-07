@@ -21,8 +21,7 @@ data manipulation (DML), and querying (MATCH).
 }
 \examples{
 \dontrun{
-db <- kuzu_database(":memory:")
-conn <- kuzu_connection(db)
+conn <- kuzu_connection(":memory:")
 
 # Create a node table
 kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
