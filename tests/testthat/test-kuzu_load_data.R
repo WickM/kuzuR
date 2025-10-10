@@ -1,6 +1,5 @@
 test_that("kuzu_copy_from_df works for node and rel tables", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Test Node Table
   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, PRIMARY KEY (id))")
@@ -36,8 +35,7 @@ test_that("kuzu_copy_from_df works for node and rel tables", {
 })
 
 test_that("kuzu_copy_from_df handles various data types", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create table with various Kuzu data types
   kuzu_execute(conn, "CREATE NODE TABLE MixedTypes(
@@ -76,16 +74,15 @@ test_that("kuzu_copy_from_df handles various data types", {
   expect_equal(df_check$m.is_active, c(TRUE, FALSE))
   expect_equal(df_check$m.value, c(1.23, 4.56))
   expect_equal(df_check$m.amount, c(10.12345, 67.89012))
-  expect_equal(as.character(df_check$m.event_date), c("2023-01-15", "2023-02-20"))
+  expect_equal(substr(as.character(df_check$m.event_date), 1, 10), c("2023-01-15", "2023-02-20"))
   # Note: POSIXct to string conversion might vary slightly in precision or timezone representation depending on R/Kuzu versions.
   # Comparing as strings for simplicity, or could compare timestamps directly if conversion is consistent.
   expect_equal(as.character(df_check$m.timestamp), c("2023-01-15 10:30:00", "2023-02-20 14:45:00"))
-  expect_equal(as.numeric(df_check$m.price), c(99.99, 123.45))
+  expect_equal(as.numeric(unlist(df_check$m.price)), c(99.99, 123.45))
 })
 
 test_that("kuzu_copy_from_df handles empty data frames", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create a simple table
   kuzu_execute(conn, "CREATE NODE TABLE EmptyTestTable(col1 STRING, PRIMARY KEY (col1))")
@@ -98,19 +95,18 @@ test_that("kuzu_copy_from_df handles empty data frames", {
 
   # Query and verify that the table is empty
   result <- kuzu_execute(conn, "MATCH (e:EmptyTestTable) RETURN count(e)")
-  expect_equal(result[[1]], 0)
+  expect_equal(as.data.frame(result)[[1]], 0)
 
   # Test with a table that has multiple columns
   kuzu_execute(conn, "CREATE NODE TABLE AnotherEmptyTable(id INT64, name STRING, PRIMARY KEY (id))")
   empty_df_multi <- data.frame(id = integer(0), name = character(0))
   kuzu_copy_from_df(conn, empty_df_multi, "AnotherEmptyTable")
   result_multi <- kuzu_execute(conn, "MATCH (a:AnotherEmptyTable) RETURN count(a)")
-  expect_equal(result_multi[[1]], 0)
+  expect_equal(as.data.frame(result_multi)[[1]], 0)
 })
 
 test_that("kuzu_merge_df works for insertion and update", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create a table for merging
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, current_city STRING, age INT64, PRIMARY KEY (name))")
@@ -167,8 +163,7 @@ create_temp_csv <- function(file_path, content_lines) {
 }
 
 test_that("kuzu_copy_from_csv loads data correctly", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create a CSV file with mixed data types
   csv_content <- c(
@@ -214,8 +209,7 @@ test_that("kuzu_copy_from_csv loads data correctly", {
 })
 
 test_that("kuzu_copy_from_csv handles different delimiters", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create a CSV file with semicolon delimiter
   csv_content_semicolon <- c(
@@ -265,8 +259,7 @@ test_that("kuzu_copy_from_csv handles different delimiters", {
 })
 
 test_that("kuzu_copy_from_csv handles empty CSV files", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create an empty CSV file
   csv_content <- c("id,name") # Header only
@@ -281,7 +274,7 @@ test_that("kuzu_copy_from_csv handles empty CSV files", {
 
   # Query and verify that the table is empty
   result <- kuzu_execute(conn, "MATCH (e:EmptyCsvTable) RETURN count(e)")
-  expect_equal(result[[1]], 0)
+  expect_equal(as.data.frame(result)[[1]], 0)
 
   unlink(temp_csv_path)
 })
@@ -297,8 +290,7 @@ create_temp_json <- function(file_path, content) {
 }
 
 test_that("kuzu_copy_from_json loads data correctly", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create a JSON file with an array of objects
   json_content <- '[
@@ -335,8 +327,7 @@ test_that("kuzu_copy_from_json loads data correctly", {
 })
 
 test_that("kuzu_copy_from_json handles empty JSON files", {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # Create an empty JSON file (empty array)
   json_content <- '[]'
@@ -351,7 +342,7 @@ test_that("kuzu_copy_from_json handles empty JSON files", {
 
   # Query and verify that the table is empty
   result <- kuzu_execute(conn, "MATCH (e:EmptyJsonTable) RETURN count(e)")
-  expect_equal(result[[1]], 0)
+  expect_equal(as.data.frame(result)[[1]], 0)
 
   unlink(temp_json_path)
 })

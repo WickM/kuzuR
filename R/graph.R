@@ -97,8 +97,7 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #' @export
 #' @examples
 #' if (requireNamespace("igraph", quietly = TRUE)) {
-#'   db <- kuzu_database(":memory:")
-#'   conn <- kuzu_connection(db)
+#'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}), (q:Person {name: 'Bob'})")
@@ -107,7 +106,7 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
 #'   g <- as_igraph(res)
 #'   print(g)
-#'   rm(db, conn, res, g)
+#'   rm(conn, res, g)
 #' }
 as_igraph <- function(query_result) {
   graph_dfs <- as.data.frame(as_networkx(query_result))
@@ -125,14 +124,13 @@ as_igraph <- function(query_result) {
 #' @export
 #' @examples
 #' if (requireNamespace("tidygraph", quietly = TRUE)) {
-#'   db <- kuzu_database(":memory:")
-#'   conn <- kuzu_connection(db)
+#'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
 #'   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
 #'   g_tidy <- as_tidygraph(res)
 #'   print(g_tidy)
-#'   rm(db, conn, res, g_tidy)
+#'   rm(conn, res, g_tidy)
 #' }
 as_tidygraph <- function(query_result) {
   graph_dfs <- as.data.frame(as_networkx(query_result))
@@ -150,14 +148,13 @@ as_tidygraph <- function(query_result) {
 #' @export
 #' @examples
 #' if (requireNamespace("g6R", quietly = TRUE)) {
-#'   db <- kuzu_database(":memory:")
-#'   conn <- kuzu_connection(db)
+#'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
 #'   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
 #'   g_g6R <- as_g6R(res)
 #'   # print(g_g6R) # Prints the interactive widget
-#'   rm(db, conn, res, g_g6R)
+#'   rm(conn, res, g_g6R)
 #' }
 as_g6R <- function(query_result) {
   graph_dfs <- as.data.frame(as_networkx(query_result))

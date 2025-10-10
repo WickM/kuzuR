@@ -8,8 +8,7 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
   skip_if_not(reticulate::py_module_available("networkx"), "networkx Python package not available")
 
   # 1. Set up an in-memory database and connection
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
 
   # 2. Create schema and data
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY(name))")
@@ -65,7 +64,7 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
   expect_equal(edge_source, "Person_Alice")
 
   # 7. Clean up
-  rm(db, conn, query_res, g_igraph, g_tidy, g_g6R)
+  rm(conn, query_res, g_igraph, g_tidy, g_g6R)
 })
 
 test_that("as_networkx throws error for invalid input", {

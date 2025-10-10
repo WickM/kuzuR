@@ -18,8 +18,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)") # Corrected 'con' to 'conn'
 #' #Load from a data.frame

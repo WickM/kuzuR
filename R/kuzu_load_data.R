@@ -18,8 +18,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- kuzu_database(":memory:")
-#' conn <- kuzu_connection(db)
+#' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)") # Corrected 'con' to 'conn'
 #' #Load from a data.frame
@@ -49,17 +48,18 @@ kuzu_copy_from_df <- function(conn, df, table_name) {
 #Copyfromfile internal Function
 # This is an internal helper function and not intended for direct user use.
 # It handles the core logic of copying data from a file path.
-kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter=NULL) {
-  main <- reticulate::import_main()
-  main$conn <- conn
-
-  # Construct the COPY query. The 'optionalParameter' is not directly used in this basic query construction.
-  # If optionalParameter were to be used, it would likely involve parsing it into specific Kuzu COPY options.
-  query <- paste0("COPY ", table_name, " FROM ", file_path)
-  main$query <- query
-
-  reticulate::py_run_string("conn.execute(query)", convert = FALSE)
-  invisible(NULL)
+kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter = NULL) {
+    main <- reticulate::import_main()
+    main$conn <- conn
+    file_path <- normalizePath(file_path, mustWork = FALSE)
+    query <- paste0("COPY ", table_name, " FROM '", file_path, "'")
+    if (!is.null(optionalParameter)) {
+        opts <- paste(names(optionalParameter), "=", unlist(optionalParameter), collapse = ", ")
+        query <- paste0(query, " (", opts, ")")
+    }
+    main$query <- query
+    reticulate::py_run_string("conn.execute(query)", convert = FALSE)
+    invisible(NULL)
 }
 
 #' Load Data from a CSV File into a Kuzu Table
@@ -96,10 +96,14 @@ kuzu_copy_from_csv <- function(conn, file_path, table_name, optionalcsvParameter
 #' @export
 #' @seealso \href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
 kuzu_copy_from_json <- function(conn, file_path, table_name) {
-  # Ensure the JSON extension is installed and loaded
-  kuzu_execute(conn, query = "INSTALL json;LOAD json;")
-  # Use the internal copy function to load data from the JSON file
-  kuzu_copy_from_file(conn, file_path =  file_path, table_name = table_name)
+    # Ensure the JSON extension is installed and loaded
+    tryCatch({
+        kuzu_execute(conn, query = "INSTALL json;LOAD json;")
+    }, error = function(e) {
+        warning("Could not install or load JSON extension. Please check your internet connection and Kuzu setup.")
+    })
+    # Use the internal copy function to load data from the JSON file
+    kuzu_copy_from_file(conn, file_path = file_path, table_name = table_name)
 }
 
 #' Load Data from a Parquet File into a Kuzu Table
@@ -163,14 +167,12 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'  kuzu_merge_df(conn, my_data_2, merge_statement_2)
 #'  }
 #' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
-kuzu_merge_df <- function(conn, df, merge_query){
-  main <- reticulate::import_main()
-  main$conn <- conn
-  main$df_to_copy <- df
-
-  query <- paste0("LOAD FROM df_to_copy MERGE ", merge_query)
-
-  main$query <- query
-  reticulate::py_run_string("conn.execute(query)", convert = FALSE)
-  invisible(NULL)
+kuzu_merge_df <- function(conn, df, merge_query) {
+    main <- reticulate::import_main()
+    main$conn <- conn
+    main$df <- df
+    query <- paste0("LOAD FROM df MERGE ", merge_query)
+    main$query <- query
+    reticulate::py_run_string("conn.execute(query, parameters={'df': df})", convert = FALSE)
+    invisible(NULL)
 }

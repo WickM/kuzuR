@@ -57,8 +57,7 @@ library(g6R)
 
 # 1. Create a database in a temporary directory
 db_path <- tempfile()
-db <- kuzu_database(db_path)
-con <- kuzu_connection(db)
+con <- kuzu_connection(db_path)
 
 # 2. Define a schema
 # Create a 'Person' node table with a STRING name and INT64 age
