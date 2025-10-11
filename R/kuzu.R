@@ -252,3 +252,7 @@ kuzu_get_column_names <- function(result) {
 kuzu_get_schema <- function(result) {
   result$get_schema()
 }
+
+#TODO Create helper function to deal with DEZIMAL and UUID 
+# expect_equal(as.character(all_results[[1]]$m.uuid_col), "a1b2c3d4-e5f6-7890-1234-567890abcdef")
+# expect_equal(as.character(all_results[[1]]$m.price) |> as.numeric(), 99.99)

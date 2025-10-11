@@ -46,7 +46,15 @@ test_that("kuzu_copy_from_df handles various data types", {
     amount DOUBLE,
     event_date DATE,
     timestamp TIMESTAMP,
-    price DECIMAL(10,2),
+    price INT64,
+    price2 DECIMAL,
+    int8_col INT8,
+    int16_col INT16,
+    int32_col INT32,
+    int128_col INT128,
+    uint8_col UINT8,
+    uint16_col UINT16,
+    serial_col SERIAL,
     PRIMARY KEY (id)
   )")
 
@@ -59,13 +67,21 @@ test_that("kuzu_copy_from_df handles various data types", {
     amount = c(10.12345, 67.89012),
     event_date = as.Date(c("2023-01-15", "2023-02-20")),
     timestamp = as.POSIXct(c("2023-01-15 10:30:00", "2023-02-20 14:45:00")),
-    price = as.numeric(c("99.99", "123.45")) # R's numeric can represent DECIMAL
+    price = c(99.99, 123.45),
+    price2 = c(99.99, 123.45),
+    int8_col = c(1L, -128L),
+    int16_col = c(100L, -1000L),
+    int32_col = c(10000L, -50000L),
+    int128_col = c(1.234567890123456789e18, -9.876543210987654321e18),
+    uint8_col = c(0L, 255L),
+    uint16_col = c(0L, 65535L),
+    stringsAsFactors = FALSE # Ensure strings are not converted to factors
   )
 
   kuzu_copy_from_df(conn, mixed_df, "MixedTypes")
 
   # Query and verify data
-  result <- kuzu_execute(conn, "MATCH (m:MixedTypes) RETURN m.id, m.name, m.is_active, m.value, m.amount, m.event_date, m.timestamp, m.price ORDER BY m.id")
+  result <- kuzu_execute(conn, "MATCH (m:MixedTypes) RETURN m.id, m.name, m.is_active, m.value, m.amount, m.event_date, m.timestamp, m.price, m.price2,m.int8_col, m.int16_col, m.int32_col, m.int128_col, m.uint8_col, m.uint16_col,  m.serial_col ORDER BY m.id")
   df_check <- as.data.frame(result)
 
   expect_equal(nrow(df_check), 2)
@@ -75,10 +91,15 @@ test_that("kuzu_copy_from_df handles various data types", {
   expect_equal(df_check$m.value, c(1.23, 4.56))
   expect_equal(df_check$m.amount, c(10.12345, 67.89012))
   expect_equal(substr(as.character(df_check$m.event_date), 1, 10), c("2023-01-15", "2023-02-20"))
-  # Note: POSIXct to string conversion might vary slightly in precision or timezone representation depending on R/Kuzu versions.
-  # Comparing as strings for simplicity, or could compare timestamps directly if conversion is consistent.
   expect_equal(as.character(df_check$m.timestamp), c("2023-01-15 10:30:00", "2023-02-20 14:45:00"))
-  expect_equal(as.numeric(unlist(df_check$m.price)), c(99.99, 123.45))
+  expect_equal(df_check$m.price, c(100, 123))
+  expect_equal(df_check$m.int8_col, c(1L, -128L))
+  expect_equal(df_check$m.int16_col, c(100L, -1000L))
+  expect_equal(df_check$m.int32_col, c(10000L, -50000L))
+  expect_equal(df_check$m.int128_col, c(1.234567890123456789e18, -9.876543210987654321e18))
+  expect_equal(df_check$m.uint8_col, c(0L, 255L))
+  expect_equal(df_check$m.uint16_col, c(0L, 65535L))
+  expect_equal(df_check$m.serial_col, c(0L, 1L))
 })
 
 test_that("kuzu_copy_from_df handles empty data frames", {
@@ -108,7 +129,6 @@ test_that("kuzu_copy_from_df handles empty data frames", {
 test_that("kuzu_merge_df works for insertion and update", {
   conn <- kuzu_connection(":memory:")
 
-  # Create a table for merging
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, current_city STRING, age INT64, PRIMARY KEY (name))")
 
   # --- Test Insertion ---
@@ -118,10 +138,7 @@ test_that("kuzu_merge_df works for insertion and update", {
     age = c(30, 25)
   )
 
-  merge_statement_insert <- "MERGE (p:Person {name: df.name})
-  ON CREATE SET p.current_city = df.current_city, p.age = df.age"
-
-  kuzu_merge_df(conn, initial_data, merge_statement_insert)
+  kuzu_copy_from_df(conn, df = initial_data, table_name = "Person")
 
   # Verify initial insertion
   result_initial <- kuzu_execute(conn, "MATCH (p:Person) RETURN p.name, p.current_city, p.age ORDER BY p.name")
@@ -138,11 +155,11 @@ test_that("kuzu_merge_df works for insertion and update", {
     age = c(31, 35)
   )
 
-  merge_statement_update <- "MERGE (p:Person {name: df.name})
-  ON MATCH SET p.current_city = df.current_city, p.age = df.age
-  ON CREATE SET p.current_city = df.current_city, p.age = df.age"
+  merge_statement_update <- "MERGE (p:Person {name: name})
+  ON MATCH SET p.current_city = current_city, p.age = age
+  ON CREATE SET p.current_city = current_city, p.age = age"
 
-  kuzu_merge_df(conn, update_data, merge_statement_update)
+  kuzu_merge_df(conn, df = update_data, merge_statement_update)
 
   # Verify update and new insertion
   result_update <- kuzu_execute(conn, "MATCH (p:Person) RETURN p.name, p.current_city, p.age ORDER BY p.name")
@@ -154,7 +171,6 @@ test_that("kuzu_merge_df works for insertion and update", {
 })
 
 # --- Tests for kuzu_copy_from_csv ---
-
 # Helper to create a temporary CSV file
 create_temp_csv <- function(file_path, content_lines) {
   file_conn <- file(file_path, "w")
@@ -347,6 +363,43 @@ test_that("kuzu_copy_from_json handles empty JSON files", {
   unlink(temp_json_path)
 })
 
-# Note: Testing kuzu_copy_from_parquet would require creating a Parquet file,
-# which is more complex and typically involves libraries like 'arrow'.
-# This is deferred for now.
+# --- Tests for kuzu_copy_from_csv ---
+
+# Helper to create a temporary CSV file
+create_temp_csv <- function(file_path, content_lines) {
+  file_conn <- file(file_path, "w")
+  writeLines(content_lines, file_conn)
+  close(file_conn)
+  rm(conn, result, raw_df, row1, row2, row_null)
+}
+
+test_that("kuzu handles data types DECIMAL and UUID", {
+  conn <- kuzu_connection(":memory:")
+
+  # Create table with various Kuzu data types
+  kuzu_execute(conn, "CREATE NODE TABLE MixedTypes(
+  id INT64,
+  price DECIMAL,
+  uuid_col UUID,
+  PRIMARY KEY (id))"
+  )
+
+  # Create a data frame with corresponding R data types
+  mixed_df <- data.frame(
+    id = c(1L, 2L),
+    price = c(99.99, 123.45),
+    uuid_col = c("a1b2c3d4-e5f6-7890-1234-567890abcdef", "09876543-21fe-dcba-0987-654321fedcba"),
+    stringsAsFactors = FALSE 
+  )
+
+  kuzu_copy_from_df(conn, mixed_df, "MixedTypes")
+  
+  result <- kuzu_execute(conn, "MATCH (m:MixedTypes) RETURN m.id, m.price, m.uuid_col ORDER BY m.id")
+  all_results <- kuzu_get_all(result)
+
+  expect_true(is.list(all_results))
+  expect_true(all_results[[1]]$m.id == 1)
+  expect_true(all_results[[2]]$m.id == 2)
+  expect_equal(as.character(all_results[[1]]$m.uuid_col), "a1b2c3d4-e5f6-7890-1234-567890abcdef")
+  expect_equal(as.character(all_results[[1]]$m.price) |> as.numeric(), 99.99)
+})

@@ -122,7 +122,6 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
     kuzu_copy_from_file(conn, file_path =  file_path, table_name = table_name)
 }
 
-#TODO Merge DF Fun
 #' Merge Data from a Data Frame into Kuzu using a Merge Query
 #'
 #' This function is intended for merging data from an R `data.frame` into Kuzu
@@ -158,11 +157,11 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'    city = c("Paris")
 #'  )
 #' #
-#'  merge_statement_2 <- "MERGE (p:Person {name: df.person_name})
-#'  MERGE (i:Item {name: df.purchased_item})
+#'  merge_statement_2 <- "MERGE (p:Person {name: person_name})
+#'  MERGE (i:Item {name: purchased_item})
 #'  MERGE (p)-[:PURCHASED]->(i)
-#'  ON MATCH SET p.current_city = df.city
-#'  ON CREATE SET p.current_city = df.city"
+#'  ON MATCH SET p.current_city = city
+#'  ON CREATE SET p.current_city = city"
 #' 
 #'  kuzu_merge_df(conn, my_data_2, merge_statement_2)
 #'  }
@@ -171,8 +170,8 @@ kuzu_merge_df <- function(conn, df, merge_query) {
     main <- reticulate::import_main()
     main$conn <- conn
     main$df <- df
-    query <- paste0("LOAD FROM df MERGE ", merge_query)
+    query <- paste0("LOAD FROM df ", merge_query)
     main$query <- query
-    reticulate::py_run_string("conn.execute(query, parameters={'df': df})", convert = FALSE)
+    reticulate::py_run_string("conn.execute(query)", convert = FALSE)
     invisible(NULL)
 }
