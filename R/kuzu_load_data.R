@@ -51,14 +51,16 @@ kuzu_copy_from_df <- function(conn, df, table_name) {
 kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter = NULL) {
     main <- reticulate::import_main()
     main$conn <- conn
-    file_path <- normalizePath(file_path, mustWork = FALSE)
+    
     query <- paste0("COPY ", table_name, " FROM '", file_path, "'")
-    if (!is.null(optionalParameter)) {
+    
+  if (!is.null(optionalParameter)) {
         opts <- paste(names(optionalParameter), "=", unlist(optionalParameter), collapse = ", ")
         query <- paste0(query, " (", opts, ")")
     }
-    main$query <- query
-    reticulate::py_run_string("conn.execute(query)", convert = FALSE)
+    
+  main$query <- query
+  reticulate::py_run_string("conn.execute(query)", convert = FALSE)
     invisible(NULL)
 }
 
@@ -77,7 +79,7 @@ kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter =
 #' @seealso \href{https://docs.kuzudb.com/import/csv/}{Kuzu CSV Import}
 kuzu_copy_from_csv <- function(conn, file_path, table_name, optionalcsvParameter=NULL) {
 
-  # Note: The 'optionalcsvParameter' is passed to kuzu_copy_from_file but not directly used in its current query construction.
+  #TODO Note: The 'optionalcsvParameter' is passed to kuzu_copy_from_file but not directly used in its current query construction.
   # Further logic might be needed here to translate optionalcsvParameter into Kuzu COPY options if supported.
   kuzu_copy_from_file(conn, file_path =  file_path, table_name = table_name, optionalParameter = optionalcsvParameter)
 
