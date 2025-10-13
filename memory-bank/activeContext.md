@@ -16,11 +16,19 @@ The current focus is a full review and synchronization of the memory bank. The g
 -   Updated `techContext.md` to accurately describe the root cause of the error (a `reticulate` object round-trip issue, not a toolchain incompatibility).
 -   Updated this file (`activeContext.md`) to remove obsolete plans for investigating the `OverflowError`.
 
+**3. R CMD Check Resolution:**
+-   Successfully resolved all `ERROR`s, `WARNING`s, and `NOTE`s from `R CMD check --as-cran`.
+-   **Dependencies**: Moved `g6R`, `tibble`, and `tidygraph` from `Suggests` to `Imports` in the `DESCRIPTION` file.
+-   **Test Failure**: Corrected a file path issue in `tests/testthat/test-kuzu_load_data.R` by replacing `here::here()` with `test_path()` to ensure correct path generation during checks.
+-   **Check Notes**:
+    -   Added `memory_prompt.md` to `.Rbuildignore`.
+    -   Refactored `R/zzz.R` to use `.onAttach` for startup messages instead of `.onLoad`.
+    -   Shortened long lines in documentation examples to conform to CRAN standards.
+
 ## Next Steps
 
 The immediate next steps involve addressing the remaining items on the CRAN submission checklist and continuing development as outlined:
-1.  **`#TODO: Pass R CMD check --as-cran`**: Run the check locally and resolve all errors, warnings, and notes.
-2.  **`#TODO: Create "g6R Visualization" Vignette`**: Focus on using `g6R` for interactive visualization of Kuzu graph data.
+1.  **`#TODO: Create "g6R Visualization" Vignette`**: Focus on using `g6R` for interactive visualization of Kuzu graph data.
 3.  **`#TODO: Update DESCRIPTION File`**: Add `URL` and `BugReports` fields, and clean up `Imports` and `Suggests`.
 4.  **`#TODO: Write a NEWS.md File`**: Document changes for the `0.1.0` release.
 5.  **`#TODO: Review and Enhance Documentation`**: Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.

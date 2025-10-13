@@ -18,3 +18,20 @@ When a cryptic error (e.g., `OverflowError`) occurs in a Foreign Function Interf
 
 **Source:**
 `kuzuR` project, `activeContext.md` (Resolution of `OverflowError`).
+
+---
+
+### 2. Overcoming Tool Execution Failures via User-Delegated Execution
+
+**Description:**
+When a command-line tool fails to execute due to environment issues (e.g., PATH, shell aliases), delegate the execution to the user. This leverages their configured environment and provides a reliable way to get the necessary output to proceed.
+
+**Content:**
+-   **Problem:** The `R CMD check` command failed when executed via the `execute_command` tool. The first attempt failed due to a PowerShell alias issue (`Invoke-History`), and the second attempt using `cmd /c` failed because `R` was not in the system's PATH.
+-   **Incorrect Hypothesis:** The command itself was incorrect or malformed.
+-   **Root Cause:** The execution environment of the `execute_command` tool was not identical to the user's interactive terminal environment, lacking the necessary PATH configuration or shell setup for the `R` command to be found and executed correctly.
+-   **Solution:** After direct execution attempts failed, the `ask_followup_question` tool was used to request that the user run the command in their own terminal/IDE and paste back the output. The user successfully executed the command, providing the necessary feedback to continue the task.
+-   **Strategic Lesson:** When direct command execution fails due to environment-specific issues outside of my control, the most efficient path forward is to delegate the execution to the user. This bypasses the environmental mismatch and serves as a reliable fallback for verifying changes or running essential build and check commands.
+
+**Source:**
+`kuzuR` project, resolution of `R CMD check` failures.
