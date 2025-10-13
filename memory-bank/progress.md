@@ -14,10 +14,15 @@
 
 ## What's Left to Build
 
+-   **Complete Test Suite:** Finalize the remaining 5 tests to ensure full coverage.
 -   **Vignettes and Documentation:** A high-priority task is to create a new vignette that demonstrates a complete analysis workflow using the new graph conversion functions. This will significantly improve the package's usability.
 -   **Broader Graph Support:** While the core framework is in place, we could add direct conversion wrappers for other popular graph libraries if requested.
 -   **Advanced Kuzu Features:** The core package could still be extended to support more advanced Kuzu features (e.g., transaction management, user-defined functions).
 
+## Known Issues
+
+-   **Data Type Support:** There are known issues with `Decimal` and `uuid` data types that require a workaround. This will be addressed in a future development cycle.
+
 ## Current Status
 
-The project is at an **alpha** stage. The core functionality is present and is now supported by a comprehensive test suite, significantly increasing its robustness. The next major step towards a beta release is improving user-facing documentation, particularly vignettes.
+The project is at an **alpha** stage. The core functionality is present and is now supported by a comprehensive test suite, significantly increasing its robustness. The test suite is nearly complete, with only 5 tests remaining to be implemented. The next major step towards a beta release is improving user-facing documentation, particularly vignettes.

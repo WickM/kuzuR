@@ -6,7 +6,11 @@ The current focus is a full review and synchronization of the memory bank. The g
 
 ## Recent Changes
 
-**1. Memory Bank Synchronization:**
+**1. Test Suite Progress:**
+-   The `testthat` suite has been significantly updated. Only 5 tests are currently missing.
+-   Identified known issues with `Decimal` and `uuid` data types that will require a workaround. These will be addressed in a future development cycle.
+
+**2. Memory Bank Synchronization:**
 -   Read all memory bank files to get a comprehensive overview.
 -   Identified and corrected inconsistencies related to the now-resolved `OverflowError`.
 -   Updated `techContext.md` to accurately describe the root cause of the error (a `reticulate` object round-trip issue, not a toolchain incompatibility).
@@ -33,11 +37,10 @@ The immediate next steps involve addressing the remaining items on the CRAN subm
 
 **Status:** RESOLVED
 
-**Description:**
-A significant `OverflowError: Python int too large to convert to C long` was previously encountered. This error was tied to a `SystemError` related to `reticulate`'s inability to correctly inspect the function signatures of the compiled `kuzu` Python library. The error manifested when the `kuzu_database` object was passed from R back to Python to create a connection.
+**Summary:**
+A persistent `OverflowError` was traced back to a `reticulate` introspection issue when passing Python objects between R and Python. The problem was solved by refactoring the code to eliminate the object round-trip, consolidating database creation and connection into a single operation.
 
-**Resolution:**
-The issue was resolved by merging the `kuzu_database()` and `kuzu_connection()` functions into a single `kuzu_connection(path)` function. By combining the database creation and connection steps into a single `reticulate::py_run_string()` call, the need to pass the Python `database` object back and forth between R and Python was eliminated. This new approach avoids the problematic introspection step entirely, thus resolving the `OverflowError`. The initial hypothesis of a C++ toolchain incompatibility was incorrect; the problem was rooted in the way `reticulate` handled the Python object.
+**Strategic Lesson:** A detailed analysis of this issue and its resolution has been distilled into a strategic lesson. See: [`reasoning_bank.md`](./reasoning_bank.md) - *Circumventing Foreign Function Interface (FFI) Pitfalls by Minimizing Object Round-Trips*.
 
 ## Kuzu Python API Feature Implementation
 Based on the [Kuzu Python API Documentation](./kuzu_python_api.md), the following functions should be reviewed and implemented:
