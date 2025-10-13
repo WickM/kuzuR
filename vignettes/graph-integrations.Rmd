@@ -97,20 +97,41 @@ tidygraph_graph <- as_tidygraph(graph_query_result)
 print(tidygraph_graph)
 ```
 
-## Converting to `g6R`
+## Interactive Visualization with `g6R`
 
-`g6R` is used for interactive graph visualization. `kuzuR` provides `as_g6R()` for direct conversion, allowing you to visualize your Kuzu graph data interactively.
+The `g6R` package provides an R interface to the G6 JavaScript graph visualization library, enabling rich, interactive visualizations directly within R environments. The `as_g6R()` function makes it straightforward to take graph data from Kuzu and create these visualizations.
 
-### Example: Converting to `g6R`
+### Example: Creating an Interactive `g6R` Graph
 
-Let's convert the Kuzu query result to a `g6R` object for visualization.
+Building on the previous examples, we can convert the Kuzu query result into a `g6R` object. We can then customize the appearance of the nodes and edges for a more informative visualization.
 
 ```{r}
 # Convert the Kuzu result to a g6R object
 g6r_graph <- as_g6R(graph_query_result)
 
+# Customize the g6R graph for better visualization
+# For example, let's color the nodes based on their label and display the 'since' property on edges
+g6r_graph <- g6r_graph |>
+  g6R::upsert_node_options(
+    label = ~.data$properties$name,
+    style = list(
+      fill = "#5B8FF9",
+      stroke = "#3D76E0"
+    )
+  ) |>
+  g6R::upsert_edge_options(
+    label = ~.data$properties$since,
+    style = list(
+      endArrow = TRUE
+    )
+  )
+
 # Display the g6R object (this will render an interactive visualization)
+# In a real interactive session (like RStudio), this would display the plot.
+# For this vignette, we'll just print the object structure.
 print(g6r_graph)
 ```
+
+This interactive visualization allows you to pan, zoom, and inspect nodes and edges, making it a powerful tool for exploring graph data retrieved from Kuzu.
 
 This concludes the vignette on graph library integrations. For more advanced usage and specific examples, please refer to the documentation of each respective library.

@@ -4,8 +4,18 @@ Version: 0.1.0
 Authors@R: 
     person("Manuel", "Wick-Eckl", role = c("aut", "cre"), 
            email = "manuel.wick@gmail.com")
-Description: An R package providing an interface to the Kuzu graph database engine,
-    enabling graph database operations and Cypher query execution from R.
+Description: A high-performance R interface to the Kuzu graph database.
+    This package uses the 'reticulate' package to wrap the official Python
+    client, allowing users to interact with Kuzu seamlessly from within R.
+    Key features include managing database connections, executing Cypher
+    queries, and efficiently loading data from R data frames. It also
+    provides seamless integration with the R ecosystem by converting query
+    results directly into popular R data structures, including 'tibble',
+    'igraph', 'tidygraph', and 'g6R' objects, making Kuzu's powerful graph
+    computation capabilities readily available for data analysis and
+    visualization workflows in R.
+URL: https://github.com/WickM/kuzuR
+BugReports: https://github.com/WickM/kuzuR/issues
 License: MIT + file LICENSE
 Imports:
     reticulate,

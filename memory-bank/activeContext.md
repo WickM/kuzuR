@@ -28,16 +28,15 @@ The current focus is a full review and synchronization of the memory bank. The g
 ## Next Steps
 
 The immediate next steps involve addressing the remaining items on the CRAN submission checklist and continuing development as outlined:
-1.  **`#TODO: Create "g6R Visualization" Vignette`**: Focus on using `g6R` for interactive visualization of Kuzu graph data.
-3.  **`#TODO: Update DESCRIPTION File`**: Add `URL` and `BugReports` fields, and clean up `Imports` and `Suggests`.
-4.  **`#TODO: Write a NEWS.md File`**: Document changes for the `0.1.0` release.
-5.  **`#TODO: Review and Enhance Documentation`**: Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
-6.  **`#TODO: Verify LICENSE File`**: Confirm the `LICENSE` file contains the full MIT license text.
-7.  **`#TODO: Ensure Package Description Acknowledges Original Authors`**: State clearly in `DESCRIPTION` and `README.md` that `kuzuR` builds upon the work of Kuzu and g6R authors.
-8.  **`#TODO: Email Kuzu and G6R Authors`**: Inform them about the `kuzuR` package before CRAN submission.
-9.  **`#TODO: Create GitHub Pages for Documentation`**: Set up GitHub Pages for hosting package documentation using `pkgdown` and GitHub Actions.
-10. **`#TODO CSV`**: Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
-11. **`#TODO UDF`**: (No specific details provided in the context).
+1.  **`#TODO: Review and Enhance Documentation`**: Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
+2.  **`#TODO: Ensure Package Description Acknowledges Original Authors`**: State clearly in `DESCRIPTION` and `README.md` that `kuzuR` builds upon the work of Kuzu and g6R authors.
+3.  **`#TODO: Email Kuzu and G6R Authors`**: Inform them about the `kuzuR` package before CRAN submission.
+4.  **`#TODO: Create GitHub Pages for Documentation`**: Set up GitHub Pages for hosting package documentation using `pkgdown` and GitHub Actions.
+5.  **`#TODO CSV`**: Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
+6.  **`#TODO UDF`**: (No specific details provided in the context).
+7.  **`#TODO: Resolve R CMD check Note`**: Investigate and resolve the single NOTE from `R CMD check`.
+8.  **`#TODO: Handle Python Dependencies Gracefully`**: Review `install_kuzu()` for CRAN compliance.
+9.  **`#TODO: Strengthen Testing`**: Review and expand test coverage for all core functionality.
 
 ## Resolved Issues
 
