@@ -17,13 +17,12 @@ Converts a Kuzu query result into a \code{g6R} object for interactive visualizat
 }
 \examples{
 if (requireNamespace("g6R", quietly = TRUE)) {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
   g_g6R <- as_g6R(res)
   # print(g_g6R) # Prints the interactive widget
-  rm(db, conn, res, g_g6R)
+  rm(conn, res, g_g6R)
 }
 }

@@ -9,12 +9,12 @@ Description: An R package providing an interface to the Kuzu graph database engi
 License: MIT + file LICENSE
 Imports:
     reticulate,
-    igraph
+    igraph,
+    g6R,
+    tibble,
+    tidygraph
 Suggests:
     testthat (>= 3.0.0),
-    tibble,
-    tidygraph,
-    g6R,
     knitr,
     rmarkdown
 VignetteBuilder: knitr

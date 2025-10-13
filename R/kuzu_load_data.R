@@ -30,7 +30,7 @@
 #' kuzu_copy_from_df(conn, knows, "knows") # Corrected argument order
 #'
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
-#' result_rel <- kuzu_execute(conn, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a.name,b.name") # Corrected 'con' to 'conn'
+#' result_rel <- kuzu_execute(conn, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a.name,b.name")
 #' }
 #' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_copy_from_df <- function(conn, df, table_name) {

@@ -17,13 +17,12 @@ Converts a Kuzu query result into a \code{tidygraph} \code{tbl_graph} object.
 }
 \examples{
 if (requireNamespace("tidygraph", quietly = TRUE)) {
-  db <- kuzu_database(":memory:")
-  conn <- kuzu_connection(db)
+  conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
   g_tidy <- as_tidygraph(res)
   print(g_tidy)
-  rm(db, conn, res, g_tidy)
+  rm(conn, res, g_tidy)
 }
 }

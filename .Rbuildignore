@@ -4,3 +4,4 @@
 ^README\.Rmd$
 ^cran-comments\.md$
 ^memory-bank/
+^memory_prompt\.md$

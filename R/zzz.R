@@ -1,7 +1,12 @@
 kuzu <- NULL
 
 .onLoad <- function(libname, pkgname) {
-   # Check for kuzu and pandas and provide a helpful message if they're not found
+  # Use a delayed binding to avoid loading Python until it's needed
+  kuzu <<- reticulate::import("kuzu", delay_load = TRUE)
+}
+
+.onAttach <- function(libname, pkgname) {
+  # Check for kuzu and pandas and provide a helpful message if they're not found
   if (interactive()) {
     pkgs <- c("kuzu", "pandas")
     installed_status <- sapply(pkgs, reticulate::py_module_available)
@@ -14,9 +19,6 @@ kuzu <- NULL
         "\nPlease run `kuzuR::install_kuzu()` to install them."
       ) 
       packageStartupMessage(msg)
-    } else {
-        # Use a delayed binding to avoid loading Python until it's needed
-        kuzu <<- reticulate::import("kuzu", delay_load = TRUE)
-      }
+    }
   }
 }

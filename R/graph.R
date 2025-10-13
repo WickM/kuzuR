@@ -101,7 +101,10 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}), (q:Person {name: 'Bob'})")
-#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' CREATE (a)-[:Knows]->(b)")
+#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE 
+#'                                                     a.name='Alice' AND b.name='Bob' 
+#'                                                     CREATE (a)-[:Knows]->(b)"
+#' )
 #'   
 #'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
 #'   g <- as_igraph(res)

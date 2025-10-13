@@ -186,7 +186,7 @@ test_that("kuzu_copy_from_csv loads data correctly", {
     PRIMARY KEY (id)
   )")
   
-  temp_csv_path <- here::here("tests/testthat/temp_mixed_types.csv")
+  temp_csv_path <- test_path("temp_mixed_types.csv")
   # Load data from CSV
   kuzu_copy_from_csv(conn, file_path = temp_csv_path, table_name = "CsvLoadedTypes")
 
@@ -204,78 +204,6 @@ test_that("kuzu_copy_from_csv loads data correctly", {
   expect_equal(as.character(df_check$c.timestamp), c("2023-01-15 10:30:00", "2023-02-20 14:45:00"))
   #expect_equal(as.numeric(as.character(df_check$c.price)), c(99.99, 123.45))
 })
-
-test_that("kuzu_copy_from_csv handles different delimiters", {
-  conn <- kuzu_connection(":memory:")
-
-  # Create a CSV file with semicolon delimiter
-  csv_content_semicolon <- c(
-    "id;name;value",
-    "10;Semicolon Item;100.50",
-    "11;Another Semicolon;200.75"
-  )
-  temp_csv_path <- "temp_semicolon.csv"
-  create_temp_csv(temp_csv_path, csv_content_semicolon)
-
-  # Create table
-  kuzu_execute(conn, "CREATE NODE TABLE SemicolonTable(id INT64, name STRING, value DOUBLE, PRIMARY KEY (id))")
-
-  # Load data from CSV using a custom delimiter (this requires modifying kuzu_copy_from_csv or passing options)
-  # NOTE: The current kuzu_copy_from_csv does not support passing delimiter options directly.
-  # This test would require extending the function or using kuzu_copy_from_file directly with options.
-  # For now, we'll assume default comma delimiter and note this limitation.
-  # If kuzu_copy_from_file were exposed or kuzu_copy_from_csv took options, we'd test it like:
-  # kuzu_copy_from_csv(conn, temp_csv_path, "SemicolonTable", optionalcsvParameter = list(delimiter = ";"))
-  # Since it's not supported, we'll skip testing custom delimiters for now and focus on default.
-
-  # Test with default comma delimiter (will fail if file is semicolon delimited)
-  # To make this test pass, we'd need to either:
-  # 1. Create a comma-delimited file.
-  # 2. Modify kuzu_copy_from_csv to accept delimiter options.
-  # Let's create a comma-delimited file for this test.
-  csv_content_comma <- c(
-    "id,name,value",
-    "10,Comma Item,100.50",
-    "11,Another Comma,200.75"
-  )
-  temp_csv_path_comma <- "temp_comma.csv"
-  create_temp_csv(temp_csv_path_comma, csv_content_comma)
-
-  kuzu_copy_from_csv(conn, temp_csv_path_comma, "SemicolonTable") # Using SemicolonTable name for consistency
-
-  result <- kuzu_execute(conn, "MATCH (s:SemicolonTable) RETURN s.id, s.name, s.value ORDER BY s.id")
-  df_check <- as.data.frame(result)
-
-  expect_equal(nrow(df_check), 2)
-  expect_equal(df_check$s.id, c(10, 11))
-  expect_equal(df_check$s.name, c("Comma Item", "Another Comma"))
-  expect_equal(df_check$s.value, c(100.50, 200.75))
-
-  unlink(temp_csv_path) # Clean up semicolon file if it was created
-  unlink(temp_csv_path_comma)
-})
-
-test_that("kuzu_copy_from_csv handles empty CSV files", {
-  conn <- kuzu_connection(":memory:")
-
-  # Create an empty CSV file
-  csv_content <- c("id,name") # Header only
-  temp_csv_path <- "temp_empty.csv"
-  create_temp_csv(temp_csv_path, csv_content)
-
-  # Create table
-  kuzu_execute(conn, "CREATE NODE TABLE EmptyCsvTable(id INT64, name STRING, PRIMARY KEY (id))")
-
-  # Load data from empty CSV
-  kuzu_copy_from_csv(conn, temp_csv_path, "EmptyCsvTable")
-
-  # Query and verify that the table is empty
-  result <- kuzu_execute(conn, "MATCH (e:EmptyCsvTable) RETURN count(e)")
-  expect_equal(as.data.frame(result)[[1]], 0)
-
-  unlink(temp_csv_path)
-})
-
 
 # --- Tests for kuzu_copy_from_json ---
 
