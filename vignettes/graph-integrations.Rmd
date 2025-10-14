@@ -109,22 +109,10 @@ Building on the previous examples, we can convert the Kuzu query result into a `
 # Convert the Kuzu result to a g6R object
 g6r_graph <- as_g6R(graph_query_result)
 
-# Customize the g6R graph for better visualization
-# For example, let's color the nodes based on their label and display the 'since' property on edges
-g6r_graph <- g6r_graph |>
-  g6R::upsert_node_options(
-    label = ~.data$properties$name,
-    style = list(
-      fill = "#5B8FF9",
-      stroke = "#3D76E0"
-    )
-  ) |>
-  g6R::upsert_edge_options(
-    label = ~.data$properties$since,
-    style = list(
-      endArrow = TRUE
-    )
-  )
+# Display the g6R object (this will render an interactive visualization)
+# In a real interactive session (like RStudio), this would display the plot.
+# For this vignette, we'll just print the object structure.
+print(g6r_graph)
 
 # Display the g6R object (this will render an interactive visualization)
 # In a real interactive session (like RStudio), this would display the plot.

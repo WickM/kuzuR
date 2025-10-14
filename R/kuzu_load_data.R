@@ -18,19 +18,24 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
-#' kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)") # Corrected 'con' to 'conn'
-#' #Load from a data.frame
-#' users_df <- data.frame(name = c("Carol", "Dan"), age = c(35, 40))
-#' kuzu_copy_from_df(conn, users_df, "User") # Corrected argument order
+#'   conn <- kuzu_connection(":memory:")
+#'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM User TO User)")
 #'
-#'#Load from a tibble
-#' knows <- tibble(from_person = c("Alice", "Bob"), to_person = c("Bob", "Carol"))
-#' kuzu_copy_from_df(conn, knows, "knows") # Corrected argument order
+#'   # Load from a data.frame
+#'   users_df <- data.frame(name = c("Carol", "Dan"), age = c(35, 40))
+#'   kuzu_copy_from_df(conn, users_df, "User")
 #'
-#' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
-#' result_rel <- kuzu_execute(conn, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a.name,b.name")
+#'   # Load from a tibble (requires pre-existing nodes)
+#'   kuzu_execute(conn, "CREATE (u:User {name: 'Alice'}), (v:User {name: 'Bob'})")
+#'   knows_df <- data.frame(from_person = c("Alice", "Bob"), to_person = c("Bob", "Carol"))
+#'   kuzu_copy_from_df(conn, knows_df, "Knows")
+#'
+#'   result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+#'   print(as.data.frame(result))
+#'
+#'   result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User) RETURN a.name, b.name")
+#'   print(as.data.frame(result_rel))
 #' }
 #' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_copy_from_df <- function(conn, df, table_name) {
@@ -76,6 +81,26 @@ kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter =
 #' @return This function is called for its side effect of loading data and does
 #'   not return a value.
 #' @export
+#' @examples
+#' \dontrun{
+#'   conn <- kuzu_connection(":memory:")
+#'   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, PRIMARY KEY (name))")
+#'
+#'   # Create a temporary CSV file
+#'   csv_file <- tempfile(fileext = ".csv")
+#'   write.csv(data.frame(name = c("Berlin", "London"), population = c(3645000, 8982000)),
+#'             csv_file, row.names = FALSE)
+#'
+#'   # Load data from CSV
+#'   kuzu_copy_from_csv(conn, csv_file, "City")
+#'
+#'   # Verify the data
+#'   result <- kuzu_execute(conn, "MATCH (c:City) RETURN c.name, c.population")
+#'   print(as.data.frame(result))
+#'
+#'   # Clean up the temporary file
+#'   unlink(csv_file)
+#' }
 #' @seealso \href{https://docs.kuzudb.com/import/csv/}{Kuzu CSV Import}
 kuzu_copy_from_csv <- function(conn, file_path, table_name, optionalcsvParameter=NULL) {
 
@@ -96,6 +121,26 @@ kuzu_copy_from_csv <- function(conn, file_path, table_name, optionalcsvParameter
 #' @return This function is called for its side effect of loading data and does
 #'   not return a value.
 #' @export
+#' @examples
+#' \dontrun{
+#'   conn <- kuzu_connection(":memory:")
+#'   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, PRIMARY KEY (id))")
+#'
+#'   # Create a temporary JSON file
+#'   json_file <- tempfile(fileext = ".json")
+#'   json_data <- '[{"id": 1, "name": "Laptop"}, {"id": 2, "name": "Mouse"}]'
+#'   writeLines(json_data, json_file)
+#'
+#'   # Load data from JSON
+#'   kuzu_copy_from_json(conn, json_file, "Product")
+#'
+#'   # Verify the data
+#'   result <- kuzu_execute(conn, "MATCH (p:Product) RETURN p.id, p.name")
+#'   print(as.data.frame(result))
+#'
+#'   # Clean up the temporary file
+#'   unlink(json_file)
+#' }
 #' @seealso \href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
 kuzu_copy_from_json <- function(conn, file_path, table_name) {
     # Ensure the JSON extension is installed and loaded
@@ -118,6 +163,28 @@ kuzu_copy_from_json <- function(conn, file_path, table_name) {
 #' @return This function is called for its side effect of loading data and does
 #'   not return a value.
 #' @export
+#' @examples
+#' \dontrun{
+#'   if (requireNamespace("arrow", quietly = TRUE)) {
+#'     conn <- kuzu_connection(":memory:")
+#'     kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, PRIMARY KEY (name))")
+#'
+#'     # Create a temporary Parquet file
+#'     parquet_file <- tempfile(fileext = ".parquet")
+#'     country_df <- data.frame(name = c("USA", "Canada"), code = c("US", "CA"))
+#'     arrow::write_parquet(country_df, parquet_file)
+#'
+#'     # Load data from Parquet
+#'     kuzu_copy_from_parquet(conn, parquet_file, "Country")
+#'
+#'     # Verify the data
+#'     result <- kuzu_execute(conn, "MATCH (c:Country) RETURN c.name, c.code")
+#'     print(as.data.frame(result))
+#'
+#'     # Clean up the temporary file
+#'     unlink(parquet_file)
+#'   }
+#' }
 #' @seealso \href{https://docs.kuzudb.com/import/parquet/}{Kuzu Parquet Import}
 kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
     # Use the internal copy function to load data from the Parquet file
