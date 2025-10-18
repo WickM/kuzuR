@@ -1,9 +1,19 @@
 url: https://wickm.github.io/kuzuR/
 template:
   bootstrap: 5
+  bslib:
+    bg: "#FAFAFA"
+    fg: "#454545"
+    primary: "#D48D3E"
+    base_font: {google: "Open Sans"}
+    heading_font: {google: "Montserrat"}
+    code_font: {google: "Fira Code"}
   params:
     logo:
       src: man/figures/kuzuRHex.png
+    favicon: man/figures/kuzuRHex.png
+  assets:
+    css: pkgdown/assets/kuzuR_style.css
 navbar:
   structure:
     left:  [intro, reference, articles, news]
@@ -14,12 +24,15 @@ navbar:
       href: articles/getting-started.html
 articles:
 - title: "Getting Started"
+  navbar: "Getting Started"
   contents:
   - getting-started
 - title: "Installation and Usage"
+  navbar: "Installation and Usage"
   contents:
   - installation-and-usage
 - title: "Graph Library Integrations"
+  navbar: "Graph Library Integrations"
   contents:
   - graph-integrations
 reference:
