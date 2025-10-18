@@ -6,7 +6,8 @@ Authors@R:
            email = "manuel.wick@gmail.com")
 Description: A high-performance R interface to the Kuzu graph database.
     This package uses the 'reticulate' package to wrap the official Python
-    client, allowing users to interact with Kuzu seamlessly from within R.
+    client ('kuzu', 'pandas', and 'networkx'), allowing users to interact
+    with Kuzu seamlessly from within R.
     Key features include managing database connections, executing Cypher
     queries, and efficiently loading data from R data frames. It also
     provides seamless integration with the R ecosystem by converting query
