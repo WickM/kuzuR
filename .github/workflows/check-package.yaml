@@ -1,0 +1,34 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_LIBS_USER: ${{ runner.temp }}/R_LIBS_USER
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: rcmdcheck local::.
+
+      - name: Pre-download Python dependencies
+        run: |
+          library(kuzuR)
+          reticulate::py_config() # This resolves the ephemeral python environment and installs py_require() dependencies
+        shell: Rscript {0}
+
+      - uses: r-lib/actions/check-r-package@v2
