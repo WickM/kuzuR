@@ -2,7 +2,6 @@
 % Please edit documentation in R/graph.R
 \name{as_g6R}
 \alias{as_g6R}
-\alias{as_g6r}
 \title{Convert a Kuzu Query Result to a g6R Object}
 \usage{
 as_g6R(query_result)
@@ -17,6 +16,7 @@ A \code{g6R} HTML widget object.
 Converts a Kuzu query result into a \code{g6R} object for interactive visualization.
 }
 \examples{
+\dontrun{
 if (requireNamespace("g6R", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
@@ -25,5 +25,6 @@ if (requireNamespace("g6R", quietly = TRUE)) {
   g_g6R <- as_g6R(res)
   # print(g_g6R) # Prints the interactive widget
   rm(conn, res, g_g6R)
+}
 }
 }

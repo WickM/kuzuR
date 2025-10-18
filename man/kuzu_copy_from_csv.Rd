@@ -23,6 +23,27 @@ not return a value.
 \description{
 Loads data from a CSV file into a specified table in the Kuzu database.
 }
+\examples{
+\dontrun{
+  conn <- kuzu_connection(":memory:")
+  kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, PRIMARY KEY (name))")
+
+  # Create a temporary CSV file
+  csv_file <- tempfile(fileext = ".csv")
+  write.csv(data.frame(name = c("Berlin", "London"), population = c(3645000, 8982000)),
+            csv_file, row.names = FALSE)
+
+  # Load data from CSV
+  kuzu_copy_from_csv(conn, csv_file, "City")
+
+  # Verify the data
+  result <- kuzu_execute(conn, "MATCH (c:City) RETURN c.name, c.population")
+  print(as.data.frame(result))
+
+  # Clean up the temporary file
+  unlink(csv_file)
+}
+}
 \seealso{
 \href{https://docs.kuzudb.com/import/csv/}{Kuzu CSV Import}
 }

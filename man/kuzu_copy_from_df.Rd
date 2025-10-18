@@ -29,19 +29,24 @@ TO Node Column: The primary key of the TO nodes.
 }
 \examples{
 \dontrun{
-conn <- kuzu_connection(":memory:")
-kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
-kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)") # Corrected 'con' to 'conn'
-#Load from a data.frame
-users_df <- data.frame(name = c("Carol", "Dan"), age = c(35, 40))
-kuzu_copy_from_df(conn, users_df, "User") # Corrected argument order
+  conn <- kuzu_connection(":memory:")
+  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE REL TABLE Knows(FROM User TO User)")
 
-#Load from a tibble
-knows <- tibble(from_person = c("Alice", "Bob"), to_person = c("Bob", "Carol"))
-kuzu_copy_from_df(conn, knows, "knows") # Corrected argument order
+  # Load from a data.frame
+  users_df <- data.frame(name = c("Carol", "Dan"), age = c(35, 40))
+  kuzu_copy_from_df(conn, users_df, "User")
 
-result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
-result_rel <- kuzu_execute(conn, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a.name,b.name")
+  # Load from a tibble (requires pre-existing nodes)
+  kuzu_execute(conn, "CREATE (u:User {name: 'Alice'}), (v:User {name: 'Bob'})")
+  knows_df <- data.frame(from_person = c("Alice", "Bob"), to_person = c("Bob", "Carol"))
+  kuzu_copy_from_df(conn, knows_df, "Knows")
+
+  result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
+  print(as.data.frame(result))
+
+  result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User) RETURN a.name, b.name")
+  print(as.data.frame(result_rel))
 }
 }
 \seealso{

@@ -1,5 +1,7 @@
-linters: with_defaults(
-  object_name_linter = NULL,
-  line_length_linter = linter(120)
+lintr_options(
+  linters = with_defaults(
+    object_name_linter = NULL,
+    line_length_linter = linter(120)
+  ),
+  exclusions = list("R/zzz.R")
 )
-exclusions: list("R/zzz.R")

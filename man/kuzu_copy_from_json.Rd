@@ -21,6 +21,27 @@ not return a value.
 Loads data from a JSON file into a specified table in the Kuzu database.
 This function also ensures the JSON extension is loaded and available.
 }
+\examples{
+\dontrun{
+  conn <- kuzu_connection(":memory:")
+  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, PRIMARY KEY (id))")
+
+  # Create a temporary JSON file
+  json_file <- tempfile(fileext = ".json")
+  json_data <- '[{"id": 1, "name": "Laptop"}, {"id": 2, "name": "Mouse"}]'
+  writeLines(json_data, json_file)
+
+  # Load data from JSON
+  kuzu_copy_from_json(conn, json_file, "Product")
+
+  # Verify the data
+  result <- kuzu_execute(conn, "MATCH (p:Product) RETURN p.id, p.name")
+  print(as.data.frame(result))
+
+  # Clean up the temporary file
+  unlink(json_file)
+}
+}
 \seealso{
 \href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
 }

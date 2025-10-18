@@ -1,3 +1,5 @@
+skip_if_not(reticulate::py_available(), "Python not available for testing")
+
 test_that("Connection object is created", {
   conn <- kuzu_connection(":memory:")
   expect_s3_class(conn, "kuzu.connection.Connection")

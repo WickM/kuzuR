@@ -20,6 +20,29 @@ not return a value.
 \description{
 Loads data from a Parquet file into a specified table in the Kuzu database.
 }
+\examples{
+\dontrun{
+  if (requireNamespace("arrow", quietly = TRUE)) {
+    conn <- kuzu_connection(":memory:")
+    kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, PRIMARY KEY (name))")
+
+    # Create a temporary Parquet file
+    parquet_file <- tempfile(fileext = ".parquet")
+    country_df <- data.frame(name = c("USA", "Canada"), code = c("US", "CA"))
+    arrow::write_parquet(country_df, parquet_file)
+
+    # Load data from Parquet
+    kuzu_copy_from_parquet(conn, parquet_file, "Country")
+
+    # Verify the data
+    result <- kuzu_execute(conn, "MATCH (c:Country) RETURN c.name, c.code")
+    print(as.data.frame(result))
+
+    # Clean up the temporary file
+    unlink(parquet_file)
+  }
+}
+}
 \seealso{
 \href{https://docs.kuzudb.com/import/parquet/}{Kuzu Parquet Import}
 }

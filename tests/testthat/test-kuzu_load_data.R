@@ -1,3 +1,5 @@
+skip_if_not(reticulate::py_available(), "Python not available for testing")
+
 test_that("kuzu_copy_from_df works for node and rel tables", {
   conn <- kuzu_connection(":memory:")
 
@@ -200,7 +202,7 @@ test_that("kuzu_copy_from_csv loads data correctly", {
   expect_equal(df_check$c.is_active, c(TRUE, FALSE))
   expect_equal(df_check$c.value, c(1.23, 4.56))
   expect_equal(df_check$c.amount, c(10.12345, 67.89012))
-  expect_equal(as.character(as.Date(df_check$c.event_date)), c("2023-01-15", "2023-02-20"))
+  expect_equal(substr(as.character(df_check$c.event_date), 1, 10), c("2023-01-15", "2023-02-20"))
   expect_equal(as.character(df_check$c.timestamp), c("2023-01-15 10:30:00", "2023-02-20 14:45:00"))
   #expect_equal(as.numeric(as.character(df_check$c.price)), c(99.99, 123.45))
 })
@@ -303,3 +305,4 @@ test_that("kuzu handles data types DECIMAL and UUID", {
   expect_equal(as.character(all_results[[1]]$m.uuid_col), "a1b2c3d4-e5f6-7890-1234-567890abcdef")
   expect_equal(as.character(all_results[[1]]$m.price) |> as.numeric(), 99.99)
 })
+

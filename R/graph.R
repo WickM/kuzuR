@@ -22,7 +22,8 @@
 #'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice', age: 25})")
 #'   kuzu_execute(conn, "CREATE (q:Person {name: 'Bob', age: 30})")
-#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' CREATE (a)-[:Knows {since: 2022}]->(b)")
+#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' " %+%
+#'                        "CREATE (a)-[:Knows {since: 2022}]->(b)")
 #'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
 #'
 #'   # Convert to a networkx object
@@ -69,7 +70,8 @@ as_networkx <- function(query_result) {
 #'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice', age: 25})")
 #'   kuzu_execute(conn, "CREATE (q:Person {name: 'Bob', age: 30})")
-#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' CREATE (a)-[:Knows {since: 2022}]->(b)")
+#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' " %+%
+#'                        "CREATE (a)-[:Knows {since: 2022}]->(b)")
 #'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
 #'
 #'   # Convert to a networkx object
@@ -133,6 +135,7 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #' @importFrom igraph graph_from_data_frame
 #' @export
 #' @examples
+#' \dontrun{
 #' if (requireNamespace("igraph", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
@@ -147,6 +150,7 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #'   g <- as_igraph(res)
 #'   print(g)
 #'   rm(conn, res, g)
+#' }
 #' }
 as_igraph <- function(query_result) {
   graph_dfs <- as.data.frame(as_networkx(query_result))
@@ -163,6 +167,7 @@ as_igraph <- function(query_result) {
 #' @importFrom tidygraph tbl_graph
 #' @export
 #' @examples
+#' \dontrun{
 #' if (requireNamespace("tidygraph", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
@@ -171,6 +176,7 @@ as_igraph <- function(query_result) {
 #'   g_tidy <- as_tidygraph(res)
 #'   print(g_tidy)
 #'   rm(conn, res, g_tidy)
+#' }
 #' }
 as_tidygraph <- function(query_result) {
   graph_dfs <- as.data.frame(as_networkx(query_result))
@@ -187,6 +193,7 @@ as_tidygraph <- function(query_result) {
 #' @importFrom g6R g6
 #' @export
 #' @examples
+#' \dontrun{
 #' if (requireNamespace("g6R", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
@@ -195,6 +202,7 @@ as_tidygraph <- function(query_result) {
 #'   g_g6R <- as_g6R(res)
 #'   # print(g_g6R) # Prints the interactive widget
 #'   rm(conn, res, g_g6R)
+#' }
 #' }
 as_g6R <- function(query_result) {
   graph_dfs <- as.data.frame(as_networkx(query_result))

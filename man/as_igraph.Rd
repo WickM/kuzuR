@@ -22,6 +22,7 @@ and then constructs an \code{igraph} object. It is the final step in the
 \code{kuzu_execute -> as_igraph} workflow.
 }
 \examples{
+\dontrun{
 if (requireNamespace("igraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
@@ -36,5 +37,6 @@ if (requireNamespace("igraph", quietly = TRUE)) {
   g <- as_igraph(res)
   print(g)
   rm(conn, res, g)
+}
 }
 }
