@@ -14,7 +14,7 @@ Description: A high-performance R interface to the Kuzu graph database.
     'igraph', 'tidygraph', and 'g6R' objects, making Kuzu's powerful graph
     computation capabilities readily available for data analysis and
     visualization workflows in R.
-URL: https://github.com/WickM/kuzuR
+URL: https://github.com/WickM/kuzuR, https://wickm.github.io/kuzuR/
 BugReports: https://github.com/WickM/kuzuR/issues
 License: MIT + file LICENSE
 Imports:

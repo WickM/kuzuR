@@ -9,11 +9,11 @@
 #' @return A Python object representing the connection to the Kuzu database.
 #' @export
 #' @examples
-#' \dontrun{
 #' # Create an in-memory database and connection
 #' conn <- kuzu_connection(":memory:")
 #'
 #' # Create or connect to an on-disk database
+#' \dontrun{
 #' conn_disk <- kuzu_connection("my_kuzu_db")
 #' }
 kuzu_connection <- function(path) {
@@ -34,7 +34,6 @@ kuzu_connection <- function(path) {
 #' @return A Python object representing the query result.
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #'
 #' # Create a node table
@@ -45,7 +44,6 @@ kuzu_connection <- function(path) {
 #'
 #' # Query data
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
-#' }
 kuzu_execute <- function(conn, query) {
   main <- reticulate::import_main()
   main$conn <- conn
@@ -65,7 +63,6 @@ kuzu_execute <- function(conn, query) {
 #' @method as.data.frame kuzu.query_result.QueryResult
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
@@ -74,7 +71,6 @@ kuzu_execute <- function(conn, query) {
 #' # Convert the result to a data.frame
 #' df <- as.data.frame(result)
 #' print(df)
-#' }
 as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
   if (!reticulate::py_module_available("pandas")) {
     stop("The 'pandas' Python package is required to convert results to a data.frame. ",
@@ -95,7 +91,6 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @method as_tibble kuzu.query_result.QueryResult
 #' @export
 #' @examples
-#' \dontrun{
 #' if (requireNamespace("tibble", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
@@ -105,7 +100,6 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
 #'   # Convert the result to a tibble
 #'   tbl <- tibble::as_tibble(result)
 #'   print(tbl)
-#' }
 #' }
 as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
   if (!requireNamespace("tibble", quietly = TRUE)) {
@@ -126,13 +120,11 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @return A list where each element is a list representing a row of results.
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
 #' all_results <- kuzu_get_all(result)
-#' }
 kuzu_get_all <- function(result) {
   col_names <- result$get_column_names()
   all_rows_values <- result$get_all()
@@ -150,14 +142,12 @@ kuzu_get_all <- function(result) {
 #' @return A list of the first `n` rows.
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
 #' first_row <- kuzu_get_n(result, 1)
-#' }
 kuzu_get_n <- function(result, n) {
   col_names <- result$get_column_names()
   # Convert n to integer for reticulate
@@ -176,7 +166,6 @@ kuzu_get_n <- function(result, n) {
 #' @return A list representing the next row, or `NULL` if no more rows are available.
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
@@ -184,7 +173,6 @@ kuzu_get_n <- function(result, n) {
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
 #' row1 <- kuzu_get_next(result)
 #' row2 <- kuzu_get_next(result)
-#' }
 kuzu_get_next <- function(result) {
   if (!result$has_next()) {
     return(NULL)
@@ -204,13 +192,11 @@ kuzu_get_next <- function(result) {
 #' @return A character vector of column data types.
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
 #' kuzu_get_column_data_types(result)
-#' }
 kuzu_get_column_data_types <- function(result) {
   result$get_column_data_types()
 }
@@ -223,13 +209,11 @@ kuzu_get_column_data_types <- function(result) {
 #' @return A character vector of column names.
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
 #' kuzu_get_column_names(result)
-#' }
 kuzu_get_column_names <- function(result) {
   result$get_column_names()
 }
@@ -242,13 +226,11 @@ kuzu_get_column_names <- function(result) {
 #' @return A named list where names are column names and values are data types.
 #' @export
 #' @examples
-#' \dontrun{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
 #' kuzu_get_schema(result)
-#' }
 kuzu_get_schema <- function(result) {
   result$get_schema()
 }

@@ -1,0 +1,68 @@
+url: https://wickm.github.io/kuzuR/
+template:
+  bootstrap: 5
+  bslib:
+    bg: "#FAFAFA"
+    fg: "#454545"
+    primary: "#D48D3E"
+    base_font: {google: "Open Sans"}
+    heading_font: {google: "Montserrat"}
+    code_font: {google: "Fira Code"}
+  params:
+    logo:
+      src: man/figures/kuzuRHex.png
+    favicon: man/figures/kuzuRHex.png
+  assets:
+    css: pkgdown/assets/kuzuR_style.css
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [github]
+  components:
+    intro:
+      text: "Getting Started"
+      href: articles/getting-started.html
+articles:
+- title: "Getting Started"
+  navbar: "Getting Started"
+  contents:
+  - getting-started
+- title: "Installation and Usage"
+  navbar: "Installation and Usage"
+  contents:
+  - installation-and-usage
+- title: "Graph Library Integrations"
+  navbar: "Graph Library Integrations"
+  contents:
+  - graph-integrations
+reference:
+- title: "Core Kuzu Connection and Querying"
+  contents:
+  - kuzu_connection
+  - kuzu_execute
+  - kuzu_get_all
+  - kuzu_get_n
+  - kuzu_get_next
+  - kuzu_get_column_names
+  - kuzu_get_column_data_types
+  - kuzu_get_schema
+- title: "Data Loading"
+  contents:
+  - kuzu_copy_from_csv
+  - as.data.frame.kuzu.query_result.QueryResult
+  - as_tibble.kuzu.query_result.QueryResult
+  - kuzu_copy_from_df
+  - kuzu_copy_from_json
+  - kuzu_copy_from_parquet
+  - kuzu_merge_df
+- title: "Graph Integrations"
+  contents:
+  - as_networkx
+  - as.data.frame.kuzu_networkx
+  - as_igraph
+  - as_tidygraph
+  - as_g6R
+  - as_g6r
+- title: "Installation"
+  contents:
+  - install_kuzu

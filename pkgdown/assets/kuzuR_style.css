@@ -1,0 +1,50 @@
+/* kuzuR pkgdown custom styles */
+
+/* Redundant styles removed, now handled by bslib in _pkgdown.yml */
+
+/* 3. Design Elements and Aesthetic */
+
+/* Navbar */
+.navbar {
+  background-color: var(--deep-taupe);
+}
+
+.navbar-brand, .nav-link {
+  color: var(--off-white) !important;
+}
+
+.nav-link:hover, .nav-link:focus {
+  color: var(--kuzu-orange) !important;
+}
+
+/* Links */
+a {
+  color: var(--kuzu-orange);
+}
+
+a:hover, a:focus {
+  color: #b87936; /* Darker orange on hover */
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--kuzu-orange);
+  border-color: var(--kuzu-orange);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #b87936;
+  border-color: #b87936;
+}
+
+/* Borders & Separators */
+hr, .card {
+  border-color: #e0e0e0;
+}
+
+/* Subtle circuit board motif for header */
+.pkgdown-header {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://www.transparenttextures.com/patterns/circuit-board.png');
+    background-size: cover;
+    background-position: center;
+}

@@ -2,6 +2,7 @@
 % Please edit documentation in R/graph.R
 \name{as_g6R}
 \alias{as_g6R}
+\alias{as_g6r}
 \title{Convert a Kuzu Query Result to a g6R Object}
 \usage{
 as_g6R(query_result)
