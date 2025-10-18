@@ -31,6 +31,14 @@ jobs:
         with:
           use-public-rspm: true
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install python dependencies
+        run: |
+          pip install kuzu
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::pkgdown, local::.
