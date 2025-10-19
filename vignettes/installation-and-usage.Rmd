@@ -119,9 +119,6 @@ Now you can execute Cypher queries and retrieve the results.
 
 # Find all persons
 result <- kuzu_execute(con, "MATCH (p:Person) RETURN p.name, p.age")
-if (Sys.info()["sysname"] == "Linux") {
-  kuzu_execute(con, "INSTALL duckdb;")
-}
 as.data.frame(result)
 
 kuzu_get_all(result)
