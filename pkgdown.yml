@@ -1,0 +1,11 @@
+pandoc: 3.1.11
+pkgdown: 2.1.3
+pkgdown_sha: ~
+articles:
+  getting-started: getting-started.html
+  graph-integrations: graph-integrations.html
+  installation-and-usage: installation-and-usage.html
+last_built: 2025-10-19T18:57Z
+urls:
+  reference: https://wickm.github.io/kuzuR/reference
+  article: https://wickm.github.io/kuzuR/articles
