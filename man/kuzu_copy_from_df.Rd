@@ -12,7 +12,8 @@ kuzu_copy_from_df(conn, df, table_name)
 \item{df}{A \code{data.frame} or \code{tibble} containing the data to load. Column
 names in the data frame should match the property names in the Kuzu table.}
 
-\item{table_name}{A string specifying the name of the destination table in Kuzu.}
+\item{table_name}{A string specifying the name of the destination table in
+Kuzu.}
 }
 \value{
 This function is called for its side effect of loading data and does
@@ -23,14 +24,16 @@ Efficiently copies data from an R \code{data.frame} or \code{tibble} into a spec
 table in the Kuzu database.
 }
 \details{
-When loading into a relationship table, Kuzu assumes the first two columns in the file are:
+When loading into a relationship table, Kuzu assumes the first two columns
+in the file are:
 FROM Node Column: The primary key of the FROM nodes.
 TO Node Column: The primary key of the TO nodes.
 }
 \examples{
 \dontrun{
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+  PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM User TO User)")
 
   # Load from a data.frame
@@ -39,16 +42,19 @@ TO Node Column: The primary key of the TO nodes.
 
   # Load from a tibble (requires pre-existing nodes)
   kuzu_execute(conn, "CREATE (u:User {name: 'Alice'}), (v:User {name: 'Bob'})")
-  knows_df <- data.frame(from_person = c("Alice", "Bob"), to_person = c("Bob", "Carol"))
+  knows_df <- data.frame(from_person = c("Alice", "Bob"), 
+  to_person = c("Bob", "Carol"))
   kuzu_copy_from_df(conn, knows_df, "Knows")
 
   result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
   print(as.data.frame(result))
 
-  result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User) RETURN a.name, b.name")
+  result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User) 
+  RETURN a.name, b.name")
   print(as.data.frame(result_rel))
 }
 }
 \seealso{
-\href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
+\href{https://docs.kuzudb.com/import/copy-from-dataframe/}
+{Kuzu Copy from DataFrame}
 }

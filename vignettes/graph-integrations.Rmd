@@ -23,10 +23,10 @@ This vignette demonstrates how to convert Kuzu query results into various R grap
 Ensure you have the necessary packages installed:
 
 ```{r, eval=FALSE}
-# install.packages("igraph")
-# install.packages("tidygraph")
-# install.packages("g6R")
-# install.packages("kuzuR") # If not already installed
+install.packages("igraph")
+install.packages("tidygraph")
+install.packages("g6R")
+install.packages("kuzuR") # If not already installed
 ```
 
 ## Converting to `igraph`
@@ -46,7 +46,8 @@ db_path <- tempfile()
 con <- kuzu_connection(db_path)
 
 # Create schema for nodes and relationships
-kuzu_execute(con, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
+kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
+                        "PRIMARY KEY (name))"))
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
 
 # Prepare data frames
@@ -70,7 +71,8 @@ Now, let's execute a query that returns graph data and convert it to an `igraph`
 
 ```{r}
 # Query to get all persons and their relationships
-graph_query_result <- kuzu_execute(con, "MATCH (p1:Person)-[k:Knows]->(p2:Person) RETURN p1, p2, k.since")
+graph_query_result <- kuzu_execute(con, paste("MATCH (p1:Person)-[k:Knows]->",
+                                              "(p2:Person) RETURN p1, p2, k.since"))
 
 # Convert the Kuzu result to an igraph object
 igraph_graph <- as_igraph(graph_query_result)

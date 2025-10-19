@@ -23,7 +23,6 @@ Welcome to `kuzuR`! This guide will walk you through the basic steps to get star
 First, ensure you have the `kuzuR` package installed from GitHub. You will also need `reticulate` to manage the Python environment.
 
 ```{r, eval=FALSE}
-# install.packages("remotes")
 remotes::install_github("WickM/kuzuR")
 ```
 
@@ -45,7 +44,8 @@ con <- kuzu_connection(":memory:")
 Next, define your graph schema using Cypher queries. Let's create a simple schema with `Person` nodes and `Knows` relationships.
 
 ```{r}
-kuzu_execute(con, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
+kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
+                        "PRIMARY KEY (name))"))
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
 ```
 
@@ -78,7 +78,8 @@ Finally, you can query your graph using Cypher and retrieve the results as an R 
 
 ```{r}
 # Execute a query
-result <- kuzu_execute(con, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a.name, b.name, k.since")
+result <- kuzu_execute(con, paste("MATCH (a:Person)-[k:Knows]->(b:Person)",
+                                  "RETURN a.name, b.name, k.since"))
 
 # Convert the result to a data frame
 df <- as.data.frame(result)

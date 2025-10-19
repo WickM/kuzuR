@@ -18,13 +18,17 @@
 #' @examples
 #' \dontrun{
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
-#'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
+#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, 
+#'   PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, 
+#'   since INT64)")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice', age: 25})")
 #'   kuzu_execute(conn, "CREATE (q:Person {name: 'Bob', age: 30})")
-#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' " %+%
+#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' 
+#'   AND b.name='Bob' " %+%
 #'                        "CREATE (a)-[:Knows {since: 2022}]->(b)")
-#'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
+#'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) 
+#'   RETURN p, k, q")
 #'
 #'   # Convert to a networkx object
 #'   nx_graph <- as_networkx(res)
@@ -66,13 +70,17 @@ as_networkx <- function(query_result) {
 #' @examples
 #' \dontrun{
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
-#'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
+#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, 
+#'   PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, 
+#'   since INT64)")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice', age: 25})")
 #'   kuzu_execute(conn, "CREATE (q:Person {name: 'Bob', age: 30})")
-#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' " %+%
+#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' 
+#'   AND b.name='Bob' " %+%
 #'                        "CREATE (a)-[:Knows {since: 2022}]->(b)")
-#'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
+#'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) 
+#'   RETURN p, k, q")
 #'
 #'   # Convert to a networkx object
 #'   nx_graph <- as_networkx(res)
@@ -87,7 +95,8 @@ as.data.frame.kuzu_networkx <- function(x, ...) {
   main$nx_graph <- x
 
   # Python script to extract nodes and edges into pandas data frames
-  reticulate::py_run_string("
+  reticulate::py_run_string(
+    "
 import networkx as nx
 import pandas as pd
 
@@ -103,14 +112,16 @@ for node_id, attributes in nx_graph.nodes(data=True):
 nodes_df = pd.DataFrame(nodes_list)
 
 # Reorder columns to ensure the 'name' column (the ID) is first,
-# as this is what igraph::graph_from_data_frame uses by default to match vertices.
+# as this is what igraph::graph_from_data_frame uses by default to match 
+# vertices.
 if 'name' in nodes_df.columns:
     cols = ['name'] + [col for col in nodes_df.columns if col != 'name']
     nodes_df = nodes_df[cols]
 
 # Extract edges, which will correctly use the node_id for source/target
 edges_df = nx.to_pandas_edgelist(nx_graph)
-  ")
+  "
+  )
 
   # Retrieve the data frames into R
   list(
@@ -130,7 +141,8 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #' and then constructs an `igraph` object. It is the final step in the
 #' `kuzu_execute -> as_igraph` workflow.
 #'
-#' @param query_result A `kuzu_query_result` object from `kuzu_execute()` that contains a graph.
+#' @param query_result A `kuzu_query_result` object from `kuzu_execute()` that 
+#' contains a graph.
 #' @return An `igraph` object.
 #' @importFrom igraph graph_from_data_frame
 #' @export
@@ -138,15 +150,19 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #' \dontrun{
 #' if (requireNamespace("igraph", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
+#'   PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)")
-#'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}), (q:Person {name: 'Bob'})")
-#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE 
-#'                                                     a.name='Alice' AND b.name='Bob' 
+#'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}), 
+#'   (q:Person {name: 'Bob'})")
+#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE
+#'                                                     a.name='Alice' AND 
+#'                                                     b.name='Bob'
 #'                                                     CREATE (a)-[:Knows]->(b)"
 #' )
-#'   
-#'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
+#'
+#'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) 
+#'   RETURN p, k, q")
 #'   g <- as_igraph(res)
 #'   print(g)
 #'   rm(conn, res, g)
@@ -162,7 +178,8 @@ as_igraph <- function(query_result) {
 #' @description
 #' Converts a Kuzu query result into a `tidygraph` `tbl_graph` object.
 #'
-#' @param query_result A `kuzu_query_result` object from `kuzu_execute()` that contains a graph.
+#' @param query_result A `kuzu_query_result` object from `kuzu_execute()` that 
+#' contains a graph.
 #' @return A `tbl_graph` object.
 #' @importFrom tidygraph tbl_graph
 #' @export
@@ -170,7 +187,8 @@ as_igraph <- function(query_result) {
 #' \dontrun{
 #' if (requireNamespace("tidygraph", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
+#'   PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
 #'   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
 #'   g_tidy <- as_tidygraph(res)
@@ -186,9 +204,11 @@ as_tidygraph <- function(query_result) {
 #' Convert a Kuzu Query Result to a g6R Object
 #'
 #' @description
-#' Converts a Kuzu query result into a `g6R` object for interactive visualization.
+#' Converts a Kuzu query result into a `g6R` object for interactive 
+#' visualization.
 #'
-#' @param query_result A `kuzu_query_result` object from `kuzu_execute()` that contains a graph.
+#' @param query_result A `kuzu_query_result` object from `kuzu_execute()` that 
+#' contains a graph.
 #' @return A `g6R` HTML widget object.
 #' @importFrom g6R g6
 #' @export
@@ -196,7 +216,8 @@ as_tidygraph <- function(query_result) {
 #' \dontrun{
 #' if (requireNamespace("g6R", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
+#'   PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
 #'   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
 #'   g_g6R <- as_g6R(res)
@@ -204,16 +225,17 @@ as_tidygraph <- function(query_result) {
 #'   rm(conn, res, g_g6R)
 #' }
 #' }
-as_g6R <- function(query_result) {
+as_g6r <- function(query_result) {
   graph_dfs <- as.data.frame(as_networkx(query_result))
-  
-  # g6R requires specific column names: 'id' for nodes, and 'source'/'target' for edges.
+
+  # g6R requires specific column names: 'id' for nodes, and 'source'/'target' 
+  # for edges.
   nodes_df <- graph_dfs$nodes
   edges_df <- graph_dfs$edges
-  
-  # The 'name' column from our conversion holds the unique ID. Rename it for g6R.
+
+  # The 'name' column from our conversion holds the unique ID. Rename it for 
+  # g6R.
   names(nodes_df)[names(nodes_df) == "name"] <- "id"
-  
+
   g6R::g6(nodes = nodes_df, edges = edges_df)
 }
-as_g6r <- as_g6R

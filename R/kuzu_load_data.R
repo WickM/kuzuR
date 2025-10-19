@@ -5,21 +5,24 @@
 #' Efficiently copies data from an R `data.frame` or `tibble` into a specified
 #' table in the Kuzu database.
 #'
-#' When loading into a relationship table, Kuzu assumes the first two columns in the file are:
+#' When loading into a relationship table, Kuzu assumes the first two columns 
+#' in the file are:
 #' FROM Node Column: The primary key of the FROM nodes.
 #' TO Node Column: The primary key of the TO nodes.
 #'
 #' @param conn A Kuzu connection object.
 #' @param df A `data.frame` or `tibble` containing the data to load. Column
 #'   names in the data frame should match the property names in the Kuzu table.
-#' @param table_name A string specifying the name of the destination table in Kuzu.
+#' @param table_name A string specifying the name of the destination table in 
+#' Kuzu.
 #' @return This function is called for its side effect of loading data and does
 #'   not return a value.
 #' @export
 #' @examples
 #' \dontrun{
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#'   PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM User TO User)")
 #'
 #'   # Load from a data.frame
@@ -28,16 +31,19 @@
 #'
 #'   # Load from a tibble (requires pre-existing nodes)
 #'   kuzu_execute(conn, "CREATE (u:User {name: 'Alice'}), (v:User {name: 'Bob'})")
-#'   knows_df <- data.frame(from_person = c("Alice", "Bob"), to_person = c("Bob", "Carol"))
+#'   knows_df <- data.frame(from_person = c("Alice", "Bob"), 
+#'   to_person = c("Bob", "Carol"))
 #'   kuzu_copy_from_df(conn, knows_df, "Knows")
 #'
 #'   result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
 #'   print(as.data.frame(result))
 #'
-#'   result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User) RETURN a.name, b.name")
+#'   result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User) 
+#'   RETURN a.name, b.name")
 #'   print(as.data.frame(result_rel))
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
+#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}
+#' {Kuzu Copy from DataFrame}
 kuzu_copy_from_df <- function(conn, df, table_name) {
   main <- reticulate::import_main()
   main$conn <- conn
@@ -53,20 +59,30 @@ kuzu_copy_from_df <- function(conn, df, table_name) {
 #Copyfromfile internal Function
 # This is an internal helper function and not intended for direct user use.
 # It handles the core logic of copying data from a file path.
-kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter = NULL) {
-    main <- reticulate::import_main()
-    main$conn <- conn
-    
-    query <- paste0("COPY ", table_name, " FROM '", file_path, "'")
-    
-  if (!is.null(optionalParameter)) {
-        opts <- paste(names(optionalParameter), "=", unlist(optionalParameter), collapse = ", ")
-        query <- paste0(query, " (", opts, ")")
-    }
-    
+kuzu_copy_from_file <- function(
+  conn,
+  file_path,
+  table_name,
+  optional_parameter = NULL
+) {
+  main <- reticulate::import_main()
+  main$conn <- conn
+
+  query <- paste0("COPY ", table_name, " FROM '", file_path, "'")
+
+  if (!is.null(optional_parameter)) {
+    opts <- paste(
+      names(optional_parameter),
+      "=",
+      unlist(optional_parameter),
+      collapse = ", "
+    )
+    query <- paste0(query, " (", opts, ")")
+  }
+
   main$query <- query
   reticulate::py_run_string("conn.execute(query)", convert = FALSE)
-    invisible(NULL)
+  invisible(NULL)
 }
 
 #' Load Data from a CSV File into a Kuzu Table
@@ -75,8 +91,10 @@ kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter =
 #'
 #' @param conn A Kuzu connection object.
 #' @param file_path A string specifying the path to the CSV file.
-#' @param table_name A string specifying the name of the destination table in Kuzu.
-#' @param optionalcsvParameter An optional parameter for CSV-specific configurations (e.g., delimiter, header).
+#' @param table_name A string specifying the name of the destination table in 
+#' Kuzu.
+#' @param optional_csv_parameter An optional parameter for CSV-specific 
+#' configurations (e.g., delimiter, header).
 #'   Refer to Kuzu documentation for available options.
 #' @return This function is called for its side effect of loading data and does
 #'   not return a value.
@@ -84,11 +102,13 @@ kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter =
 #' @examples
 #' \dontrun{
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, PRIMARY KEY (name))")
+#'   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, 
+#'   PRIMARY KEY (name))")
 #'
 #'   # Create a temporary CSV file
 #'   csv_file <- tempfile(fileext = ".csv")
-#'   write.csv(data.frame(name = c("Berlin", "London"), population = c(3645000, 8982000)),
+#'   write.csv(data.frame(name = c("Berlin", "London"), 
+#'   population = c(3645000, 8982000)),
 #'             csv_file, row.names = FALSE)
 #'
 #'   # Load data from CSV
@@ -102,12 +122,22 @@ kuzu_copy_from_file <- function(conn, file_path, table_name, optionalParameter =
 #'   unlink(csv_file)
 #' }
 #' @seealso \href{https://docs.kuzudb.com/import/csv/}{Kuzu CSV Import}
-kuzu_copy_from_csv <- function(conn, file_path, table_name, optionalcsvParameter=NULL) {
-
-  #TODO Note: The 'optionalcsvParameter' is passed to kuzu_copy_from_file but not directly used in its current query construction.
-  # Further logic might be needed here to translate optionalcsvParameter into Kuzu COPY options if supported.
-  kuzu_copy_from_file(conn, file_path =  file_path, table_name = table_name, optionalParameter = optionalcsvParameter)
-
+kuzu_copy_from_csv <- function(
+  conn,
+  file_path,
+  table_name,
+  optional_csv_parameter = NULL
+) {
+  #TODO Note: The 'optional_csv_parameter' is passed to kuzu_copy_from_file but 
+  # not directly used in its current query construction.
+  # Further logic might be needed here to translate optional_csv_parameter into 
+  # Kuzu COPY options if supported.
+  kuzu_copy_from_file(
+    conn,
+    file_path = file_path,
+    table_name = table_name,
+    optional_parameter = optional_csv_parameter
+  )
 }
 
 #' Load Data from a JSON File into a Kuzu Table
@@ -117,14 +147,16 @@ kuzu_copy_from_csv <- function(conn, file_path, table_name, optionalcsvParameter
 #'
 #' @param conn A Kuzu connection object.
 #' @param file_path A string specifying the path to the JSON file.
-#' @param table_name A string specifying the name of the destination table in Kuzu.
+#' @param table_name A string specifying the name of the destination table in 
+#' Kuzu.
 #' @return This function is called for its side effect of loading data and does
 #'   not return a value.
 #' @export
 #' @examples
 #' \dontrun{
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, PRIMARY KEY (id))")
+#'   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, 
+#'   PRIMARY KEY (id))")
 #'
 #'   # Create a temporary JSON file
 #'   json_file <- tempfile(fileext = ".json")
@@ -141,16 +173,24 @@ kuzu_copy_from_csv <- function(conn, file_path, table_name, optionalcsvParameter
 #'   # Clean up the temporary file
 #'   unlink(json_file)
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
+#' @seealso \href{https://docs.kuzudb.com/import/copy-from-json/}
+#' {Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}
+#' {Kuzu JSON Extension}
 kuzu_copy_from_json <- function(conn, file_path, table_name) {
-    # Ensure the JSON extension is installed and loaded
-    tryCatch({
-        kuzu_execute(conn, query = "INSTALL json;LOAD json;")
-    }, error = function(e) {
-        warning("Could not install or load JSON extension. Please check your internet connection and Kuzu setup.")
-    })
-    # Use the internal copy function to load data from the JSON file
-    kuzu_copy_from_file(conn, file_path = file_path, table_name = table_name)
+  # Ensure the JSON extension is installed and loaded
+  tryCatch(
+    {
+      kuzu_execute(conn, query = "INSTALL json;LOAD json;")
+    },
+    error = function(e) {
+      warning(
+        paste("Could not install or load JSON extension. Please check your",
+              "internet connection and Kuzu setup.")
+      )
+    }
+  )
+  # Use the internal copy function to load data from the JSON file
+  kuzu_copy_from_file(conn, file_path = file_path, table_name = table_name)
 }
 
 #' Load Data from a Parquet File into a Kuzu Table
@@ -159,7 +199,8 @@ kuzu_copy_from_json <- function(conn, file_path, table_name) {
 #'
 #' @param conn A Kuzu connection object.
 #' @param file_path A string specifying the path to the Parquet file.
-#' @param table_name A string specifying the name of the destination table in Kuzu.
+#' @param table_name A string specifying the name of the destination table in 
+#' Kuzu.
 #' @return This function is called for its side effect of loading data and does
 #'   not return a value.
 #' @export
@@ -167,7 +208,8 @@ kuzu_copy_from_json <- function(conn, file_path, table_name) {
 #' \dontrun{
 #'   if (requireNamespace("arrow", quietly = TRUE)) {
 #'     conn <- kuzu_connection(":memory:")
-#'     kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, PRIMARY KEY (name))")
+#'     kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, 
+#'     PRIMARY KEY (name))")
 #'
 #'     # Create a temporary Parquet file
 #'     parquet_file <- tempfile(fileext = ".parquet")
@@ -187,8 +229,8 @@ kuzu_copy_from_json <- function(conn, file_path, table_name) {
 #' }
 #' @seealso \href{https://docs.kuzudb.com/import/parquet/}{Kuzu Parquet Import}
 kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
-    # Use the internal copy function to load data from the Parquet file
-    kuzu_copy_from_file(conn, file_path =  file_path, table_name = table_name)
+  # Use the internal copy function to load data from the Parquet file
+  kuzu_copy_from_file(conn, file_path = file_path, table_name = table_name)
 }
 
 #' Merge Data from a Data Frame into Kuzu using a Merge Query
@@ -210,15 +252,15 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'    item = c("Book", "Pen"),
 #'    current_city = c("New York", "London")
 #'  )
-#' 
+#'
 #'  merge_statement <- "MERGE (p:Person {name: df.name})
 #'  MERGE (i:Item {name: df.item})
 #'  MERGE (p)-[:PURCHASED]->(i)
 #'  ON MATCH SET p.current_city = df.current_city
 #'  ON CREATE SET p.current_city = df.current_city"
-#' 
+#'
 #'  kuzu_merge_df(conn, my_data, merge_statement)
-#' 
+#'
 #'  # Example with a different merge query structure:
 #'  my_data_2 <- data.frame(
 #'    person_name = c("Charlie"),
@@ -231,16 +273,17 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'  MERGE (p)-[:PURCHASED]->(i)
 #'  ON MATCH SET p.current_city = city
 #'  ON CREATE SET p.current_city = city"
-#' 
+#'
 #'  kuzu_merge_df(conn, my_data_2, merge_statement_2)
 #'  }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
+#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}
+#' {Kuzu Copy from DataFrame}
 kuzu_merge_df <- function(conn, df, merge_query) {
-    main <- reticulate::import_main()
-    main$conn <- conn
-    main$df <- df
-    query <- paste0("LOAD FROM df ", merge_query)
-    main$query <- query
-    reticulate::py_run_string("conn.execute(query)", convert = FALSE)
-    invisible(NULL)
+  main <- reticulate::import_main()
+  main$conn <- conn
+  main$df <- df
+  query <- paste0("LOAD FROM df ", merge_query)
+  main$query <- query
+  reticulate::py_run_string("conn.execute(query)", convert = FALSE)
+  invisible(NULL)
 }

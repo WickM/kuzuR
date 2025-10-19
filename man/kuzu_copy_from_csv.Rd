@@ -4,16 +4,18 @@
 \alias{kuzu_copy_from_csv}
 \title{Load Data from a CSV File into a Kuzu Table}
 \usage{
-kuzu_copy_from_csv(conn, file_path, table_name, optionalcsvParameter = NULL)
+kuzu_copy_from_csv(conn, file_path, table_name, optional_csv_parameter = NULL)
 }
 \arguments{
 \item{conn}{A Kuzu connection object.}
 
 \item{file_path}{A string specifying the path to the CSV file.}
 
-\item{table_name}{A string specifying the name of the destination table in Kuzu.}
+\item{table_name}{A string specifying the name of the destination table in
+Kuzu.}
 
-\item{optionalcsvParameter}{An optional parameter for CSV-specific configurations (e.g., delimiter, header).
+\item{optional_csv_parameter}{An optional parameter for CSV-specific
+configurations (e.g., delimiter, header).
 Refer to Kuzu documentation for available options.}
 }
 \value{
@@ -26,11 +28,13 @@ Loads data from a CSV file into a specified table in the Kuzu database.
 \examples{
 \dontrun{
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, 
+  PRIMARY KEY (name))")
 
   # Create a temporary CSV file
   csv_file <- tempfile(fileext = ".csv")
-  write.csv(data.frame(name = c("Berlin", "London"), population = c(3645000, 8982000)),
+  write.csv(data.frame(name = c("Berlin", "London"), 
+  population = c(3645000, 8982000)),
             csv_file, row.names = FALSE)
 
   # Load data from CSV

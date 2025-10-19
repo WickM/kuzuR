@@ -23,7 +23,6 @@ This vignette provides a step-by-step guide to installing the `kuzuR` package an
 First, you need to install the `kuzuR` package from GitHub. #TODO add CRAN
 
 ```{r, eval=FALSE}
-# install.packages("devtools")
 devtools::install_github("WickM/kuzuR")
 ```
 
@@ -54,7 +53,7 @@ db_path <- tempfile()
 con <- kuzu_connection(db_path)
 
 # Alternatively, create an in-memory database (data is lost when R session ends)
-# con <- kuzu_connection(":memory:")
+con <- kuzu_connection(":memory:")
 ```
 
 ### 3. Define a Schema
@@ -77,7 +76,8 @@ Let's create a simple schema with a `Person` node table and a `Knows` relationsh
 | `dict`          | `MAP`                    |
 
 ```{r}
-kuzu_execute(con, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
+kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
+                        "PRIMARY KEY (name))"))
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
 ```
 
@@ -109,7 +109,7 @@ Now you can execute Cypher queries and retrieve the results.
 
 ```{r}
 #TODO add diferent result methodes
-#todo add glue and stick to ("COPY Person FROM ... method) 
+#todo add glue and stick to ("COPY Person FROM ... method)
 "COPY Person FROM {persons}"
 "COPY Person FROM {c://.csv}"
 "COPY Person FROM {c://.json}"
@@ -126,7 +126,8 @@ kuzu_get_all(result)
 
 ```{r}
 # Find relationships
-result_rel <- kuzu_execute(con, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN a.name, k.since, b.name")
+result_rel <- kuzu_execute(con, paste("MATCH (a:Person)-[k:Knows]->(b:Person)",
+                                      "RETURN a.name, k.since, b.name"))
 as.data.frame(result_rel)
 ```
 

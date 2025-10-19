@@ -20,13 +20,13 @@ networkx <- NULL
     pkgs <- c("kuzu", "pandas")
     installed_status <- sapply(pkgs, reticulate::py_module_available)
     missing_pkgs <- names(installed_status[!installed_status])
-    
+
     if (length(missing_pkgs) > 0) {
       msg <- paste(
         "Required Python packages are not installed:",
         paste(missing_pkgs, collapse = ", "),
         "\nPlease run `kuzuR::install_kuzu()` to install them."
-      ) 
+      )
       packageStartupMessage(msg)
     }
   }

@@ -7,7 +7,8 @@
 as_igraph(query_result)
 }
 \arguments{
-\item{query_result}{A \code{kuzu_query_result} object from \code{kuzu_execute()} that contains a graph.}
+\item{query_result}{A \code{kuzu_query_result} object from \code{kuzu_execute()} that
+contains a graph.}
 }
 \value{
 An \code{igraph} object.
@@ -25,15 +26,19 @@ and then constructs an \code{igraph} object. It is the final step in the
 \dontrun{
 if (requireNamespace("igraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
+  PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)")
-  kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}), (q:Person {name: 'Bob'})")
-  kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE 
-                                                    a.name='Alice' AND b.name='Bob' 
+  kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}), 
+  (q:Person {name: 'Bob'})")
+  kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE
+                                                    a.name='Alice' AND 
+                                                    b.name='Bob'
                                                     CREATE (a)-[:Knows]->(b)"
 )
-  
-  res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
+
+  res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) 
+  RETURN p, k, q")
   g <- as_igraph(res)
   print(g)
   rm(conn, res, g)

@@ -11,7 +11,8 @@ kuzu_copy_from_json(conn, file_path, table_name)
 
 \item{file_path}{A string specifying the path to the JSON file.}
 
-\item{table_name}{A string specifying the name of the destination table in Kuzu.}
+\item{table_name}{A string specifying the name of the destination table in
+Kuzu.}
 }
 \value{
 This function is called for its side effect of loading data and does
@@ -24,7 +25,8 @@ This function also ensures the JSON extension is loaded and available.
 \examples{
 \dontrun{
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, PRIMARY KEY (id))")
+  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, 
+  PRIMARY KEY (id))")
 
   # Create a temporary JSON file
   json_file <- tempfile(fileext = ".json")
@@ -43,5 +45,7 @@ This function also ensures the JSON extension is loaded and available.
 }
 }
 \seealso{
-\href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
+\href{https://docs.kuzudb.com/import/copy-from-json/}
+{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}
+{Kuzu JSON Extension}
 }

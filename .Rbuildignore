@@ -11,3 +11,5 @@
 ^\.github$
 ^codecov\.yml$
 ^\.lintr$
+^\.vscode$
+^[.]?air[.]toml$

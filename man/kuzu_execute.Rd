@@ -24,7 +24,8 @@ data manipulation (DML), and querying (MATCH).
 conn <- kuzu_connection(":memory:")
 
 # Create a node table
-kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+PRIMARY KEY (name))")
 
 # Insert data
 kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")

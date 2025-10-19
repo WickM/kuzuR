@@ -11,7 +11,8 @@ kuzu_copy_from_parquet(conn, file_path, table_name)
 
 \item{file_path}{A string specifying the path to the Parquet file.}
 
-\item{table_name}{A string specifying the name of the destination table in Kuzu.}
+\item{table_name}{A string specifying the name of the destination table in
+Kuzu.}
 }
 \value{
 This function is called for its side effect of loading data and does
@@ -24,7 +25,8 @@ Loads data from a Parquet file into a specified table in the Kuzu database.
 \dontrun{
   if (requireNamespace("arrow", quietly = TRUE)) {
     conn <- kuzu_connection(":memory:")
-    kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, PRIMARY KEY (name))")
+    kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, 
+    PRIMARY KEY (name))")
 
     # Create a temporary Parquet file
     parquet_file <- tempfile(fileext = ".parquet")

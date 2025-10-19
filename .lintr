@@ -1,7 +1,6 @@
-lintr_options(
-  linters = with_defaults(
-    object_name_linter = NULL,
-    line_length_linter = linter(120)
-  ),
-  exclusions = list("R/zzz.R")
-)
+linters: linters_with_defaults(
+    line_length_linter(120),
+    indentation_linter = NULL,
+    trailing_whitespace_linter = NULL
+    )
+encoding: "UTF-8"

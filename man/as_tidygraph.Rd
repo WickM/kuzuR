@@ -7,7 +7,8 @@
 as_tidygraph(query_result)
 }
 \arguments{
-\item{query_result}{A \code{kuzu_query_result} object from \code{kuzu_execute()} that contains a graph.}
+\item{query_result}{A \code{kuzu_query_result} object from \code{kuzu_execute()} that
+contains a graph.}
 }
 \value{
 A \code{tbl_graph} object.
@@ -19,7 +20,8 @@ Converts a Kuzu query result into a \code{tidygraph} \code{tbl_graph} object.
 \dontrun{
 if (requireNamespace("tidygraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
+  PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
   g_tidy <- as_tidygraph(res)

@@ -20,7 +20,8 @@ Fetches the first \code{n} rows from a Kuzu query result.
 \examples{
 \dontrun{
 conn <- kuzu_connection(":memory:")
-kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, PRIMARY KEY (name))")
+kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+PRIMARY KEY (name))")
 kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})")
 result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")

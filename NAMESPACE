@@ -3,7 +3,7 @@
 S3method(as.data.frame,kuzu.query_result.QueryResult)
 S3method(as.data.frame,kuzu_networkx)
 S3method(as_tibble,kuzu.query_result.QueryResult)
-export(as_g6R)
+export(as_g6r)
 export(as_igraph)
 export(as_networkx)
 export(as_tidygraph)

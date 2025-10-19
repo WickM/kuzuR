@@ -28,13 +28,17 @@ core of the conversion process.
 \examples{
 \dontrun{
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))")
-  kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
+  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, 
+  PRIMARY KEY (name))")
+  kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, 
+  since INT64)")
   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice', age: 25})")
   kuzu_execute(conn, "CREATE (q:Person {name: 'Bob', age: 30})")
-  kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' " \%+\%
+  kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' 
+  AND b.name='Bob' " \%+\%
                        "CREATE (a)-[:Knows {since: 2022}]->(b)")
-  res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) RETURN p, k, q")
+  res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) 
+  RETURN p, k, q")
 
   # Convert to a networkx object
   nx_graph <- as_networkx(res)
