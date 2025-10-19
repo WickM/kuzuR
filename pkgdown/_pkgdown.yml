@@ -62,7 +62,6 @@ reference:
   - as_igraph
   - as_tidygraph
   - as_g6R
-  - as_g6r
 - title: "Installation"
   contents:
   - install_kuzu

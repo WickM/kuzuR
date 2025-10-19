@@ -2,19 +2,17 @@
 
 ## Current Work Focus
 
-The current focus is a full review and synchronization of the memory bank. The goal is to ensure all documents are consistent, accurate, and reflect the latest project state, particularly regarding the resolution of the `OverflowError`.
+The current focus is on preparing the `kuzuR` package for CRAN submission, including documentation enhancements, author acknowledgments, and setting up GitHub Pages. The memory bank has been fully reviewed and synchronized to reflect the latest project state.
 
 ## Recent Changes
 
-**1. Test Suite Progress:**
+**1. Memory Bank Synchronization:**
+-   All core memory bank files (`projectbrief.md`, `productContext.md`, `activeContext.md`, `systemPatterns.md`, `techContext.md`, `progress.md`, `reasoning_bank.md`, `kuzu_python_api.md`, `overflow_toolchain_versions.md`) have been read and reviewed.
+-   The memory bank is now fully synchronized and consistent, accurately reflecting the current project state and resolved issues.
+
+**2. Test Suite Progress:**
 -   The `testthat` suite has been significantly updated. Only 5 tests are currently missing.
 -   Identified known issues with `Decimal` and `uuid` data types that will require a workaround. These will be addressed in a future development cycle.
-
-**2. Memory Bank Synchronization:**
--   Read all memory bank files to get a comprehensive overview.
--   Identified and corrected inconsistencies related to the now-resolved `OverflowError`.
--   Updated `techContext.md` to accurately describe the root cause of the error (a `reticulate` object round-trip issue, not a toolchain incompatibility).
--   Updated this file (`activeContext.md`) to remove obsolete plans for investigating the `OverflowError`.
 
 **3. R CMD Check Resolution:**
 -   Successfully resolved all `ERROR`s, `WARNING`s, and `NOTE`s from `R CMD check --as-cran`.
@@ -28,15 +26,13 @@ The current focus is a full review and synchronization of the memory bank. The g
 ## Next Steps
 
 The immediate next steps involve addressing the remaining items on the CRAN submission checklist and continuing development as outlined:
-1.  **`#TODO: Review and Enhance Documentation`**: Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
-2.  **`#TODO: Ensure Package Description Acknowledges Original Authors`**: State clearly in `DESCRIPTION` and `README.md` that `kuzuR` builds upon the work of Kuzu and g6R authors.
-3.  **`#TODO: Email Kuzu and G6R Authors`**: Inform them about the `kuzuR` package before CRAN submission.
-4.  **`#TODO: Create GitHub Pages for Documentation`**: Set up GitHub Pages for hosting package documentation using `pkgdown` and GitHub Actions.
+
 5.  **`#TODO CSV`**: Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
 6.  **`#TODO UDF`**: (No specific details provided in the context).
-7.  **`#TODO: Resolve R CMD check Note`**: Investigate and resolve the single NOTE from `R CMD check`.
-8.  **`#TODO: Handle Python Dependencies Gracefully`**: Review `install_kuzu()` for CRAN compliance.
-9.  **`#TODO: Strengthen Testing`**: Review and expand test coverage for all core functionality.
+8.  **`#TODO: Strengthen Testing`**: Review and expand test coverage for all core functionality.
+9.  **`#TODO: Fix GitHub Actions`**: Address any issues with GitHub Actions workflows.
+10. **`#TODO: Configure Codecov and Lintr`**: Set up and configure Codecov for code coverage and Lintr for code style checking.
+11. **`#TODO: Manually Inspect Code Examples`**: Perform a final manual inspection of all code examples for validity and correctness.
 
 ## Resolved Issues
 

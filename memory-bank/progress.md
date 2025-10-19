@@ -34,6 +34,9 @@
 -   **Broader Graph Support:** While the core framework is in place, we could add direct conversion wrappers for other popular graph libraries if requested.
 -   **Advanced Kuzu Features:** The core package could still be extended to support more advanced Kuzu features (e.g., transaction management).
 -   **ellmer Graph RAG Tool Implementation:** Implement the `ellmer` tool for Graph RAG (post-CRAN submission).
+-   **Fix GitHub Actions:** Address any issues with GitHub Actions workflows.
+-   **Configure Codecov and Lintr:** Set up and configure Codecov for code coverage and Lintr for code style checking.
+-   **Manually Inspect Code Examples:** Perform a final manual inspection of all code examples for validity and correctness.
 
 ## Known Issues
 
@@ -41,4 +44,4 @@
 
 ## Current Status
 
-The project is at an **alpha** stage. The core functionality is present and is now supported by a comprehensive test suite, significantly increasing its robustness. The test suite is now complete, and all `R CMD check` issues have been resolved. The immediate next steps are focused on preparing for CRAN submission, particularly improving user-facing documentation and addressing the CRAN checklist items.
+The project is at an **alpha** stage. The core functionality is present and is now supported by a comprehensive test suite, significantly increasing its robustness. The test suite is now complete, and all `R CMD check` issues have been resolved. The memory bank has been fully reviewed and synchronized. The immediate next steps are focused on preparing for CRAN submission, particularly improving user-facing documentation and addressing the CRAN checklist items.
