@@ -41,7 +41,7 @@ kuzu_connection <- function(path) {
 #' conn <- kuzu_connection(":memory:")
 #'
 #' # Create a node table
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #'
 #' # Insert data
@@ -71,7 +71,7 @@ kuzu_execute <- function(conn, query) {
 #' @examples
 #' \dontrun{
 #' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -107,7 +107,7 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
 #' \dontrun{
 #' if (requireNamespace("tibble", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #'   PRIMARY KEY (name))")
 #'   kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #'   result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -137,7 +137,7 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
 
 #' Retrieve All Rows from a Query Result
 #'
-#' Fetches all rows from a Kuzu query result and returns them as a list of 
+#' Fetches all rows from a Kuzu query result and returns them as a list of
 #' lists.
 #'
 #' @param result A Kuzu query result object.
@@ -146,7 +146,7 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @examples
 #' \dontrun{
 #' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -193,13 +193,13 @@ kuzu_get_n <- function(result, n) {
 #' called repeatedly to iterate through results one by one.
 #'
 #' @param result A Kuzu query result object.
-#' @return A list representing the next row, or `NULL` if no more rows are 
+#' @return A list representing the next row, or `NULL` if no more rows are
 #' available.
 #' @export
 #' @examples
 #' \dontrun{
 #' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})")
@@ -228,7 +228,7 @@ kuzu_get_next <- function(result) {
 #' @examples
 #' \dontrun{
 #' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -248,7 +248,7 @@ kuzu_get_column_data_types <- function(result) {
 #' @examples
 #' \dontrun{
 #' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
@@ -268,7 +268,7 @@ kuzu_get_column_names <- function(result) {
 #' @examples
 #' \dontrun{
 #' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")

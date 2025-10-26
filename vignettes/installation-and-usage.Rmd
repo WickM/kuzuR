@@ -14,121 +14,170 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+This vignette provides a guide to `kuzuR` and performing basic operations, including creating a database, defining a schema, loading data from various sources, and executing Cypher queries.
 
-This vignette provides a step-by-step guide to installing the `kuzuR` package and its dependencies, and demonstrates its basic usage for connecting to a Kuzu database, creating a schema, loading data, and executing simple queries.
+## 1. Connecting to a Database
 
-## Installation
-
-First, you need to install the `kuzuR` package from GitHub. #TODO add CRAN
-
-```{r, eval=FALSE}
-devtools::install_github("WickM/kuzuR")
-```
-
-`kuzuR` relies on the official Python `kuzu` library. To manage the Python dependencies, `kuzuR` provides a helper function `install_kuzu()`. This function will install the necessary Python packages into a dedicated environment using `reticulate`.
-
-```{r, eval=FALSE}
-library(kuzuR)
-install_kuzu()
-```
-
-## Basic Usage
-
-Once the package and its dependencies are installed, you can start using `kuzuR` to interact with a Kuzu database.
-
-### 1. Load the library
+First, load the `kuzuR` package and create a connection to a Kuzu database. You can create an in-memory database or specify a path to a database file on disk.
 
 ```{r}
 library(kuzuR)
-```
-
-### 2. Create a Connection
-
-To get started, you need to create a connection to a Kuzu database. You can either connect to an on-disk database by providing a path or create a temporary in-memory database. If the database at the specified path does not exist, it will be created for you.
-
-```{r}
-# Create a temporary on-disk database
-db_path <- tempfile()
-con <- kuzu_connection(db_path)
-
-# Alternatively, create an in-memory database (data is lost when R session ends)
 con <- kuzu_connection(":memory:")
 ```
 
-### 3. Define a Schema
+## 2. Data Types and Schema Definition
 
-Let's create a simple schema with a `Person` node table and a `Knows` relationship table.
+Kuzu supports a rich set of data types. When creating a schema, you need to map your R data types to the corresponding Kuzu `LogicalTypeID`.
 
-#TODO Add R typte
+### Kuzu to R Data Type Mapping
 
-| **Python type** | **Kuzu `LogicalTypeID`** |
-|-----------------|--------------------------|
-| `bool`          | `BOOL`                   |
-| `int`           | `INT64`                  |
-| `float`         | `DOUBLE`                 |
-| `str`           | `STRING`                 |
-| `datetime`      | `TIMESTAMP`              |
-| `date`          | `DATE`                   |
-| `timedelta`     | `INTERVAL`               |
-| `uuid`          | `UUID`                   |
-| `list`          | `LIST`                   |
-| `dict`          | `MAP`                    |
+| **Kuzu `LogicalTypeID`** | **R Type Equivalent** | **Description** |
+|-------------------|-------------------|----------------------------------|
+| `BOOL` | `logical` | `TRUE`/`FALSE` values |
+| `INT64` | `integer` | 64-bit signed integer |
+| `DOUBLE` | `numeric` | Double-precision floating-point number |
+| `STRING` | `character` | UTF-8 encoded string |
+| `TIMESTAMP` | `POSIXct` | Date and time with timezone, stored as microseconds since epoch |
+| `DATE` | `Date` | Date (year, month, day) |
+| `INTERVAL` | `difftime` | Time interval (e.g., "1 year 2 months 3 days") |
+| `UUID` | `character` | Universally Unique Identifier, stored as a string |
+| `LIST` | `list` | Ordered collection of values of the same type |
+| `MAP` | `list` (named list) | Unordered collection of key-value pairs |
+
+### Creating a Complex Schema
+
+You can define a schema with node and relationship tables using `kuzu_execute()`. Here's an example of a more complex schema:
 
 ```{r}
-kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
-                        "PRIMARY KEY (name))"))
-kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
+# Create a node table for users with various data types
+kuzu_execute(con, paste("CREATE NODE TABLE User(userID UUID, name STRING,",
+                        "age INT64, is_active BOOL, created_at TIMESTAMP,",
+                        "last_login DATE, notes STRING[],",
+                        "PRIMARY KEY (userID))"))
+
+# Create a node table for products
+kuzu_execute(con, "CREATE NODE TABLE Product(productID INT64, name STRING, PRIMARY KEY (productID))")
+
+# Create a relationship table for user purchases
+kuzu_execute(con, "CREATE REL TABLE Buys(FROM User TO Product, purchase_date DATE)")
 ```
 
-### 4. Load Data
+## 3. Loading Data
 
-You can load data into your tables from R data frames using `kuzu_copy_from_df()`.
+You can load data into your Kuzu tables from R data frames or external files like CSV.
+
+### Loading from a Data Frame
+
+Use `kuzu_copy_from_df()` to load data from an R `data.frame`.
 
 ```{r}
+library(jsonlite)
 # Create data frames for nodes and relationships
-persons <- data.frame(
-  name = c("Alice", "Bob", "Carol"),
-  age = c(35, 45, 25)
+users <- data.frame(
+  userID = c("a1b2c3d4-e5f6-7890-1234-567890abcdef", "b2c3d4e5-f6a7-8901-2345-67890abcdef0"),
+  name = c("Alice", "Bob"),
+  age = c(35, 45),
+  is_active = c(TRUE, FALSE),
+  created_at = as.POSIXct(c("2023-01-15 10:30:00", "2022-11-20 14:00:00")),
+  last_login = as.Date(c("2023-10-25", "2023-09-30")),
+  stringsAsFactors = FALSE
+)
+# LIST types should be formatted as JSON strings
+users$notes <- c(toJSON(c("note1", "note2")), toJSON("note3"))
+
+products <- data.frame(
+  productID = c(101, 102),
+  name = c("Laptop", "Mouse")
 )
 
-knows <- data.frame(
-  from_person = c("Alice", "Bob"),
-  to_person = c("Bob", "Carol"),
-  since = c(2010, 2015)
+buys <- data.frame(
+  from_user = c("a1b2c3d4-e5f6-7890-1234-567890abcdef", "b2c3d4e5-f6a7-8901-2345-67890abcdef0"),
+  to_product = c(101, 102),
+  purchase_date = as.Date(c("2023-02-20", "2023-03-15"))
 )
 
 # Load data into Kuzu
-kuzu_copy_from_df(con, persons, "Person")
-kuzu_copy_from_df(con, knows, "Knows")
+kuzu_copy_from_df(con, users, "User")
+kuzu_copy_from_df(con, products, "Product")
+kuzu_copy_from_df(con, buys, "Buys")
 ```
 
-### 5. Execute Queries
+### Loading from a CSV File
 
-Now you can execute Cypher queries and retrieve the results.
+Use `kuzu_copy_from_csv()` to load data from a CSV file. For this to work, the file should be in the current working directory.
 
 ```{r}
-#TODO add diferent result methodes
-#todo add glue and stick to ("COPY Person FROM ... method)
-"COPY Person FROM {persons}"
-"COPY Person FROM {c://.csv}"
-"COPY Person FROM {c://.json}"
-"COPY Person FROM {c://.json}"
+# Create a CSV file in the project's root directory
+csv_filename <- "products.csv"
+write.csv(data.frame(productID = c(103, 104), name = c("Keyboard", "Monitor")),
+          csv_filename, row.names = FALSE)
 
+# Load data from the CSV file using just the filename
+kuzu_copy_from_csv(con, csv_filename, "Product")
 
-
-# Find all persons
-result <- kuzu_execute(con, "MATCH (p:Person) RETURN p.name, p.age")
-as.data.frame(result)
-
-kuzu_get_all(result)
+# Clean up the created file
+unlink(csv_filename)
 ```
+
+## 4. Executing Queries and Converting Results
+
+You can execute Cypher queries using `kuzu_execute()` and convert the results into various R formats.
 
 ```{r}
-# Find relationships
-result_rel <- kuzu_execute(con, paste("MATCH (a:Person)-[k:Knows]->(b:Person)",
-                                      "RETURN a.name, k.since, b.name"))
-as.data.frame(result_rel)
+# Execute a query to get users and their purchases
+query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u.name, p.name, b.purchase_date")
 ```
 
-This concludes the basic introduction to `kuzuR`. For more advanced topics, such as graph library integrations, please see the other vignettes.
+### A Note on Query Results
+
+The `QueryResult` object returned by `kuzu_execute()` acts as an iterator over the results. This means it can only be consumed once. Functions like `as.data.frame()`, `as_tibble()`, `kuzu_get_all()`, and the graph conversion functions will exhaust this iterator.
+
+### Convert to Data Frame or Tibble
+
+```{r}
+# Convert to a data frame
+df_result <- as.data.frame(query_result)
+print(df_result)
+
+# Convert to a tibble
+tibble_result <- as_tibble(query_result)
+print(tibble_result)
+```
+
+### Use Query Results returned as list
+
+```{r}
+query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u.name, p.name, b.purchase_date")
+
+result <- kuzu_get_all(query_result)
+print(result)
+
+# only fetch 1. result 
+query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u.name, p.name, b.purchase_date")
+
+result <- kuzu_get_n(query_result, 1)
+print(result)
+
+#Fetch next result
+result <- kuzu_get_next(query_result)
+print(result)
+```
+
+### Convert to Graph Objects
+
+For queries that return graph structures, you can convert the results into graph objects from packages like `igraph` or `tidygraph`. To do this, the query must return the node and relationship variables themselves, not just their properties.
+
+```{r}
+# Execute a query that returns a graph structure 
+graph_query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u, p, b")
+igraph_obj <- as_igraph(graph_query_result)
+print(igraph_obj)
+
+plot(igraph_obj)
+
+# Convert to a tidygraph object
+tidygraph_obj <- as_tidygraph(graph_query_result)
+print(tidygraph_obj)
+
+plot(tidygraph_obj)
+```

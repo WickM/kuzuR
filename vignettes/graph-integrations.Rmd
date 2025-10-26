@@ -18,17 +18,6 @@ knitr::opts_chunk$set(
 
 This vignette demonstrates how to convert Kuzu query results into various R graph library objects, including `igraph`, `tidygraph`, and `g6R`. It showcases the seamless integration of `kuzuR` with popular R packages for graph analysis and visualization.
 
-## Prerequisites
-
-Ensure you have the necessary packages installed:
-
-```{r, eval=FALSE}
-install.packages("igraph")
-install.packages("tidygraph")
-install.packages("g6R")
-install.packages("kuzuR") # If not already installed
-```
-
 ## Converting to `igraph`
 
 The `igraph` package is a powerful tool for graph manipulation and analysis in R. `kuzuR` provides a direct conversion function `as_igraph()` to transform Kuzu query results into `igraph` objects.
@@ -72,13 +61,14 @@ Now, let's execute a query that returns graph data and convert it to an `igraph`
 ```{r}
 # Query to get all persons and their relationships
 graph_query_result <- kuzu_execute(con, paste("MATCH (p1:Person)-[k:Knows]->",
-                                              "(p2:Person) RETURN p1, p2, k.since"))
+                                              "(p2:Person) RETURN p1, p2, k"))
 
 # Convert the Kuzu result to an igraph object
 igraph_graph <- as_igraph(graph_query_result)
 
 # Print the igraph object summary
 print(igraph_graph)
+plot(igraph_graph)
 ```
 
 You can now perform standard `igraph` operations on `igraph_graph`.
@@ -97,6 +87,7 @@ tidygraph_graph <- as_tidygraph(graph_query_result)
 
 # Print the tidygraph object summary
 print(tidygraph_graph)
+plot(tidygraph_graph)
 ```
 
 ## Interactive Visualization with `g6R`
@@ -108,20 +99,15 @@ The `g6R` package provides an R interface to the G6 JavaScript graph visualizati
 Building on the previous examples, we can convert the Kuzu query result into a `g6R` object. We can then customize the appearance of the nodes and edges for a more informative visualization.
 
 ```{r}
-# Convert the Kuzu result to a g6R object
-g6r_graph <- as_g6R(graph_query_result)
+library(g6R)
+graph_query_result <- kuzu_execute(con, paste("MATCH (p1:Person)-[k:Knows]->",
+                                              "(p2:Person) RETURN p1, p2, k"))
+# Convert the Kuzu result to a g6R-compatible list
+igraph_graph <- as_igraph(graph_query_result)
 
-# Display the g6R object (this will render an interactive visualization)
-# In a real interactive session (like RStudio), this would display the plot.
-# For this vignette, we'll just print the object structure.
-print(g6r_graph)
+g6 <- g6R::g6_igraph(igraph_graph) |>
+  g6_layout(d3_force_layout())
 
-# Display the g6R object (this will render an interactive visualization)
-# In a real interactive session (like RStudio), this would display the plot.
-# For this vignette, we'll just print the object structure.
-print(g6r_graph)
+# Display the graph
+g6
 ```
-
-This interactive visualization allows you to pan, zoom, and inspect nodes and edges, making it a powerful tool for exploring graph data retrieved from Kuzu.
-
-This concludes the vignette on graph library integrations. For more advanced usage and specific examples, please refer to the documentation of each respective library.

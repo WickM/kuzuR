@@ -14,7 +14,6 @@
 #'
 #' @param query_result A `kuzu_query_result` object from `kuzu_execute()`.
 #' @return A `networkx.classes.graph.Graph` object (via `reticulate`).
-#' @export
 #' @examples
 #' \dontrun{
 #'   conn <- kuzu_connection(":memory:")
@@ -65,7 +64,6 @@ as_networkx <- function(query_result) {
 #' @param x A `kuzu_networkx` object from `as_networkx()`.
 #' @param ... Additional arguments (not used).
 #' @return A list containing two data frames: `nodes` and `edges`.
-#' @export
 #' @method as.data.frame kuzu_networkx
 #' @examples
 #' \dontrun{
@@ -100,25 +98,36 @@ as.data.frame.kuzu_networkx <- function(x, ...) {
 import networkx as nx
 import pandas as pd
 
-# nx.to_pandas_edgelist() uses the networkx node ID for source/target.
-# We must extract that same ID to create a valid vertices data frame for igraph.
+def flatten_attributes(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_attributes(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
 nodes_list = []
 for node_id, attributes in nx_graph.nodes(data=True):
-    # The attributes dictionary contains the properties from Kuzu.
-    # We add the networkx ID to it.
-    attributes['name'] = node_id
-    nodes_list.append(attributes)
+    flat_attrs = flatten_attributes(attributes)
+    if '_label' in flat_attrs:
+        flat_attrs['label'] = flat_attrs.pop('_label')
+    
+    # Remove internal properties
+    keys_to_remove = [k for k in flat_attrs.keys() if k.startswith('_')]
+    for k in keys_to_remove:
+        del flat_attrs[k]
+        
+    flat_attrs['name'] = node_id
+    nodes_list.append(flat_attrs)
 
 nodes_df = pd.DataFrame(nodes_list)
 
-# Reorder columns to ensure the 'name' column (the ID) is first,
-# as this is what igraph::graph_from_data_frame uses by default to match 
-# vertices.
 if 'name' in nodes_df.columns:
     cols = ['name'] + [col for col in nodes_df.columns if col != 'name']
     nodes_df = nodes_df[cols]
 
-# Extract edges, which will correctly use the node_id for source/target
 edges_df = nx.to_pandas_edgelist(nx_graph)
   "
   )
@@ -201,41 +210,4 @@ as_tidygraph <- function(query_result) {
   tidygraph::tbl_graph(nodes = graph_dfs$nodes, edges = graph_dfs$edges)
 }
 
-#' Convert a Kuzu Query Result to a g6R Object
-#'
-#' @description
-#' Converts a Kuzu query result into a `g6R` object for interactive 
-#' visualization.
-#'
-#' @param query_result A `kuzu_query_result` object from `kuzu_execute()` that 
-#' contains a graph.
-#' @return A `g6R` HTML widget object.
-#' @importFrom g6R g6
-#' @export
-#' @examples
-#' \dontrun{
-#' if (requireNamespace("g6R", quietly = TRUE)) {
-#'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
-#'   PRIMARY KEY (name))")
-#'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
-#'   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
-#'   g_g6R <- as_g6R(res)
-#'   # print(g_g6R) # Prints the interactive widget
-#'   rm(conn, res, g_g6R)
-#' }
-#' }
-as_g6r <- function(query_result) {
-  graph_dfs <- as.data.frame(as_networkx(query_result))
-
-  # g6R requires specific column names: 'id' for nodes, and 'source'/'target' 
-  # for edges.
-  nodes_df <- graph_dfs$nodes
-  edges_df <- graph_dfs$edges
-
-  # The 'name' column from our conversion holds the unique ID. Rename it for 
-  # g6R.
-  names(nodes_df)[names(nodes_df) == "name"] <- "id"
-
-  g6R::g6(nodes = nodes_df, edges = edges_df)
-}
+>>>>>>> Stashed changes

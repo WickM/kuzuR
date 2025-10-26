@@ -42,8 +42,7 @@
 #'   RETURN a.name, b.name")
 #'   print(as.data.frame(result_rel))
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}
-#' {Kuzu Copy from DataFrame}
+#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_copy_from_df <- function(conn, df, table_name) {
   main <- reticulate::import_main()
   main$conn <- conn
@@ -67,6 +66,9 @@ kuzu_copy_from_file <- function(
 ) {
   main <- reticulate::import_main()
   main$conn <- conn
+
+  # Replace backslashes with forward slashes for compatibility
+  file_path <- gsub("\\\\", "/", file_path)
 
   query <- paste0("COPY ", table_name, " FROM '", file_path, "'")
 
@@ -173,9 +175,7 @@ kuzu_copy_from_csv <- function(
 #'   # Clean up the temporary file
 #'   unlink(json_file)
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-json/}
-#' {Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}
-#' {Kuzu JSON Extension}
+#' @seealso \href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
 kuzu_copy_from_json <- function(conn, file_path, table_name) {
   # Ensure the JSON extension is installed and loaded
   tryCatch(
@@ -276,8 +276,7 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'
 #'  kuzu_merge_df(conn, my_data_2, merge_statement_2)
 #'  }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}
-#' {Kuzu Copy from DataFrame}
+#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_merge_df <- function(conn, df, merge_query) {
   main <- reticulate::import_main()
   main$conn <- conn

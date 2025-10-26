@@ -13,19 +13,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-# kuzuR <img src="man/figures/logo.png" align="right" height=""  />
+# kuzuR <img src="man/figures/logo.png" align="right"/>
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/kuzuR)](https://cran.r-project.org/package=kuzuR)
-[![R-CMD-check](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
-[![Codecov test coverage](https://codecov.io/gh/WickM/kuzuR/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
+
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental) [![CRAN status](https://www.r-pkg.org/badges/version/kuzuR)](https://cran.r-project.org/package=kuzuR) [![R-CMD-check](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml) [![Codecov test coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR) [![Codecov test coverage](https://codecov.io/gh/WickM/kuzuR/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
+
 <!-- badges: end -->
 
 ## Overview
 
-`kuzuR` provides an R interface to the [Kuzu Graph Database](https://kuzudb.com/), a high-performance, embedded graph database. The package acts as a wrapper around the official Python `kuzu` client, using the `reticulate` package to bridge the two languages. This allows you to interact with Kuzu seamlessly within your R environment, integrating its powerful graph computation capabilities into your existing data analysis workflows.
+`kuzuR` provides an R interface to the [Kuzu Graph Database](https://github.com/kuzudb/kuzu?tab=readme-ov-file), a high-performance, embedded graph database. The package acts as a wrapper around the official Python `kuzu` client, using the `reticulate` package to bridge the two languages. This allows you to interact with Kuzu seamlessly within your R environment, integrating its powerful graph computation capabilities into your existing data analysis workflows.
 
 The primary goal of `kuzuR` is to provide an idiomatic R experience for: - Creating and managing Kuzu database instances. - Executing Cypher queries. - Loading data from and retrieving results into R data frames and tibbles. - Converting graph query results directly into R-native graph objects like `igraph` and `tidygraph`.
 
@@ -33,7 +31,13 @@ The primary goal of `kuzuR` is to provide an idiomatic R experience for: - Creat
 
 `kuzuR` requires a working Python installation. Once Python is available, you can install the package and its Python dependencies in two steps.
 
-1.  **Install the R package** from GitHub:
+**Install the R package** from CRAN:
+
+``` r
+#install.packages("kuzuR")
+```
+
+**Install the R package** from GitHub:
 
 ``` r
 # install.packages("pak")
@@ -131,7 +135,6 @@ kuzu_get_schema(query_result)
 
 ## Learning and Getting Help
 
-This package is currently **experimental**. The core API is subject to change as we work towards a stable release.
-
--   For more detailed examples and workflows, please see the package vignettes (coming soon).
+-   For more detailed examples and workflows, please see the package vignettes.
+-   For more detailed examples on how to use kuzu Query see [kuzu documentation](https://kuzudb.github.io/docs/)
 -   If you encounter a bug or have a feature request, please file an issue on [GitHub](https://github.com/WickM/kuzuR/issues).

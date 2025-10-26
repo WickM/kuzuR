@@ -2,7 +2,7 @@
 title: "Getting Started with kuzuR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting Started}
+  %\VignetteIndexEntry{Graph Library Integrations}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -22,8 +22,16 @@ Welcome to `kuzuR`! This guide will walk you through the basic steps to get star
 
 First, ensure you have the `kuzuR` package installed from GitHub. You will also need `reticulate` to manage the Python environment.
 
+Development Version
+
 ```{r, eval=FALSE}
 remotes::install_github("WickM/kuzuR")
+```
+
+Cran Version
+
+```{r, eval=FALSE}
+install.packages("kuzuR")
 ```
 
 ## Basic Usage

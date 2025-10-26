@@ -21,10 +21,10 @@ License: MIT + file LICENSE
 Imports:
     reticulate,
     igraph,
-    g6R,
     tibble,
     tidygraph
 Suggests:
+    g6R,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown

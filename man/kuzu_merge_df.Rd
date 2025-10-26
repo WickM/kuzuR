@@ -55,6 +55,5 @@ my_data <- data.frame(
  }
 }
 \seealso{
-\href{https://docs.kuzudb.com/import/copy-from-dataframe/}
-{Kuzu Copy from DataFrame}
+\href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 }

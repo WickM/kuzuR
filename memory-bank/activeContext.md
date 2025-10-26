@@ -29,9 +29,7 @@ The immediate next steps involve addressing the remaining items on the CRAN subm
 
 5.  **`#TODO CSV`**: Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
 6.  **`#TODO UDF`**: (No specific details provided in the context).
-8.  **`#TODO: Strengthen Testing`**: Review and expand test coverage for all core functionality.
-9.  **`#TODO: Fix GitHub Actions`**: Address any issues with GitHub Actions workflows.
-10. **`#TODO: Configure Codecov and Lintr`**: Set up and configure Codecov for code coverage and Lintr for code style checking.
+#TODO: Label in Graph is not the 'name' it is the typy in our case should be name
 11. **`#TODO: Manually Inspect Code Examples`**: Perform a final manual inspection of all code examples for validity and correctness.
 
 ## Resolved Issues
