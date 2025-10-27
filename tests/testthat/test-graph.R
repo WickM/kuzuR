@@ -5,7 +5,6 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
   # Skip if packages are not installed
   skip_if_not_installed("igraph")
   skip_if_not_installed("tidygraph")
-  skip_if_not_installed("g6R")
   skip_if_not(
     reticulate::py_module_available("networkx"),
     "networkx Python package not available"
@@ -58,30 +57,8 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
     1
   )
 
-  # 6. Test as_g6R()
-  g_g6r <- as_g6r(query_res)
-
-  # A. Test the class. The g6R package produces objects of class "g6".
-  expect_s3_class(g_g6r, "g6")
-  expect_s3_class(g_g6r, "htmlwidget")
-
-  # B. Test the data payload.
-  # The str() output revealed the data is a list of lists, not a data frame.
-  widget_data <- g_g6r$x$data
-
-  # Check counts
-  expect_equal(length(widget_data$nodes), 2)
-  expect_equal(length(widget_data$edges), 1)
-
-  # Extract node and edge properties and test them
-  node_ids <- sapply(widget_data$nodes, `[[`, "id")
-  edge_source <- sapply(widget_data$edges, `[[`, "source")
-
-  expect_equal(sort(node_ids), c("Person_Alice", "Person_Bob"))
-  expect_equal(edge_source, "Person_Alice")
-
   # 7. Clean up
-  rm(conn, query_res, g_igraph, g_tidy, g_g6r)
+  rm(conn, query_res, g_igraph, g_tidy)
 })
 
 test_that("as_networkx throws error for invalid input", {

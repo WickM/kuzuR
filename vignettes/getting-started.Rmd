@@ -2,7 +2,7 @@
 title: "Getting Started with kuzuR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Graph Library Integrations}
+  %\VignetteIndexEntry{Getting Started with kuzuR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -68,6 +68,9 @@ igraph_graph <- as_igraph(graph_query_result)
 
 # Print the igraph object summary
 print(igraph_graph)
+
+V(igraph_graph)$label <- igraph::V(igraph_graph)$name
+E(igraph_graph)$label <- "knows"
 plot(igraph_graph)
 ```
 
@@ -92,7 +95,7 @@ plot(tidygraph_graph)
 
 ## Interactive Visualization with `g6R`
 
-The `g6R` package provides an R interface to the G6 JavaScript graph visualization library, enabling rich, interactive visualizations directly within R environments. The `as_g6R()` function makes it straightforward to take graph data from Kuzu and create these visualizations.
+The `g6R` package provides an R interface to the G6 JavaScript graph visualization library, enabling rich, interactive visualizations directly within R environments. Since `g6R` has built-in support for `igraph` objects, you can easily create interactive visualizations by first converting your Kuzu query result to an `igraph` object.
 
 ### Example: Creating an Interactive `g6R` Graph
 
@@ -105,8 +108,30 @@ graph_query_result <- kuzu_execute(con, paste("MATCH (p1:Person)-[k:Knows]->",
 # Convert the Kuzu result to a g6R-compatible list
 igraph_graph <- as_igraph(graph_query_result)
 
-g6 <- g6R::g6_igraph(igraph_graph) |>
-  g6_layout(d3_force_layout())
+g6 <- g6_igraph(igraph_graph) |>
+  g6_layout(d3_force_layout()) |>
+  g6_options(
+    animation = FALSE,
+    node = list(
+      style = list(
+        labelText = JS("(d) => d.name")
+      )
+    ),
+    edge = list(
+      style = list(
+        endArrow = TRUE,
+        labelText = JS("(d) => d.data.label")
+      )
+    )
+  ) |>
+  g6_behaviors(
+    zoom_canvas(),
+    collapse_expand(),
+    drag_canvas(),
+    drag_element()
+  ) |>
+  g6_plugins("toolbar")
+
 
 # Display the graph
 g6

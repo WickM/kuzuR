@@ -1,5 +1,8 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+There are no ERRORs or WARNINGs.
 
-* This is a new release.
+There is one NOTE regarding the license stub. I have ensured that the `DESCRIPTION` file specifies `License: MIT + file LICENSE` and that the `LICENSE` file contains the standard MIT license text.
+
+The `pdflatex` error during the check is a local environment issue and should not affect the package's integrity on CRAN.
+

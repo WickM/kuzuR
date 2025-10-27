@@ -45,5 +45,5 @@ This function also ensures the JSON extension is loaded and available.
 }
 }
 \seealso{
-\href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
+\href{https://kuzudb.github.io/docs/import/copy-from-json/}{Kuzu JSON Import}, \href{https://kuzudb.github.io/docs/extensions/json/}{Kuzu JSON Extension}
 }

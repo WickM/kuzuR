@@ -17,7 +17,7 @@ Description: A high-performance R interface to the Kuzu graph database.
     visualization workflows in R.
 URL: https://github.com/WickM/kuzuR, https://wickm.github.io/kuzuR/
 BugReports: https://github.com/WickM/kuzuR/issues
-License: MIT + file LICENSE
+License: MIT
 Imports:
     reticulate,
     igraph,
@@ -25,6 +25,7 @@ Imports:
     tidygraph
 Suggests:
     g6R,
+    jsonlite,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown

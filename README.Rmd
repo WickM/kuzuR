@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-`kuzuR` provides an R interface to the [Kuzu Graph Database](https://github.com/kuzudb/kuzu?tab=readme-ov-file), a high-performance, embedded graph database. The package acts as a wrapper around the official Python `kuzu` client, using the `reticulate` package to bridge the two languages. This allows you to interact with Kuzu seamlessly within your R environment, integrating its powerful graph computation capabilities into your existing data analysis workflows.
+`kuzuR` provides an R interface to the [Kuzu Graph Database](https://kuzudb.github.io/docs/), a high-performance, embedded graph database. The package acts as a wrapper around the official Python `kuzu` client, using the `reticulate` package to bridge the two languages. This allows you to interact with Kuzu seamlessly within your R environment, integrating its powerful graph computation capabilities into your existing data analysis workflows.
 
 The primary goal of `kuzuR` is to provide an idiomatic R experience for: - Creating and managing Kuzu database instances. - Executing Cypher queries. - Loading data from and retrieving results into R data frames and tibbles. - Converting graph query results directly into R-native graph objects like `igraph` and `tidygraph`.
 
@@ -118,7 +118,7 @@ print(g_tidy)
 
 # c) Convert to a g6R object for interactive plotting
 # Note: This will render as an interactive plot in HTML outputs.
-g_g6 <- as_g6R(graph_result)
+g_g6 <- g6_igraph(g_igraph)
 g_g6
 
 # 6. Inspecting Query Results

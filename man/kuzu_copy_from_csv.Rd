@@ -49,5 +49,5 @@ Loads data from a CSV file into a specified table in the Kuzu database.
 }
 }
 \seealso{
-\href{https://docs.kuzudb.com/import/csv/}{Kuzu CSV Import}
+\href{https://kuzudb.github.io/docs/import/csv/}{Kuzu CSV Import}
 }

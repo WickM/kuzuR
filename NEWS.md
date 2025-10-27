@@ -10,6 +10,6 @@
 * Integration with R graph libraries:
     * Direct conversion to `igraph` objects with `as_igraph()`.
     * Direct conversion to `tidygraph` objects with `as_tidygraph()`.
-    * Direct conversion to `g6R` objects for interactive visualization with `as_g6R()`.
+    * Integration with `g6R` for interactive visualization via `igraph` objects.
 * Includes a helper function `install_kuzu()` to manage Python dependencies.
 * Added vignettes for installation, usage, and graph library integrations.

@@ -140,6 +140,7 @@ df_result <- as.data.frame(query_result)
 print(df_result)
 
 # Convert to a tibble
+library(tibble)
 tibble_result <- as_tibble(query_result)
 print(tibble_result)
 ```

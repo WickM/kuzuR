@@ -55,5 +55,5 @@ TO Node Column: The primary key of the TO nodes.
 }
 }
 \seealso{
-\href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
+\href{https://kuzudb.github.io/docs/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 }

@@ -46,5 +46,5 @@ Loads data from a Parquet file into a specified table in the Kuzu database.
 }
 }
 \seealso{
-\href{https://docs.kuzudb.com/import/parquet/}{Kuzu Parquet Import}
+\href{https://kuzudb.github.io/docs/import/parquet/}{Kuzu Parquet Import}
 }

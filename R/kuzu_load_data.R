@@ -42,7 +42,7 @@
 #'   RETURN a.name, b.name")
 #'   print(as.data.frame(result_rel))
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
+#' @seealso \href{https://kuzudb.github.io/docs/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_copy_from_df <- function(conn, df, table_name) {
   main <- reticulate::import_main()
   main$conn <- conn
@@ -123,7 +123,7 @@ kuzu_copy_from_file <- function(
 #'   # Clean up the temporary file
 #'   unlink(csv_file)
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/csv/}{Kuzu CSV Import}
+#' @seealso \href{https://kuzudb.github.io/docs/import/csv/}{Kuzu CSV Import}
 kuzu_copy_from_csv <- function(
   conn,
   file_path,
@@ -175,7 +175,7 @@ kuzu_copy_from_csv <- function(
 #'   # Clean up the temporary file
 #'   unlink(json_file)
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-json/}{Kuzu JSON Import}, \href{https://docs.kuzudb.com/extensions/json/}{Kuzu JSON Extension}
+#' @seealso \href{https://kuzudb.github.io/docs/import/copy-from-json/}{Kuzu JSON Import}, \href{https://kuzudb.github.io/docs/extensions/json/}{Kuzu JSON Extension}
 kuzu_copy_from_json <- function(conn, file_path, table_name) {
   # Ensure the JSON extension is installed and loaded
   tryCatch(
@@ -227,7 +227,7 @@ kuzu_copy_from_json <- function(conn, file_path, table_name) {
 #'     unlink(parquet_file)
 #'   }
 #' }
-#' @seealso \href{https://docs.kuzudb.com/import/parquet/}{Kuzu Parquet Import}
+#' @seealso \href{https://kuzudb.github.io/docs/import/parquet/}{Kuzu Parquet Import}
 kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
   # Use the internal copy function to load data from the Parquet file
   kuzu_copy_from_file(conn, file_path = file_path, table_name = table_name)
@@ -276,7 +276,7 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'
 #'  kuzu_merge_df(conn, my_data_2, merge_statement_2)
 #'  }
-#' @seealso \href{https://docs.kuzudb.com/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
+#' @seealso \href{https://kuzudb.github.io/docs/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_merge_df <- function(conn, df, merge_query) {
   main <- reticulate::import_main()
   main$conn <- conn
