@@ -93,10 +93,10 @@ edges <- data.frame(
 )
 
 # Use kuzu_copy_from_df to load the data
-kuzu_copy_from_df(con, "Person", nodes)
-# Rename columns to match Kuzu's expected FROM/TO for relationships
+kuzu_copy_from_df(con, nodes, "Person")
+
 names(edges) <- c("FROM", "TO", "since")
-kuzu_copy_from_df(con, "Knows", edges)
+kuzu_copy_from_df(con, edges, "Knows")
 
 # 4. Execute Cypher queries
 # Retrieve data as a data frame

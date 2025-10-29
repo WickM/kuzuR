@@ -49,6 +49,7 @@ kuzu_copy_from_df <- function(conn, df, table_name) {
   main$df_to_copy <- df
 
   query <- paste0("COPY ", table_name, " FROM df_to_copy")
+  
   main$query <- query
   reticulate::py_run_string("conn.execute(query)", convert = FALSE)
 
