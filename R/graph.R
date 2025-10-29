@@ -11,47 +11,7 @@ as_networkx <- function(query_result) {
   nx_graph
 }
 
-#' Convert a kuzu_networkx Object to a List of Data Frames
-#'
-#' @description
-#' This S3 method converts the `reticulate`-wrapped `networkx` graph object
-#' into a standard R list containing a `nodes` data frame and an `edges`
-#' data frame.
-#'
-#' @details
-#' This function shells out to Python via `reticulate` to perform the
-#' conversion. It uses `pandas` and `networkx` to extract the node and edge
-#' attributes into data frames that can be easily used in R. This is the
-#' core of the conversion process.
-#'
-#' @param x A `kuzu_networkx` object from `as_networkx()`.
-#' @param ... Additional arguments (not used).
-#' @return A list containing two data frames: `nodes` and `edges`.
-#' @method as.data.frame kuzu_networkx
-#' @examples
-#' \dontrun{
-#'   conn <- kuzu_connection(":memory:")
-#'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, age INT64, 
-#'   PRIMARY KEY (name))")
-#'   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person, 
-#'   since INT64)")
-#'   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice', age: 25})")
-#'   kuzu_execute(conn, "CREATE (q:Person {name: 'Bob', age: 30})")
-#'   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE a.name='Alice' 
-#'   AND b.name='Bob' " %+%
-#'                        "CREATE (a)-[:Knows {since: 2022}]->(b)")
-#'   res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) 
-#'   RETURN p, k, q")
-#'
-#'   # Convert to a networkx object
-#'   nx_graph <- as_networkx(res)
-#'
-#'   # Convert to a list of data frames
-#'   graph_dfs <- as.data.frame(nx_graph)
-#'   print(graph_dfs$nodes)
-#'   print(graph_dfs$edges)
-#' }
-as.data.frame.kuzu_networkx <- function(x, ...) {
+as_data_frame_kuzu_networkx <- function(x, ...) {
   main <- reticulate::import_main()
   main$nx_graph <- x
 
@@ -141,7 +101,7 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #' }
 #' }
 as_igraph <- function(query_result) {
-  graph_dfs <- as.data.frame(as_networkx(query_result))
+  graph_dfs <- as_data_frame_kuzu_networkx(as_networkx(query_result))
   igraph::graph_from_data_frame(d = graph_dfs$edges, vertices = graph_dfs$nodes)
 }
 
@@ -169,6 +129,6 @@ as_igraph <- function(query_result) {
 #' }
 #' }
 as_tidygraph <- function(query_result) {
-  graph_dfs <- as.data.frame(as_networkx(query_result))
+  graph_dfs <- as_data_frame_kuzu_networkx(as_networkx(query_result))
   tidygraph::tbl_graph(nodes = graph_dfs$nodes, edges = graph_dfs$edges)
 }

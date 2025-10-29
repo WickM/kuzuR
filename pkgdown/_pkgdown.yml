@@ -57,11 +57,8 @@ reference:
   - kuzu_merge_df
 - title: "Graph Integrations"
   contents:
-  - as_networkx
-  - as.data.frame.kuzu_networkx
   - as_igraph
   - as_tidygraph
-  - as_g6R
 - title: "Installation"
   contents:
   - install_kuzu
