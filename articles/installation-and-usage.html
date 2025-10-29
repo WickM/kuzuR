@@ -78,177 +78,321 @@
 
     
     
+<p>This vignette provides a guide to <code>kuzuR</code> and performing
+basic operations, including creating a database, defining a schema,
+loading data from various sources, and executing Cypher queries.</p>
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="connecting-to-a-database">1. Connecting to a Database<a class="anchor" aria-label="anchor" href="#connecting-to-a-database"></a>
 </h2>
-<p>This vignette provides a step-by-step guide to installing the
-<code>kuzuR</code> package and its dependencies, and demonstrates its
-basic usage for connecting to a Kuzu database, creating a schema,
-loading data, and executing simple queries.</p>
-</div>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<p>First, you need to install the <code>kuzuR</code> package from
-GitHub. #TODO add CRAN</p>
+<p>First, load the <code>kuzuR</code> package and create a connection to
+a Kuzu database. You can create an in-memory database or specify a path
+to a database file on disk.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"WickM/kuzuR"</span><span class="op">)</span></span></code></pre></div>
-<p><code>kuzuR</code> relies on the official Python <code>kuzu</code>
-library. To manage the Python dependencies, <code>kuzuR</code> provides
-a helper function <code><a href="../reference/install_kuzu.html">install_kuzu()</a></code>. This function will
-install the necessary Python packages into a dedicated environment using
-<code>reticulate</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WickM/kuzuR" class="external-link">kuzuR</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/install_kuzu.html">install_kuzu</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_connection.html">kuzu_connection</a></span><span class="op">(</span><span class="st">":memory:"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
+<h2 id="data-types-and-schema-definition">2. Data Types and Schema Definition<a class="anchor" aria-label="anchor" href="#data-types-and-schema-definition"></a>
 </h2>
-<p>Once the package and its dependencies are installed, you can start
-using <code>kuzuR</code> to interact with a Kuzu database.</p>
+<p>Kuzu supports a rich set of data types. When creating a schema, you
+need to map your R data types to the corresponding Kuzu
+<code>LogicalTypeID</code>.</p>
 <div class="section level3">
-<h3 id="load-the-library">1. Load the library<a class="anchor" aria-label="anchor" href="#load-the-library"></a>
+<h3 id="kuzu-to-r-data-type-mapping">Kuzu to R Data Type Mapping<a class="anchor" aria-label="anchor" href="#kuzu-to-r-data-type-mapping"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WickM/kuzuR" class="external-link">kuzuR</a></span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="create-a-connection">2. Create a Connection<a class="anchor" aria-label="anchor" href="#create-a-connection"></a>
-</h3>
-<p>To get started, you need to create a connection to a Kuzu database.
-You can either connect to an on-disk database by providing a path or
-create a temporary in-memory database. If the database at the specified
-path does not exist, it will be created for you.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create a temporary on-disk database</span></span>
-<span><span class="va">db_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_connection.html">kuzu_connection</a></span><span class="op">(</span><span class="va">db_path</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Alternatively, create an in-memory database (data is lost when R session ends)</span></span>
-<span><span class="co"># con &lt;- kuzu_connection(":memory:")</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="define-a-schema">3. Define a Schema<a class="anchor" aria-label="anchor" href="#define-a-schema"></a>
-</h3>
-<p>Let’s create a simple schema with a <code>Person</code> node table
-and a <code>Knows</code> relationship table.</p>
-<p>#TODO Add R typte</p>
 <table class="table">
+<colgroup>
+<col width="26%">
+<col width="26%">
+<col width="47%">
+</colgroup>
 <thead><tr class="header">
-<th><strong>Python type</strong></th>
 <th><strong>Kuzu <code>LogicalTypeID</code></strong></th>
+<th><strong>R Type Equivalent</strong></th>
+<th><strong>Description</strong></th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>bool</code></td>
 <td><code>BOOL</code></td>
+<td><code>logical</code></td>
+<td>
+<code>TRUE</code>/<code>FALSE</code> values</td>
 </tr>
 <tr class="even">
-<td><code>int</code></td>
 <td><code>INT64</code></td>
+<td><code>integer</code></td>
+<td>64-bit signed integer</td>
 </tr>
 <tr class="odd">
-<td><code>float</code></td>
 <td><code>DOUBLE</code></td>
+<td><code>numeric</code></td>
+<td>Double-precision floating-point number</td>
 </tr>
 <tr class="even">
-<td><code>str</code></td>
 <td><code>STRING</code></td>
+<td><code>character</code></td>
+<td>UTF-8 encoded string</td>
 </tr>
 <tr class="odd">
-<td><code>datetime</code></td>
 <td><code>TIMESTAMP</code></td>
+<td><code>POSIXct</code></td>
+<td>Date and time with timezone, stored as microseconds since epoch</td>
 </tr>
 <tr class="even">
-<td><code>date</code></td>
 <td><code>DATE</code></td>
+<td><code>Date</code></td>
+<td>Date (year, month, day)</td>
 </tr>
 <tr class="odd">
-<td><code>timedelta</code></td>
 <td><code>INTERVAL</code></td>
+<td><code>difftime</code></td>
+<td>Time interval (e.g., “1 year 2 months 3 days”)</td>
 </tr>
 <tr class="even">
-<td><code>uuid</code></td>
 <td><code>UUID</code></td>
+<td><code>character</code></td>
+<td>Universally Unique Identifier, stored as a string</td>
 </tr>
 <tr class="odd">
-<td><code>list</code></td>
 <td><code>LIST</code></td>
+<td><code>list</code></td>
+<td>Ordered collection of values of the same type</td>
 </tr>
 <tr class="even">
-<td><code>dict</code></td>
 <td><code>MAP</code></td>
+<td>
+<code>list</code> (named list)</td>
+<td>Unordered collection of key-value pairs</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f9fe7eea990&gt;</span></span>
-<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f9fe7eeacd0&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="load-data">4. Load Data<a class="anchor" aria-label="anchor" href="#load-data"></a>
+<h3 id="creating-a-complex-schema">Creating a Complex Schema<a class="anchor" aria-label="anchor" href="#creating-a-complex-schema"></a>
 </h3>
-<p>You can load data into your tables from R data frames using
-<code><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df()</a></code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create data frames for nodes and relationships</span></span>
-<span><span class="va">persons</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Carol"</span><span class="op">)</span>,</span>
-<span>  age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">35</span>, <span class="fl">45</span>, <span class="fl">25</span><span class="op">)</span></span>
+<p>You can define a schema with node and relationship tables using
+<code><a href="../reference/kuzu_execute.html">kuzu_execute()</a></code>. Here’s an example of a more complex
+schema:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create a node table for users with various data types</span></span>
+<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"CREATE NODE TABLE User(userID UUID, name STRING,"</span>,</span>
+<span>                        <span class="st">"age INT64, is_active BOOL, created_at TIMESTAMP,"</span>,</span>
+<span>                        <span class="st">"last_login DATE, notes STRING[],"</span>,</span>
+<span>                        <span class="st">"PRIMARY KEY (userID))"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f512e3abb00&gt;</span></span>
+<span></span>
+<span><span class="co"># Create a node table for products</span></span>
+<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE NODE TABLE Product(productID INT64, name STRING, PRIMARY KEY (productID))"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f512d03b6e0&gt;</span></span>
+<span></span>
+<span><span class="co"># Create a relationship table for user purchases</span></span>
+<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Buys(FROM User TO Product, purchase_date DATE)"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f512d0a8fe0&gt;</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="loading-data">3. Loading Data<a class="anchor" aria-label="anchor" href="#loading-data"></a>
+</h2>
+<p>You can load data into your Kuzu tables from R data frames or
+external files like CSV.</p>
+<div class="section level3">
+<h3 id="loading-from-a-data-frame">Loading from a Data Frame<a class="anchor" aria-label="anchor" href="#loading-from-a-data-frame"></a>
+</h3>
+<p>Use <code><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df()</a></code> to load data from an R
+<code>data.frame</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a></span><span class="op">)</span></span>
+<span><span class="co"># Create data frames for nodes and relationships</span></span>
+<span><span class="va">users</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  userID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a1b2c3d4-e5f6-7890-1234-567890abcdef"</span>, <span class="st">"b2c3d4e5-f6a7-8901-2345-67890abcdef0"</span><span class="op">)</span>,</span>
+<span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span><span class="op">)</span>,</span>
+<span>  age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">35</span>, <span class="fl">45</span><span class="op">)</span>,</span>
+<span>  is_active <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>  created_at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2023-01-15 10:30:00"</span>, <span class="st">"2022-11-20 14:00:00"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  last_login <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2023-10-25"</span>, <span class="st">"2023-09-30"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># LIST types should be formatted as JSON strings</span></span>
+<span><span class="va">users</span><span class="op">$</span><span class="va">notes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"note1"</span>, <span class="st">"note2"</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="st">"note3"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">products</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  productID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">101</span>, <span class="fl">102</span><span class="op">)</span>,</span>
+<span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Laptop"</span>, <span class="st">"Mouse"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">knows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  from_person <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span><span class="op">)</span>,</span>
-<span>  to_person <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bob"</span>, <span class="st">"Carol"</span><span class="op">)</span>,</span>
-<span>  since <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2010</span>, <span class="fl">2015</span><span class="op">)</span></span>
+<span><span class="va">buys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  from_user <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a1b2c3d4-e5f6-7890-1234-567890abcdef"</span>, <span class="st">"b2c3d4e5-f6a7-8901-2345-67890abcdef0"</span><span class="op">)</span>,</span>
+<span>  to_product <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">101</span>, <span class="fl">102</span><span class="op">)</span>,</span>
+<span>  purchase_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2023-02-20"</span>, <span class="st">"2023-03-15"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load data into Kuzu</span></span>
-<span><span class="fu"><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">persons</span>, <span class="st">"Person"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">knows</span>, <span class="st">"Knows"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">users</span>, <span class="st">"User"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">products</span>, <span class="st">"Product"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">buys</span>, <span class="st">"Buys"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="execute-queries">5. Execute Queries<a class="anchor" aria-label="anchor" href="#execute-queries"></a>
+<h3 id="loading-from-a-csv-file">Loading from a CSV File<a class="anchor" aria-label="anchor" href="#loading-from-a-csv-file"></a>
 </h3>
-<p>Now you can execute Cypher queries and retrieve the results.</p>
+<p>Use <code><a href="../reference/kuzu_copy_from_csv.html">kuzu_copy_from_csv()</a></code> to load data from a CSV file.
+For this to work, the file should be in the current working
+directory.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create a CSV file in the project's root directory</span></span>
+<span><span class="va">csv_filename</span> <span class="op">&lt;-</span> <span class="st">"products.csv"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>productID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">103</span>, <span class="fl">104</span><span class="op">)</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Keyboard"</span>, <span class="st">"Monitor"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>          <span class="va">csv_filename</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load data from the CSV file using just the filename</span></span>
+<span><span class="fu"><a href="../reference/kuzu_copy_from_csv.html">kuzu_copy_from_csv</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">csv_filename</span>, <span class="st">"Product"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Clean up the created file</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">csv_filename</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="executing-queries-and-converting-results">4. Executing Queries and Converting Results<a class="anchor" aria-label="anchor" href="#executing-queries-and-converting-results"></a>
+</h2>
+<p>You can execute Cypher queries using <code><a href="../reference/kuzu_execute.html">kuzu_execute()</a></code> and
+convert the results into various R formats.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Execute a query to get users and their purchases</span></span>
+<span><span class="va">query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (u:User)-[b:Buys]-&gt;(p:Product) RETURN u.name, p.name, b.purchase_date"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="a-note-on-query-results">A Note on Query Results<a class="anchor" aria-label="anchor" href="#a-note-on-query-results"></a>
+</h3>
+<p>The <code>QueryResult</code> object returned by
+<code><a href="../reference/kuzu_execute.html">kuzu_execute()</a></code> acts as an iterator over the results. This
+means it can only be consumed once. Functions like
+<code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code>, <code><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble()</a></code>,
+<code><a href="../reference/kuzu_get_all.html">kuzu_get_all()</a></code>, and the graph conversion functions will
+exhaust this iterator.</p>
+</div>
+<div class="section level3">
+<h3 id="convert-to-data-frame-or-tibble">Convert to Data Frame or Tibble<a class="anchor" aria-label="anchor" href="#convert-to-data-frame-or-tibble"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert to a data frame</span></span>
+<span><span class="va">df_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df_result</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   u.name p.name b.purchase_date</span></span>
+<span><span class="co">#&gt; 1  Alice Laptop      2023-02-20</span></span>
+<span><span class="co">#&gt; 2    Bob  Mouse      2023-03-15</span></span>
+<span></span>
+<span><span class="co"># Convert to a tibble</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
+<span><span class="va">tibble_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tibble_result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
+<span><span class="co">#&gt;   u.name p.name b.purchase_date    </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Alice  Laptop 2023-02-20 <span style="color: #949494;">00:00:00</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Bob    Mouse  2023-03-15 <span style="color: #949494;">00:00:00</span></span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="use-query-results-returned-as-list">Use Query Results returned as list<a class="anchor" aria-label="anchor" href="#use-query-results-returned-as-list"></a>
+</h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#TODO add diferent result methodes</span></span>
-<span><span class="co">#todo add glue and stick to ("COPY Person FROM ... method) </span></span>
-<span><span class="st">"COPY Person FROM {persons}"</span></span>
-<span><span class="co">#&gt; [1] "COPY Person FROM {persons}"</span></span>
-<span><span class="st">"COPY Person FROM {c://.csv}"</span></span>
-<span><span class="co">#&gt; [1] "COPY Person FROM {c://.csv}"</span></span>
-<span><span class="st">"COPY Person FROM {c://.json}"</span></span>
-<span><span class="co">#&gt; [1] "COPY Person FROM {c://.json}"</span></span>
-<span><span class="st">"COPY Person FROM {c://.json}"</span></span>
-<span><span class="co">#&gt; [1] "COPY Person FROM {c://.json}"</span></span>
+<code class="sourceCode R"><span><span class="va">query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (u:User)-[b:Buys]-&gt;(p:Product) RETURN u.name, p.name, b.purchase_date"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_get_all.html">kuzu_get_all</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [[1]]$u.name</span></span>
+<span><span class="co">#&gt; [1] "Alice"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[1]]$p.name</span></span>
+<span><span class="co">#&gt; [1] "Laptop"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[1]]$b.purchase_date</span></span>
+<span><span class="co">#&gt; [1] "2023-02-20"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; [[2]]$u.name</span></span>
+<span><span class="co">#&gt; [1] "Bob"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]$p.name</span></span>
+<span><span class="co">#&gt; [1] "Mouse"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]$b.purchase_date</span></span>
+<span><span class="co">#&gt; [1] "2023-03-15"</span></span>
 <span></span>
+<span><span class="co"># only fetch 1. result </span></span>
+<span><span class="va">query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (u:User)-[b:Buys]-&gt;(p:Product) RETURN u.name, p.name, b.purchase_date"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Find all persons</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (p:Person) RETURN p.name, p.age"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   p.name p.age</span></span>
-<span><span class="co">#&gt; 1  Alice    35</span></span>
-<span><span class="co">#&gt; 2    Bob    45</span></span>
-<span><span class="co">#&gt; 3  Carol    25</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_get_n.html">kuzu_get_n</a></span><span class="op">(</span><span class="va">query_result</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [[1]]$u.name</span></span>
+<span><span class="co">#&gt; [1] "Alice"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[1]]$p.name</span></span>
+<span><span class="co">#&gt; [1] "Laptop"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[1]]$b.purchase_date</span></span>
+<span><span class="co">#&gt; [1] "2023-02-20"</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/kuzu_get_all.html">kuzu_get_all</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; list()</span></span></code></pre></div>
+<span><span class="co">#Fetch next result</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_get_next.html">kuzu_get_next</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $u.name</span></span>
+<span><span class="co">#&gt; [1] "Bob"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $p.name</span></span>
+<span><span class="co">#&gt; [1] "Mouse"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $b.purchase_date</span></span>
+<span><span class="co">#&gt; [1] "2023-03-15"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="convert-to-graph-objects">Convert to Graph Objects<a class="anchor" aria-label="anchor" href="#convert-to-graph-objects"></a>
+</h3>
+<p>For queries that return graph structures, you can convert the results
+into graph objects from packages like <code>igraph</code> or
+<code>tidygraph</code>. To do this, the query must return the node and
+relationship variables themselves, not just their properties.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Find relationships</span></span>
-<span><span class="va">result_rel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (a:Person)-[k:Knows]-&gt;(b:Person) RETURN a.name, k.since, b.name"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">result_rel</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   a.name k.since b.name</span></span>
-<span><span class="co">#&gt; 1  Alice    2010    Bob</span></span>
-<span><span class="co">#&gt; 2    Bob    2015  Carol</span></span></code></pre></div>
-<p>This concludes the basic introduction to <code>kuzuR</code>. For more
-advanced topics, such as graph library integrations, please see the
-other vignettes.</p>
+<code class="sourceCode R"><span><span class="co"># Execute a query that returns a graph structure </span></span>
+<span><span class="va">graph_query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (u:User)-[b:Buys]-&gt;(p:Product) RETURN u, p, b"</span><span class="op">)</span></span>
+<span><span class="va">igraph_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_igraph.html">as_igraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">igraph_obj</span><span class="op">)</span></span>
+<span><span class="co">#&gt; IGRAPH a0a8a98 DN-- 4 2 -- </span></span>
+<span><span class="co">#&gt; + attr: name (v/c), userID (v/x), age (v/n), is_active (v/x),</span></span>
+<span><span class="co">#&gt; | created_at (v/n), last_login (v/x), notes (v/x), User (v/x), label</span></span>
+<span><span class="co">#&gt; | (v/c), productID (v/n), Product (v/x), _src (e/x), purchase_date</span></span>
+<span><span class="co">#&gt; | (e/x), _dst (e/x), _label (e/c), _id (e/x)</span></span>
+<span><span class="co">#&gt; + edges from a0a8a98 (vertex names):</span></span>
+<span><span class="co">#&gt; [1] User_a1b2c3d4-e5f6-7890-1234-567890abcdef-&gt;Product_101</span></span>
+<span><span class="co">#&gt; [2] User_b2c3d4e5-f6a7-8901-2345-67890abcdef0-&gt;Product_102</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">igraph_obj</span><span class="op">)</span></span></code></pre></div>
+<p><img src="installation-and-usage_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Convert to a tidygraph object</span></span>
+<span><span class="va">tidygraph_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_tidygraph.html">as_tidygraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tidygraph_obj</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tbl_graph: 4 nodes and 2 edges</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # A rooted forest with 2 trees</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # Node Data: 4 × 11 (active)</span></span></span>
+<span><span class="co">#&gt;   name    userID        age is_active created_at          last_login notes User </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> User_a… <span style="color: #949494;">&lt;uuid.UUID&gt;</span>    35 <span style="color: #949494;">&lt;lgl [1]&gt;</span> 2023-01-15 <span style="color: #949494;">10:30:00</span> <span style="color: #949494;">&lt;date [1]&gt;</span> <span style="color: #949494;">&lt;chr&gt;</span> <span style="color: #949494;">&lt;lgl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Produc… <span style="color: #949494;">&lt;dbl [1]&gt;</span>     <span style="color: #BB0000;">NaN</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #BB0000;">NA</span>                  <span style="color: #949494;">&lt;dbl [1]&gt;</span>  <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> User_b… <span style="color: #949494;">&lt;uuid.UUID&gt;</span>    45 <span style="color: #949494;">&lt;lgl [1]&gt;</span> 2022-11-20 <span style="color: #949494;">14:00:00</span> <span style="color: #949494;">&lt;date [1]&gt;</span> <span style="color: #949494;">&lt;chr&gt;</span> <span style="color: #949494;">&lt;lgl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Produc… <span style="color: #949494;">&lt;dbl [1]&gt;</span>     <span style="color: #BB0000;">NaN</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #BB0000;">NA</span>                  <span style="color: #949494;">&lt;dbl [1]&gt;</span>  <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: label &lt;chr&gt;, productID &lt;dbl&gt;, Product &lt;list&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # Edge Data: 2 × 7</span></span></span>
+<span><span class="co">#&gt;    from    to `_src`           purchase_date `_dst`       `_label` `_id`       </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     2 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;date [1]&gt;</span>    <span style="color: #949494;">&lt;named list&gt;</span> Buys     <span style="color: #949494;">&lt;named list&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     3     4 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;date [1]&gt;</span>    <span style="color: #949494;">&lt;named list&gt;</span> Buys     <span style="color: #949494;">&lt;named list&gt;</span></span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tidygraph_obj</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

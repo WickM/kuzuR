@@ -66,8 +66,7 @@
 
 
 
-
-<div class="row">
+<script src="graph-integrations_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="graph-integrations_files/g6-binding-0.1.0/g6.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Graph Library Integrations</h1>
             
@@ -88,16 +87,6 @@ integration of <code>kuzuR</code> with popular R packages for graph
 analysis and visualization.</p>
 </div>
 <div class="section level2">
-<h2 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
-</h2>
-<p>Ensure you have the necessary packages installed:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("igraph")</span></span>
-<span><span class="co"># install.packages("tidygraph")</span></span>
-<span><span class="co"># install.packages("g6R")</span></span>
-<span><span class="co"># install.packages("kuzuR") # If not already installed</span></span></code></pre></div>
-</div>
-<div class="section level2">
 <h2 id="converting-to-igraph">Converting to <code>igraph</code><a class="anchor" aria-label="anchor" href="#converting-to-igraph"></a>
 </h2>
 <p>The <code>igraph</code> package is a powerful tool for graph
@@ -109,7 +98,7 @@ results into <code>igraph</code> objects.</p>
 </h3>
 <p>First, let’s set up a Kuzu database and load some sample graph
 data.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WickM/kuzuR" class="external-link">kuzuR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/" class="external-link">igraph</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -126,10 +115,11 @@ data.</p>
 <span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_connection.html">kuzu_connection</a></span><span class="op">(</span><span class="va">db_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create schema for nodes and relationships</span></span>
-<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fd0a44e3090&gt;</span></span>
+<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"CREATE NODE TABLE Person(name STRING, age INT64,"</span>,</span>
+<span>                        <span class="st">"PRIMARY KEY (name))"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fac1d2669f0&gt;</span></span>
 <span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fd0a44e3550&gt;</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fac0f54df40&gt;</span></span>
 <span></span>
 <span><span class="co"># Prepare data frames</span></span>
 <span><span class="va">persons_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -148,18 +138,26 @@ data.</p>
 <span><span class="fu"><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">knows_data</span>, <span class="st">"Knows"</span><span class="op">)</span></span></code></pre></div>
 <p>Now, let’s execute a query that returns graph data and convert it to
 an <code>igraph</code> object.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Query to get all persons and their relationships</span></span>
-<span><span class="va">graph_query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (p1:Person)-[k:Knows]-&gt;(p2:Person) RETURN p1, p2, k.since"</span><span class="op">)</span></span>
+<span><span class="va">graph_query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"MATCH (p1:Person)-[k:Knows]-&gt;"</span>,</span>
+<span>                                              <span class="st">"(p2:Person) RETURN p1, p2, k"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Convert the Kuzu result to an igraph object</span></span>
 <span><span class="va">igraph_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_igraph.html">as_igraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print the igraph object summary</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">igraph_graph</span><span class="op">)</span></span>
-<span><span class="co">#&gt; IGRAPH d058b09 DN-- 3 0 -- </span></span>
-<span><span class="co">#&gt; + attr: name (v/c), _id (v/x), _label (v/c), age (v/n), Person (v/l)</span></span>
-<span><span class="co">#&gt; + edges from d058b09 (vertex names):</span></span></code></pre></div>
+<span><span class="co">#&gt; IGRAPH fc1a225 DN-- 3 2 -- </span></span>
+<span><span class="co">#&gt; + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _src (e/x),</span></span>
+<span><span class="co">#&gt; | _dst (e/x), _id (e/x), since (e/n), _label (e/c)</span></span>
+<span><span class="co">#&gt; + edges from fc1a225 (vertex names):</span></span>
+<span><span class="co">#&gt; [1] Person_Alice-&gt;Person_Bob   Person_Bob  -&gt;Person_Carol</span></span>
+<span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">igraph_graph</span><span class="op">)</span><span class="op">$</span><span class="va">label</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">igraph_graph</span><span class="op">)</span><span class="op">$</span><span class="va">name</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">igraph_graph</span><span class="op">)</span><span class="op">$</span><span class="va">label</span> <span class="op">&lt;-</span> <span class="st">"knows"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">igraph_graph</span><span class="op">)</span></span></code></pre></div>
+<p><img src="graph-integrations_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <p>You can now perform standard <code>igraph</code> operations on
 <code>igraph_graph</code>.</p>
 </div>
@@ -176,25 +174,30 @@ via <code><a href="../reference/as_tidygraph.html">as_tidygraph()</a></code>.</p
 </h3>
 <p>Using the same Kuzu query result, we can convert it to a
 <code>tidygraph</code> object.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert the Kuzu result to a tidygraph object</span></span>
 <span><span class="va">tidygraph_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_tidygraph.html">as_tidygraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print the tidygraph object summary</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tidygraph_graph</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tbl_graph: 3 nodes and 0 edges</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tbl_graph: 3 nodes and 2 edges</span></span></span>
 <span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; # A rooted forest with 3 trees</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # A rooted tree</span></span></span>
 <span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; # Node Data: 3 × 5 (active)</span></span></span>
-<span><span class="co">#&gt;   name         `_id`            `_label`   age Person</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Person_Alice <span style="color: #949494;">&lt;named list [2]&gt;</span> Person      35 TRUE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Person_Bob   <span style="color: #949494;">&lt;named list [2]&gt;</span> Person      45 TRUE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Person_Carol <span style="color: #949494;">&lt;named list [2]&gt;</span> Person      25 TRUE  </span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # Node Data: 3 × 4 (active)</span></span></span>
+<span><span class="co">#&gt;   name           age Person label </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Person_Alice    35 TRUE   Person</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Person_Bob      45 TRUE   Person</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Person_Carol    25 TRUE   Person</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; # Edge Data: 0 × 2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 variables: from &lt;int&gt;, to &lt;int&gt;</span></span></span></code></pre></div>
+<span><span class="co"><span style="color: #949494;">#&gt; # Edge Data: 2 × 7</span></span></span>
+<span><span class="co">#&gt;    from    to `_src`           `_dst`           `_id`            since `_label`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     2 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;named list [2]&gt;</span>  <span style="text-decoration: underline;">2</span>010 Knows   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     3 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;named list [2]&gt;</span>  <span style="text-decoration: underline;">2</span>015 Knows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tidygraph_graph</span><span class="op">)</span></span></code></pre></div>
+<p><img src="graph-integrations_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -202,9 +205,10 @@ via <code><a href="../reference/as_tidygraph.html">as_tidygraph()</a></code>.</p
 </h2>
 <p>The <code>g6R</code> package provides an R interface to the G6
 JavaScript graph visualization library, enabling rich, interactive
-visualizations directly within R environments. The <code><a href="../reference/as_g6R.html">as_g6R()</a></code>
-function makes it straightforward to take graph data from Kuzu and
-create these visualizations.</p>
+visualizations directly within R environments. Since <code>g6R</code>
+has built-in support for <code>igraph</code> objects, you can easily
+create interactive visualizations by first converting your Kuzu query
+result to an <code>igraph</code> object.</p>
 <div class="section level3">
 <h3 id="example-creating-an-interactive-g6r-graph">Example: Creating an Interactive <code>g6R</code> Graph<a class="anchor" aria-label="anchor" href="#example-creating-an-interactive-g6r-graph"></a>
 </h3>
@@ -212,25 +216,50 @@ create these visualizations.</p>
 result into a <code>g6R</code> object. We can then customize the
 appearance of the nodes and edges for a more informative
 visualization.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Convert the Kuzu result to a g6R object</span></span>
-<span><span class="va">g6r_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_g6R.html">as_g6R</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/cynkra/g6R" class="external-link">g6R</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'g6R'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:graphics':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     legend</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:utils':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     history</span></span>
+<span><span class="va">graph_query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"MATCH (p1:Person)-[k:Knows]-&gt;"</span>,</span>
+<span>                                              <span class="st">"(p2:Person) RETURN p1, p2, k"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Convert the Kuzu result to a g6R-compatible list</span></span>
+<span><span class="va">igraph_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_igraph.html">as_igraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Display the g6R object (this will render an interactive visualization)</span></span>
-<span><span class="co"># In a real interactive session (like RStudio), this would display the plot.</span></span>
-<span><span class="co"># For this vignette, we'll just print the object structure.</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g6r_graph</span><span class="op">)</span></span>
+<span><span class="va">g6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://cynkra.github.io/g6R/reference/g6_igraph.html" class="external-link">g6_igraph</a></span><span class="op">(</span><span class="va">igraph_graph</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://cynkra.github.io/g6R/reference/g6_layout.html" class="external-link">g6_layout</a></span><span class="op">(</span><span class="fu"><a href="https://cynkra.github.io/g6R/reference/d3_force_layout.html" class="external-link">d3_force_layout</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://cynkra.github.io/g6R/reference/g6_options.html" class="external-link">g6_options</a></span><span class="op">(</span></span>
+<span>    animation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        labelText <span class="op">=</span> <span class="fu">JS</span><span class="op">(</span><span class="st">"(d) =&gt; d.name"</span><span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    edge <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        endArrow <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>        labelText <span class="op">=</span> <span class="fu">JS</span><span class="op">(</span><span class="st">"(d) =&gt; d.data.label"</span><span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://cynkra.github.io/g6R/reference/g6_behaviors.html" class="external-link">g6_behaviors</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://cynkra.github.io/g6R/reference/zoom_canvas.html" class="external-link">zoom_canvas</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://cynkra.github.io/g6R/reference/collapse_expand.html" class="external-link">collapse_expand</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://cynkra.github.io/g6R/reference/drag_canvas.html" class="external-link">drag_canvas</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://cynkra.github.io/g6R/reference/drag_element.html" class="external-link">drag_element</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://cynkra.github.io/g6R/reference/g6_plugins.html" class="external-link">g6_plugins</a></span><span class="op">(</span><span class="st">"toolbar"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Display the g6R object (this will render an interactive visualization)</span></span>
-<span><span class="co"># In a real interactive session (like RStudio), this would display the plot.</span></span>
-<span><span class="co"># For this vignette, we'll just print the object structure.</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g6r_graph</span><span class="op">)</span></span></code></pre></div>
-<p>This interactive visualization allows you to pan, zoom, and inspect
-nodes and edges, making it a powerful tool for exploring graph data
-retrieved from Kuzu.</p>
-<p>This concludes the vignette on graph library integrations. For more
-advanced usage and specific examples, please refer to the documentation
-of each respective library.</p>
+<span></span>
+<span><span class="co"># Display the graph</span></span>
+<span><span class="va">g6</span></span></code></pre></div>
+<div id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:100%;height:432.632880098888px;" class="g6 html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"data":{"nodes":[{"name":"Person_Alice","age":35,"Person":true,"label":"Person","id":"1","style":{"collapsed":false,"cursor":"default","fill":"#1783FF","fillOpacity":1,"increasedLineWidthForHitTesting":0,"lineCap":"butt","lineJoin":"miter","lineWidth":1,"opacity":1,"shadowType":"outer","size":32,"stroke":"#000","strokeOpacity":1,"visibility":"visible","name":"Person_Alice","age":35,"Person":true,"label":"Person","id":"1"}},{"name":"Person_Bob","age":45,"Person":true,"label":"Person","id":"2","style":{"collapsed":false,"cursor":"default","fill":"#1783FF","fillOpacity":1,"increasedLineWidthForHitTesting":0,"lineCap":"butt","lineJoin":"miter","lineWidth":1,"opacity":1,"shadowType":"outer","size":32,"stroke":"#000","strokeOpacity":1,"visibility":"visible","name":"Person_Bob","age":45,"Person":true,"label":"Person","id":"2"}},{"name":"Person_Carol","age":25,"Person":true,"label":"Person","id":"3","style":{"collapsed":false,"cursor":"default","fill":"#1783FF","fillOpacity":1,"increasedLineWidthForHitTesting":0,"lineCap":"butt","lineJoin":"miter","lineWidth":1,"opacity":1,"shadowType":"outer","size":32,"stroke":"#000","strokeOpacity":1,"visibility":"visible","name":"Person_Carol","age":25,"Person":true,"label":"Person","id":"3"}}],"edges":[{"source":"1","target":"2","_src":[{"offset":0,"table":0}],"_dst":[{"offset":1,"table":0}],"_id":[{"offset":0,"table":1}],"since":2010,"_label":"Knows","endArrow":true,"style":{"cursor":"default","fillRule":"nonzero","isBillboard":true,"lineDash":0,"lineDashOffset":0,"lineWidth":1,"opacity":1,"sourcePort":"1","stroke":"#000","strokeOpacity":1,"targetPort":"2","visibility":"visible","zIndex":-10000,"_src":[{"offset":0,"table":0}],"_dst":[{"offset":1,"table":0}],"_id":[{"offset":0,"table":1}],"since":2010,"_label":"Knows","endArrow":true}},{"source":"2","target":"3","_src":[{"offset":1,"table":0}],"_dst":[{"offset":2,"table":0}],"_id":[{"offset":1,"table":1}],"since":2015,"_label":"Knows","endArrow":true,"style":{"cursor":"default","fillRule":"nonzero","isBillboard":true,"lineDash":0,"lineDashOffset":0,"lineWidth":1,"opacity":1,"sourcePort":"2","stroke":"#000","strokeOpacity":1,"targetPort":"3","visibility":"visible","zIndex":-10000,"_src":[{"offset":1,"table":0}],"_dst":[{"offset":2,"table":0}],"_id":[{"offset":1,"table":1}],"since":2015,"_label":"Knows","endArrow":true}}]},"jsonUrl":null,"iconsUrl":"//at.alicdn.com/t/font_2678727_za4qjydwkkh.js","layout":{"type":"d3-force","link":{"distance":100,"strength":2},"collide":{"radius":40}},"node":{"style":{"labelText":"(d) => d.name"}},"edge":{"style":{"endArrow":true,"labelText":"(d) => d.data.label"}},"animation":false,"autoResize":false,"cursor":"default","rotation":0,"zoom":1,"zoomRange":[0.01,10],"theme":"light","behaviors":[{"key":"zoom-canvas","animation":{"duration":200},"enable":true,"preventDefault":true,"sensitivity":1,"type":"zoom-canvas"},{"key":"collapse-expand","animation":true,"enable":true,"trigger":"dblclick","align":true,"type":"collapse-expand"},{"key":"drag-canvas","enable":"(e) => {\n        return e.targetType === 'canvas';\n      }","direction":"both","sensitivity":10,"type":"drag-canvas"},{"key":"drag-element","enable":true,"animation":true,"state":"selected","dropEffect":"move","hideEdge":"none","shadow":false,"type":"drag-element"}],"plugins":[{"getItems":"( ) => [\n        { id : 'zoom-in' , value : 'zoom-in' },\n        { id : 'zoom-out' , value : 'zoom-out' },\n        { id : 'auto-fit' , value : 'auto-fit' },\n        { id: 'delete', value: 'delete' },\n        { id: 'request-fullscreen', value: 'request-fullscreen' },\n        { id: 'exit-fullscreen', value: 'exit-fullscreen' },\n      ]","key":"toolbar","position":"top-left","onClick":"( value, target, current ) => {   \n        // Handle button click events\n        const graph = HTMLWidgets\n          .find(`#${target.closest('.g6').id}`)\n          .getWidget();\n        const fullScreen = graph.getPluginInstance('fullscreen');\n        const zoomLevel = graph.getZoom();\n        if ( value === 'zoom-in' ) {   \n          graph.zoomTo (graph.getZoom() + 0.25);\n        } else if ( value === 'zoom-out' ) {     \n          graph.zoomTo (graph.getZoom() - 0.25);\n        } else if ( value === 'auto-fit' ) {     \n          graph.fitView ( ) ;\n        } else if (value === 'delete') {\n          const selectedNodes = graph\n            .getElementDataByState('node', 'selected')\n            .map((node) => {\n              return node.id\n            }\n          );\n          graph.removeNodeData(selectedNodes);\n          graph.draw();\n        } else if (value === 'request-fullscreen') {\n          if (fullScreen !== undefined) {\n            fullScreen.request();\n          }\n        } else if (value === 'exit-fullscreen') {\n          if (fullScreen !== undefined) {\n            fullScreen.exit();\n          }\n        }\n      }\n    ","type":"toolbar"}]},"evals":["node.style.labelText","edge.style.labelText","behaviors.2.enable","plugins.0.getItems","plugins.0.onClick"],"jsHooks":[]}</script>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

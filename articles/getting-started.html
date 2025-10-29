@@ -91,9 +91,12 @@ running your first query.</p>
 <p>First, ensure you have the <code>kuzuR</code> package installed from
 GitHub. You will also need <code>reticulate</code> to manage the Python
 environment.</p>
+<p>Development Version</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"WickM/kuzuR"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"WickM/kuzuR"</span><span class="op">)</span></span></code></pre></div>
+<p>Cran Version</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"kuzuR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
@@ -103,7 +106,7 @@ environment.</p>
 </h3>
 <p>The first step is to create a connection to a Kuzu database. You can
 create an in-memory database or connect to a database on disk.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WickM/kuzuR" class="external-link">kuzuR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create an in-memory database connection</span></span>
@@ -115,18 +118,19 @@ create an in-memory database or connect to a database on disk.</p>
 <p>Next, define your graph schema using Cypher queries. Let’s create a
 simple schema with <code>Person</code> nodes and <code>Knows</code>
 relationships.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f762d0e3610&gt;</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"CREATE NODE TABLE Person(name STRING, age INT64,"</span>,</span>
+<span>                        <span class="st">"PRIMARY KEY (name))"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fa0bb1d4440&gt;</span></span>
 <span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f762d0e39d0&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fa0c6542c00&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="load-data">3. Load Data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h3>
 <p>You can load data from R data frames directly into your Kuzu
 database.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a data frame of persons</span></span>
 <span><span class="va">persons_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Carol"</span><span class="op">)</span>,</span>
@@ -149,9 +153,10 @@ database.</p>
 </h3>
 <p>Finally, you can query your graph using Cypher and retrieve the
 results as an R data frame.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Execute a query</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (a:Person)-[k:Knows]-&gt;(b:Person) RETURN a.name, b.name, k.since"</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"MATCH (a:Person)-[k:Knows]-&gt;(b:Person)"</span>,</span>
+<span>                                  <span class="st">"RETURN a.name, b.name, k.since"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Convert the result to a data frame</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>

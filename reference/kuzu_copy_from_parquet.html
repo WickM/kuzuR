@@ -65,7 +65,8 @@
 
 
 <dt id="arg-table-name">table_name<a class="anchor" aria-label="anchor" href="#arg-table-name"></a></dt>
-<dd><p>A string specifying the name of the destination table in Kuzu.</p></dd>
+<dd><p>A string specifying the name of the destination table in
+Kuzu.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -75,7 +76,7 @@ not return a value.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="https://docs.kuzudb.com/import/parquet/" class="external-link">Kuzu Parquet Import</a></p></div>
+    <div class="dont-index"><p><a href="https://kuzudb.github.io/docs/import/parquet/" class="external-link">Kuzu Parquet Import</a></p></div>
     </div>
 
     <div class="section level2">
@@ -83,7 +84,8 @@ not return a value.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"arrow"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="kuzu_connection.html">kuzu_connection</a></span><span class="op">(</span><span class="st">":memory:"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"CREATE NODE TABLE Country(name STRING, code STRING, PRIMARY KEY (name))"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"CREATE NODE TABLE Country(name STRING, code STRING, </span></span></span>
+<span class="r-in"><span><span class="st">    PRIMARY KEY (name))"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>    <span class="co"># Create a temporary Parquet file</span></span></span>
 <span class="r-in"><span>    <span class="va">parquet_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".parquet"</span><span class="op">)</span></span></span>
