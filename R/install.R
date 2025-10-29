@@ -5,6 +5,7 @@
 #' using `reticulate::py_install()`.
 #'
 #' @export
+#' @return `NULL` invisibly.
 #' @examples
 #' \dontrun{
 #' install_kuzu()
