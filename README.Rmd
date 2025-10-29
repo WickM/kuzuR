@@ -59,7 +59,6 @@ Here is a complete example demonstrating how to create a database, define a sche
 library(kuzuR)
 library(igraph)
 library(tidygraph)
-library(g6R)
 
 # 1. Create a database in a temporary directory
 db_path <- tempfile()
@@ -115,11 +114,6 @@ plot(g_igraph)
 # b) Convert to a tidygraph object
 g_tidy <- as_tidygraph(graph_result)
 print(g_tidy)
-
-# c) Convert to a g6R object for interactive plotting
-# Note: This will render as an interactive plot in HTML outputs.
-g_g6 <- g6_igraph(g_igraph)
-g_g6
 
 # 6. Inspecting Query Results
 # You can inspect the schema of a query result without converting it to a data frame.
