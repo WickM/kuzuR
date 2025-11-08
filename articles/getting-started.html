@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">kuzuR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,9 +121,9 @@ relationships.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"CREATE NODE TABLE Person(name STRING, age INT64,"</span>,</span>
 <span>                        <span class="st">"PRIMARY KEY (name))"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f1839fd8230&gt;</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f09ebcba4b0&gt;</span></span>
 <span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f1838cad310&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f09ebcbae10&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="load-data">3. Load Data<a class="anchor" aria-label="anchor" href="#load-data"></a>

@@ -16,8 +16,10 @@
     [`as_tidygraph()`](https://wickm.github.io/kuzuR/reference/as_tidygraph.md).
   - Integration with `g6R` for interactive visualization via `igraph`
     objects.
-- Includes a helper function
-  [`install_kuzu()`](https://wickm.github.io/kuzuR/reference/install_kuzu.md)
-  to manage Python dependencies.
+- The `install_kuzu()` helper function has been replaced with
+  [`check_kuzu_installation()`](https://wickm.github.io/kuzuR/reference/check_kuzu_installation.md).
+  The package no longer installs Python dependencies automatically,
+  instead guiding the user to install them manually for greater
+  environment control.
 - Added vignettes for installation, usage, and graph library
   integrations.
