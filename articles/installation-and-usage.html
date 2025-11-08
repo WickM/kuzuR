@@ -179,15 +179,15 @@ schema:</p>
 <span>                        <span class="st">"age INT64, is_active BOOL, created_at TIMESTAMP,"</span>,</span>
 <span>                        <span class="st">"last_login DATE, notes STRING[],"</span>,</span>
 <span>                        <span class="st">"PRIMARY KEY (userID))"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f512e3abb00&gt;</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fbecd6e0260&gt;</span></span>
 <span></span>
 <span><span class="co"># Create a node table for products</span></span>
 <span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE NODE TABLE Product(productID INT64, name STRING, PRIMARY KEY (productID))"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f512d03b6e0&gt;</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fbecd6e02c0&gt;</span></span>
 <span></span>
 <span><span class="co"># Create a relationship table for user purchases</span></span>
 <span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Buys(FROM User TO Product, purchase_date DATE)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f512d0a8fe0&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fbecc341040&gt;</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -357,17 +357,17 @@ relationship variables themselves, not just their properties.</p>
 <span><span class="va">graph_query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (u:User)-[b:Buys]-&gt;(p:Product) RETURN u, p, b"</span><span class="op">)</span></span>
 <span><span class="va">igraph_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_igraph.html">as_igraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">igraph_obj</span><span class="op">)</span></span>
-<span><span class="co">#&gt; IGRAPH a0a8a98 DN-- 4 2 -- </span></span>
+<span><span class="co">#&gt; IGRAPH bff5e0e DN-- 4 2 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), userID (v/x), age (v/n), is_active (v/x),</span></span>
 <span><span class="co">#&gt; | created_at (v/n), last_login (v/x), notes (v/x), User (v/x), label</span></span>
-<span><span class="co">#&gt; | (v/c), productID (v/n), Product (v/x), _src (e/x), purchase_date</span></span>
-<span><span class="co">#&gt; | (e/x), _dst (e/x), _label (e/c), _id (e/x)</span></span>
-<span><span class="co">#&gt; + edges from a0a8a98 (vertex names):</span></span>
+<span><span class="co">#&gt; | (v/c), productID (v/n), Product (v/x), _src (e/x), _dst (e/x), _id</span></span>
+<span><span class="co">#&gt; | (e/x), _label (e/c), purchase_date (e/x)</span></span>
+<span><span class="co">#&gt; + edges from bff5e0e (vertex names):</span></span>
 <span><span class="co">#&gt; [1] User_a1b2c3d4-e5f6-7890-1234-567890abcdef-&gt;Product_101</span></span>
 <span><span class="co">#&gt; [2] User_b2c3d4e5-f6a7-8901-2345-67890abcdef0-&gt;Product_102</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">igraph_obj</span><span class="op">)</span></span></code></pre></div>
-<p><img src="installation-and-usage_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<p><img src="installation-and-usage_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Convert to a tidygraph object</span></span>
@@ -387,10 +387,10 @@ relationship variables themselves, not just their properties.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: label &lt;chr&gt;, productID &lt;dbl&gt;, Product &lt;list&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#</span></span></span>
 <span><span class="co"><span style="color: #949494;">#&gt; # Edge Data: 2 × 7</span></span></span>
-<span><span class="co">#&gt;    from    to `_src`           purchase_date `_dst`       `_label` `_id`       </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     2 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;date [1]&gt;</span>    <span style="color: #949494;">&lt;named list&gt;</span> Buys     <span style="color: #949494;">&lt;named list&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     3     4 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;date [1]&gt;</span>    <span style="color: #949494;">&lt;named list&gt;</span> Buys     <span style="color: #949494;">&lt;named list&gt;</span></span></span>
+<span><span class="co">#&gt;    from    to `_src`           `_dst`       `_id`        `_label` purchase_date</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     2 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;named list&gt;</span> <span style="color: #949494;">&lt;named list&gt;</span> Buys     <span style="color: #949494;">&lt;date [1]&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     3     4 <span style="color: #949494;">&lt;named list [2]&gt;</span> <span style="color: #949494;">&lt;named list&gt;</span> <span style="color: #949494;">&lt;named list&gt;</span> Buys     <span style="color: #949494;">&lt;date [1]&gt;</span></span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tidygraph_obj</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -406,7 +406,7 @@ relationship variables themselves, not just their properties.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
