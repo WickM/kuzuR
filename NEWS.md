@@ -11,5 +11,5 @@
     * Direct conversion to `igraph` objects with `as_igraph()`.
     * Direct conversion to `tidygraph` objects with `as_tidygraph()`.
     * Integration with `g6R` for interactive visualization via `igraph` objects.
-* Includes a helper function `install_kuzu()` to manage Python dependencies.
+* The `install_kuzu()` helper function has been replaced with `check_kuzu_installation()`. The package no longer installs Python dependencies automatically, instead guiding the user to install them manually for greater environment control.
 * Added vignettes for installation, usage, and graph library integrations.

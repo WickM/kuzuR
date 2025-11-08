@@ -1,82 +1,39 @@
-#' Install the Kuzu Python package
+#' Check for Kuzu Python Dependencies
 #'
-#' This function checks if the 'kuzu' Python package is available in the current
-#' reticulate environment. If not, it will ask for permission to install it
-#' using `reticulate::py_install()`.
+#' This function checks if the required Python packages (`kuzu`, `pandas`,
+#' `networkx`) are available in the user's `reticulate` environment. If any
+#' packages are missing, it provides a clear, actionable message guiding the
+#' user on how to install them manually.
 #'
 #' @export
-#' @return `NULL` invisibly.
+#' @return `NULL` invisibly. The function is called for its side effect of
+#'   checking dependencies and printing messages.
 #' @examples
 #' \dontrun{
-#' install_kuzu()
+#' check_kuzu_installation()
 #' }
-install_kuzu <- function() {
+check_kuzu_installation <- function() {
   pkgs <- c("kuzu", "pandas", "networkx")
   installed_status <- sapply(pkgs, reticulate::py_module_available)
 
   if (all(installed_status)) {
     message(
-      "The 'kuzu', 'pandas', and 'networkx' Python packages are already",
-      " installed and available."
+      "The 'kuzu', 'pandas', and 'networkx' Python packages are installed and available."
     )
     return(invisible(NULL))
   }
 
   missing_pkgs <- names(installed_status[!installed_status])
-  message(paste(
+  
+  # Construct the error message
+  error_msg <- paste(
     "The following required Python packages are not installed:",
-    paste(missing_pkgs, collapse = ", ")
-  ))
-
-  if (interactive()) {
-    question <- paste("Would you like to install them now? (This will use",
-                      "reticulate::py_install)")
-    if (utils::askYesNo(question, default = TRUE)) {
-      # Ask user if they want to create a new environment or use an existing one
-      env_choice <- readline(
-        prompt = paste("Install into a new environment? (y/n, default is 'n'",
-                       " for current/specified env): ")
-      )
-
-      if (tolower(env_choice) == "y") {
-        new_env_name <- readline(
-          prompt = "Enter the name for the new environment: "
-        )
-        if (new_env_name != "") {
-          reticulate::py_install(
-            pkgs,
-            pip = TRUE,
-            envname = new_env_name,
-            create_env = TRUE
-          )
-        } else {
-          message(
-            "New environment name cannot be empty. Installation cancelled."
-          )
-        }
-      } else {
-        # User chose not to create a new environment, prompt for existing env 
-        # name or use default
-        existing_env_name <- readline(
-          prompt = paste("Enter the name of the existing environment to use",
-                         " (leave blank for default): ")
-        )
-        if (existing_env_name != "") {
-          reticulate::py_install(pkgs, pip = TRUE, envname = existing_env_name)
-        } else {
-          # Use default environment if blank is provided
-          reticulate::py_install(pkgs, pip = TRUE)
-        }
-      }
-    } else {
-      message("Installation cancelled by user.")
-    }
-  } else {
-    message(
-      "To install the required packages, please run `kuzuR::install_kuzu()`",
-      " in an interactive R session."
-    )
-  }
-
+    paste(missing_pkgs, collapse = ", "),
+    "\nTo install them, please run the following command in your R console:",
+    sprintf('\nreticulate::py_install(c("%s"), pip = TRUE)', paste(missing_pkgs, collapse = '", "'))
+  )
+  
+  stop(error_msg, call. = FALSE)
+  
   invisible(NULL)
 }

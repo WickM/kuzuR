@@ -85,7 +85,7 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
     stop(
       "The 'pandas' Python package is required to convert results to a ",
       "data.frame. ",
-      "Please run `kuzuR::install_kuzu()`.",
+      "Please install it using reticulate::py_install('pandas', pip = TRUE).",
       call. = FALSE
     )
   }
@@ -128,7 +128,7 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
     stop(
       "The 'pandas' Python package is required to convert results to a ",
       "tibble. ",
-      "Please run `kuzuR::install_kuzu()`.",
+      "Please install it using reticulate::py_install('pandas', pip = TRUE).",
       call. = FALSE
     )
   }

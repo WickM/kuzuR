@@ -12,8 +12,6 @@ status](https://www.r-pkg.org/badges/version/kuzuR)](https://cran.r-project.org/
 [![R-CMD-check](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
-[![Codecov test
-coverage](https://codecov.io/gh/WickM/kuzuR/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
 
 <!-- badges: end -->
 

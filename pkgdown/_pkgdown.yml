@@ -61,4 +61,4 @@ reference:
   - as_tidygraph
 - title: "Installation"
   contents:
-  - install_kuzu
+  - check_kuzu_installation

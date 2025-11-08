@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# kuzuR <img src="man/figures/logo.png" align="right"/>
+# kuzuR <img src="man/figures/logo.png" align="right" height="138"/>
 
 <!-- badges: start -->
 
@@ -30,26 +30,37 @@ The primary goal of `kuzuR` is to provide an idiomatic R experience for: - Creat
 
 ## Installation
 
-`kuzuR` requires a working Python installation. Once Python is available, you can install the package and its Python dependencies in two steps.
+`kuzuR` requires a working Python installation with the `kuzu`, `pandas`, and `networkx` packages.
 
-**Install the R package** from CRAN:
+1.  **Install the R Package**
 
-``` r
-#install.packages("kuzuR")
-```
+You can install the development version from GitHub:
 
-**Install the R package** from GitHub:
-
-``` r
+```r
 # install.packages("pak")
 pak::pak("WickM/kuzuR")
 ```
 
-2.  **Install Python dependencies:** Use the built-in helper function to install `kuzu`, `pandas`, and `networkx` into a dedicated environment.
+Or the stable version from CRAN:
+```r
+# install.packages("kuzuR")
+```
 
-``` r
+2.  **Install Python Dependencies**
+
+After installing `kuzuR`, you must install the required Python packages. You can do this from your R console using `reticulate`:
+
+```r
 library(kuzuR)
-install_kuzu()
+reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)
+```
+
+3.  **Verify Installation**
+
+You can check that all dependencies are correctly installed by running:
+```r
+check_kuzu_installation()
+#> The 'kuzu', 'pandas', and 'networkx' Python packages are installed and available.
 ```
 
 ## Usage

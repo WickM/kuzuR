@@ -47,6 +47,10 @@ This pattern is exemplified by the graph conversion workflow:
 
 This demonstrates a powerful pattern of creating custom S3 classes for `reticulate` objects to enable clean, R-native conversion workflows.
 
-### 3. Dependency Management via Helper Function
+### 3. Dependency Management via User-Controlled Installation
 
-The reliance on Python packages is managed through a dedicated helper function, `install_kuzu()` (located in `R/install.R`). This abstracts the `reticulate::py_install()` process, guiding users to install dependencies into a consistent environment. This is a common pattern for `reticulate`-based packages to simplify setup for non-expert users.
+The reliance on Python packages is managed by placing the responsibility for installation directly on the user. This is a deliberate design choice to increase transparency and give users full control over their Python environments.
+
+The package provides a helper function, `check_kuzu_installation()`, which verifies that the required Python packages (`kuzu`, `pandas`, `networkx`) are available. If they are not, it provides a clear, copy-pasteable command for the user to run.
+
+This pattern avoids the complexities and potential surprises of automated installation, favoring an explicit, user-driven setup process. The `.onAttach` function also checks for dependencies when the package is loaded and provides the same helpful guidance.

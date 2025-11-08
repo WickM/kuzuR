@@ -13,7 +13,7 @@
 A developer working on this package needs:
 1.  A working R environment.
 2.  A Python installation accessible to `reticulate`.
-3.  The `kuzu`, `pandas`, and `networkx` Python packages installed in the environment that `reticulate` uses. The `R/install.R` file provides a helper function (`install_kuzu()`) for this purpose.
+3.  The `kuzu`, `pandas`, and `networkx` Python packages installed in the environment that `reticulate` uses. The package provides a helper function, `check_kuzu_installation()`, to verify this setup and guide the user.
 
 ## The `reticulate` Decision: A Technical Constraint
 
@@ -29,6 +29,7 @@ Attempting to link the MSVC-compiled Kuzu library against an `Rcpp`-based packag
 -   **Performance Overhead:** The `reticulate` bridge introduces a layer of overhead compared to a theoretical native C++ implementation. Data serialization between R and Python is the primary performance consideration.
 -   **Python Dependency:** The package is not self-contained. Its functionality is entirely dependent on an external Python environment and the `kuzu`, `pandas`, and `networkx` libraries.
 -   **Error Handling:** Errors can originate from R, Python, or the Kuzu database itself. Stack traces can be complex, spanning multiple languages.
+-   **`NAMESPACE` Management:** The `NAMESPACE` file is managed automatically by `roxygen2`. It must not be edited manually. All changes to exported functions must be handled via `roxygen2` documentation tags (e.g., `@export`) followed by running `devtools::document()`.
 
 ## Resolved `reticulate` Object Round-Trip Issue
 
