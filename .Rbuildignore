@@ -13,3 +13,4 @@
 ^\.lintr$
 ^\.vscode$
 ^[.]?air[.]toml$
+^CRAN-SUBMISSION$

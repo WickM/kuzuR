@@ -4,6 +4,8 @@ Version: 0.1.0
 Authors@R: 
     person("Manuel", "Wick-Eckl", role = c("aut", "cre"), 
            email = "manuel.wick@gmail.com")
+Author: Manuel Wick-Eckl
+Maintainer: Manuel Wick-Eckl <manuel.wick@gmail.com>
 Description: Provides a high-performance R interface to the Kuzu graph database.
     It uses the 'reticulate' package to wrap the official Python client
     ('kuzu', 'pandas', and 'networkx'), allowing users to interact with Kuzu

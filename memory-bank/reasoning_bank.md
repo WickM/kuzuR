@@ -35,3 +35,20 @@ When a command-line tool fails to execute due to environment issues (e.g., PATH,
 
 **Source:**
 `kuzuR` project, resolution of `R CMD check` failures.
+
+---
+
+### 3. De-risking `reticulate`-Based R Packages with Cross-Platform CI
+
+**Description:**
+For R packages that depend on Python via the `reticulate` bridge, standard CI checks running only on Linux are insufficient. The primary technical risk is the R-to-Python interface, which can have platform-specific failures (especially on Windows due to toolchain differences). A robust CI strategy must validate the `reticulate` bridge on all major operating systems.
+
+**Content:**
+-   **Problem:** The `kuzuR` package's CI workflow only ran on `ubuntu-latest`. While it could verify the R code, it failed to test the core dependency: the `reticulate` bridge to the Python `kuzu` library on Windows and macOS, where users are likely to encounter issues.
+-   **Incorrect Hypothesis:** A standard `R-CMD-check` on a single OS is sufficient to guarantee package quality.
+-   **Root Cause:** The project's `techContext.md` explicitly stated that `reticulate` was chosen to bypass a Windows-specific C++ toolchain incompatibility. By not testing on Windows, the CI process was ignoring the most significant known risk.
+-   **Solution:** The GitHub Actions workflow was refactored to use a `strategy: matrix` to run the full test suite on `windows-latest`, `macos-latest`, and `ubuntu-latest`. Additionally, the workflow was modified to explicitly install a specific Python version (`actions/setup-python`) and the required Python packages (`pip install`), creating a predictable and debuggable environment.
+-   **Strategic Lesson:** When an R package's core functionality relies on an FFI bridge like `reticulate`, the CI strategy must be designed to de-risk that specific dependency. This involves running tests on a matrix of operating systems to catch platform-specific integration issues and ensuring the foreign language environment (e.g., Python) is explicitly and predictably configured.
+
+**Source:**
+`kuzuR` project, refactoring of `.github/workflows/check-package.yaml`.

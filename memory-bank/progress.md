@@ -13,6 +13,10 @@
     -   Result retrieval and conversion to `data.frame` and `tibble`.
 -   **Complete Test Suite:** The test suite is comprehensive and covers all core functionality.
 -   **Vignette and Documentation Updates:** All vignettes and the `README.Rmd` have been updated to reflect the current state of the package.
+-   **Robust CI/CD Pipeline:** The GitHub Actions workflow has been overhauled to provide comprehensive, cross-platform testing.
+    -   It now runs on Windows, macOS, and Ubuntu.
+    -   It uses a controlled Python environment, ensuring stability and predictability.
+    -   This provides a strong guarantee that the core `reticulate` bridge is functional across all major platforms.
 -   **CRAN Compliance:** Most `R CMD check` issues have been resolved. The remaining issues are a system-level `pdflatex` error and a persistent but likely benign NOTE about the license stub.
 
 ## What's Left to Build
