@@ -14,8 +14,8 @@
 <url><loc>https://wickm.github.io/kuzuR/reference/as_igraph.html</loc></url>
 <url><loc>https://wickm.github.io/kuzuR/reference/as_tibble.kuzu.query_result.QueryResult.html</loc></url>
 <url><loc>https://wickm.github.io/kuzuR/reference/as_tidygraph.html</loc></url>
-<url><loc>https://wickm.github.io/kuzuR/reference/check_kuzu_installation.html</loc></url>
 <url><loc>https://wickm.github.io/kuzuR/reference/index.html</loc></url>
+<url><loc>https://wickm.github.io/kuzuR/reference/install_kuzu.html</loc></url>
 <url><loc>https://wickm.github.io/kuzuR/reference/kuzu_connection.html</loc></url>
 <url><loc>https://wickm.github.io/kuzuR/reference/kuzu_copy_from_csv.html</loc></url>
 <url><loc>https://wickm.github.io/kuzuR/reference/kuzu_copy_from_df.html</loc></url>

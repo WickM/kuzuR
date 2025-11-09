@@ -45,5 +45,5 @@
 
 ## Installation
 
-- [`check_kuzu_installation()`](https://wickm.github.io/kuzuR/reference/check_kuzu_installation.md)
-  : Check for Kuzu Python Dependencies
+- [`install_kuzu()`](https://wickm.github.io/kuzuR/reference/install_kuzu.md)
+  : Install the Kuzu Python package
