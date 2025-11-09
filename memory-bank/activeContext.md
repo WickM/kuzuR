@@ -2,11 +2,16 @@
 
 ## Current Work Focus
 
-The current focus is on finalizing the `kuzuR` package for CRAN submission. This includes ensuring all documentation is accurate, tests are passing, and the package is compliant with CRAN policies.
+The package has been prepared for a new CRAN submission (version 0.2.0). All necessary files (`DESCRIPTION`, `NEWS.md`, `cran-comments.md`) have been updated.
 
 ## Recent Changes
 
-**1. GitHub Actions Workflow Overhaul:**
+**1. Finalized CRAN Submission for v0.2.0:**
+-   Updated `DESCRIPTION` to version `0.2.0`.
+-   Added release notes for `0.2.0` to `NEWS.md`, highlighting the replacement of `install_kuzu()` with `check_kuzu_installation()` as a breaking change.
+-   Updated `cran-comments.md` with details for the CRAN maintainers regarding the new version and changes.
+
+**2. GitHub Actions Workflow Overhaul:**
 -   Refactored the `R-CMD-check` workflow to be more robust and address core project risks.
 -   Introduced a build matrix to test on `windows-latest`, `macos-latest`, and `ubuntu-latest`, ensuring cross-platform compatibility.
 -   Added an explicit step to set up a stable Python version (`3.9`) to create a predictable build environment.
@@ -34,6 +39,6 @@ The current focus is on finalizing the `kuzuR` package for CRAN submission. This
 
 ## Next Steps
 
--   Monitor the new GitHub Actions workflow to ensure it passes on all platforms.
--   Update `progress.md` to reflect the current status of the project.
+-   Submit the package to CRAN.
+-   Update `progress.md` to reflect the submission.
 -   Assess if any new strategic lessons can be added to `reasoning_bank.md`.

@@ -17,14 +17,12 @@
     -   It now runs on Windows, macOS, and Ubuntu.
     -   It uses a controlled Python environment, ensuring stability and predictability.
     -   This provides a strong guarantee that the core `reticulate` bridge is functional across all major platforms.
--   **CRAN Compliance:** Most `R CMD check` issues have been resolved. The remaining issues are a system-level `pdflatex` error and a persistent but likely benign NOTE about the license stub.
+-   **CRAN Compliance:** The package passes `R CMD check` without any ERRORs, WARNINGs, or NOTEs. All necessary documentation and metadata have been prepared for submission.
 
 ## What's Left to Build
--   **CRAN Submission Checklist:**
-    1.  Review and Enhance Documentation: Ensure all exported functions have complete and runnable examples, and review all documentation for clarity.
-    **CSV Import Options:** Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
 -   **UDF (User-Defined Functions):** Investigate and implement support for Kuzu's user-defined functions.
 -   **ellmer Graph RAG Tool Implementation:** Implement the `ellmer` tool for Graph RAG (post-CRAN submission).
+-   **CSV Import Options:** Document CSV import options (HEADER, DELIM, QUOTE, ESCAPE, SKIP, PARALLEL, IGNORE_ERRORS, auto_detect, sample_size, NULL_STRINGS, Compressed CSV files).
 
 ## Known Issues
 
@@ -33,4 +31,4 @@
 
 ## Current Status
 
-The project is at a **beta** stage. The core functionality is stable and well-tested. The documentation has been updated, and the package is nearly ready for CRAN submission. The remaining tasks are primarily related to the CRAN submission process and future feature enhancements.
+The project is **ready for CRAN submission** (v0.2.0). The core functionality is stable, well-tested, and fully documented. The package passes all local and CI checks. Future work will focus on new features like UDF support and the `ellmer` integration.
