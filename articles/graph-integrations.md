@@ -37,9 +37,9 @@ con <- kuzu_connection(db_path)
 # Create schema for nodes and relationships
 kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
                         "PRIMARY KEY (name))"))
-#> <kuzu.query_result.QueryResult object at 0x7f854dbab920>
+#> <kuzu.query_result.QueryResult object at 0x7fb0178669f0>
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
-#> <kuzu.query_result.QueryResult object at 0x7f854c9d6060>
+#> <kuzu.query_result.QueryResult object at 0x7fb00888fce0>
 
 # Prepare data frames
 persons_data <- data.frame(
@@ -71,10 +71,10 @@ igraph_graph <- as_igraph(graph_query_result)
 
 # Print the igraph object summary
 print(igraph_graph)
-#> IGRAPH 2410cb4 DN-- 3 2 -- 
-#> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), since (e/n),
-#> | _id (e/x), _src (e/x), _dst (e/x), _label (e/c)
-#> + edges from 2410cb4 (vertex names):
+#> IGRAPH ac9a491 DN-- 3 2 -- 
+#> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _id (e/x),
+#> | _dst (e/x), since (e/n), _label (e/c), _src (e/x)
+#> + edges from ac9a491 (vertex names):
 #> [1] Person_Alice->Person_Bob   Person_Bob  ->Person_Carol
 
 V(igraph_graph)$label <- igraph::V(igraph_graph)$name
@@ -116,10 +116,10 @@ print(tidygraph_graph)
 #> 3 Person_Carol    25 TRUE   Person
 #> #
 #> # Edge Data: 2 × 7
-#>    from    to since `_id`            `_src`           `_dst`           `_label`
-#>   <int> <int> <dbl> <list>           <list>           <list>           <chr>   
-#> 1     1     2  2010 <named list [2]> <named list [2]> <named list [2]> Knows   
-#> 2     2     3  2015 <named list [2]> <named list [2]> <named list [2]> Knows
+#>    from    to `_id`            `_dst`           since `_label` `_src`          
+#>   <int> <int> <list>           <list>           <dbl> <chr>    <list>          
+#> 1     1     2 <named list [2]> <named list [2]>  2010 Knows    <named list [2]>
+#> 2     2     3 <named list [2]> <named list [2]>  2015 Knows    <named list [2]>
 plot(tidygraph_graph)
 ```
 

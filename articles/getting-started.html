@@ -121,9 +121,9 @@ relationships.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"CREATE NODE TABLE Person(name STRING, age INT64,"</span>,</span>
 <span>                        <span class="st">"PRIMARY KEY (name))"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7efe15daba10&gt;</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fe60a9d4380&gt;</span></span>
 <span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7efe15d37380&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7fe6096ad220&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="load-data">3. Load Data<a class="anchor" aria-label="anchor" href="#load-data"></a>

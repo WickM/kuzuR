@@ -47,15 +47,15 @@ kuzu_execute(con, paste("CREATE NODE TABLE User(userID UUID, name STRING,",
                         "age INT64, is_active BOOL, created_at TIMESTAMP,",
                         "last_login DATE, notes STRING[],",
                         "PRIMARY KEY (userID))"))
-#> <kuzu.query_result.QueryResult object at 0x7f5cd7fd43b0>
+#> <kuzu.query_result.QueryResult object at 0x7f00a8786780>
 
 # Create a node table for products
 kuzu_execute(con, "CREATE NODE TABLE Product(productID INT64, name STRING, PRIMARY KEY (productID))")
-#> <kuzu.query_result.QueryResult object at 0x7f5cd6cad220>
+#> <kuzu.query_result.QueryResult object at 0x7f00996ad310>
 
 # Create a relationship table for user purchases
 kuzu_execute(con, "CREATE REL TABLE Buys(FROM User TO Product, purchase_date DATE)")
-#> <kuzu.query_result.QueryResult object at 0x7f5cd6cad370>
+#> <kuzu.query_result.QueryResult object at 0x7f00996ad3a0>
 ```
 
 ## 3. Loading Data
@@ -232,12 +232,12 @@ themselves, not just their properties.
 graph_query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u, p, b")
 igraph_obj <- as_igraph(graph_query_result)
 print(igraph_obj)
-#> IGRAPH c9b2765 DN-- 4 2 -- 
+#> IGRAPH 9b82853 DN-- 4 2 -- 
 #> + attr: name (v/c), userID (v/x), age (v/n), is_active (v/x),
 #> | created_at (v/n), last_login (v/x), notes (v/x), User (v/x), label
-#> | (v/c), productID (v/n), Product (v/x), _src (e/x), _label (e/c), _id
-#> | (e/x), purchase_date (e/x), _dst (e/x)
-#> + edges from c9b2765 (vertex names):
+#> | (v/c), productID (v/n), Product (v/x), purchase_date (e/x), _id
+#> | (e/x), _label (e/c), _dst (e/x), _src (e/x)
+#> + edges from 9b82853 (vertex names):
 #> [1] User_a1b2c3d4-e5f6-7890-1234-567890abcdef->Product_101
 #> [2] User_b2c3d4e5-f6a7-8901-2345-67890abcdef0->Product_102
 
@@ -265,10 +265,10 @@ print(tidygraph_obj)
 #> # ℹ 3 more variables: label <chr>, productID <dbl>, Product <list>
 #> #
 #> # Edge Data: 2 × 7
-#>    from    to `_src`           `_label` `_id`        purchase_date `_dst`      
-#>   <int> <int> <list>           <chr>    <list>       <list>        <list>      
-#> 1     1     2 <named list [2]> Buys     <named list> <date [1]>    <named list>
-#> 2     3     4 <named list [2]> Buys     <named list> <date [1]>    <named list>
+#>    from    to purchase_date `_id`            `_label` `_dst`       `_src`      
+#>   <int> <int> <list>        <list>           <chr>    <list>       <list>      
+#> 1     1     2 <date [1]>    <named list [2]> Buys     <named list> <named list>
+#> 2     3     4 <date [1]>    <named list [2]> Buys     <named list> <named list>
 
 plot(tidygraph_obj)
 ```
