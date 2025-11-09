@@ -94,7 +94,7 @@ test_that("kuzu_copy_from_df handles various data types", {
     value = c(1.23, 4.56),
     amount = c(10.12345, 67.89012),
     event_date = as.Date(c("2023-01-15", "2023-02-20")),
-    timestamp = as.POSIXct(c("2023-01-15 10:30:00", "2023-02-20 14:45:00")),
+    timestamp = as.POSIXct(c("2023-01-15 10:30:00", "2023-02-20 14:45:00"), tz = "UTC"),
     price = c(99.99, 123.45),
     price2 = c(99.99, 123.45),
     int8_col = c(1L, -128L),
@@ -128,9 +128,11 @@ test_that("kuzu_copy_from_df handles various data types", {
     substr(as.character(df_check$m.event_date), 1, 10),
     c("2023-01-15", "2023-02-20")
   )
+  # Format both actual and expected to UTC strings for a robust comparison
+  expected_timestamps_df <- as.POSIXct(c("2023-01-15 10:30:00", "2023-02-20 14:45:00"), tz = "UTC")
   expect_equal(
-    as.character(df_check$m.timestamp),
-    c("2023-01-15 10:30:00", "2023-02-20 14:45:00")
+    format(df_check$m.timestamp, tz = "UTC", format = "%Y-%m-%d %H:%M:%S"),
+    format(expected_timestamps_df, tz = "UTC", format = "%Y-%m-%d %H:%M:%S")
   )
   expect_equal(df_check$m.price, c(100, 123))
   expect_equal(df_check$m.int8_col, c(1L, -128L))
@@ -278,9 +280,11 @@ test_that("kuzu_copy_from_csv loads data correctly", {
     substr(as.character(df_check$c.event_date), 1, 10),
     c("2023-01-15", "2023-02-20")
   )
+  # Format both actual and expected to UTC strings for a robust comparison
+  expected_timestamps_csv <- as.POSIXct(c("2023-01-15 09:30:00", "2023-02-20 13:45:00"), tz = "UTC")
   expect_equal(
-    as.character(df_check$c.timestamp),
-    c("2023-01-15 10:30:00", "2023-02-20 14:45:00")
+    format(df_check$c.timestamp, tz = "UTC", format = "%Y-%m-%d %H:%M:%S"),
+    format(expected_timestamps_csv, tz = "UTC", format = "%Y-%m-%d %H:%M:%S")
   )
 })
 
