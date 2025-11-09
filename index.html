@@ -130,12 +130,12 @@
 <span><span class="st">  PRIMARY KEY (name)</span></span>
 <span><span class="st">)"</span></span>
 <span><span class="fu"><a href="reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">schema_query_1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x00000230F2280050&gt;</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x000001DDFFE00050&gt;</span></span>
 <span></span>
 <span><span class="co"># Create a 'Knows' relationship table</span></span>
 <span><span class="va">schema_query_2</span> <span class="op">&lt;-</span> <span class="st">"CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"</span></span>
 <span><span class="fu"><a href="reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">schema_query_2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x00000230F2153D90&gt;</span></span>
+<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x000001DDFFC97D90&gt;</span></span>
 <span></span>
 <span><span class="co"># 3. Load data from R data frames</span></span>
 <span><span class="co"># Create node data</span></span>
@@ -173,10 +173,10 @@
 <span><span class="co"># a) Convert to an igraph object</span></span>
 <span><span class="va">g_igraph</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_igraph.html">as_igraph</a></span><span class="op">(</span><span class="va">graph_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g_igraph</span><span class="op">)</span></span>
-<span><span class="co">#&gt; IGRAPH 18d3706 DN-- 3 2 -- </span></span>
-<span><span class="co">#&gt; + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _id (e/x),</span></span>
-<span><span class="co">#&gt; | _dst (e/x), since (e/n), _label (e/c), _src (e/x)</span></span>
-<span><span class="co">#&gt; + edges from 18d3706 (vertex names):</span></span>
+<span><span class="co">#&gt; IGRAPH 6697a05 DN-- 3 2 -- </span></span>
+<span><span class="co">#&gt; + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _label (e/c),</span></span>
+<span><span class="co">#&gt; | _id (e/x), _dst (e/x), since (e/n), _src (e/x)</span></span>
+<span><span class="co">#&gt; + edges from 6697a05 (vertex names):</span></span>
 <span><span class="co">#&gt; [1] Person_Alice-&gt;Person_Bob   Person_Bob  -&gt;Person_Carol</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g_igraph</span><span class="op">)</span></span>
 <span></span>
@@ -195,10 +195,10 @@
 <span><span class="co">#&gt; 3 Person_Carol    50 TRUE   Person</span></span>
 <span><span class="co">#&gt; #</span></span>
 <span><span class="co">#&gt; # Edge Data: 2 × 7</span></span>
-<span><span class="co">#&gt;    from    to `_id`            `_dst`           since `_label` `_src`          </span></span>
-<span><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;list&gt;           &lt;list&gt;           &lt;dbl&gt; &lt;chr&gt;    &lt;list&gt;          </span></span>
-<span><span class="co">#&gt; 1     1     2 &lt;named list [2]&gt; &lt;named list [2]&gt;  2010 Knows    &lt;named list [2]&gt;</span></span>
-<span><span class="co">#&gt; 2     2     3 &lt;named list [2]&gt; &lt;named list [2]&gt;  2015 Knows    &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt;    from    to `_label` `_id`            `_dst`           since `_src`          </span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;list&gt;           &lt;list&gt;           &lt;dbl&gt; &lt;list&gt;          </span></span>
+<span><span class="co">#&gt; 1     1     2 Knows    &lt;named list [2]&gt; &lt;named list [2]&gt;  2010 &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 2     2     3 Knows    &lt;named list [2]&gt; &lt;named list [2]&gt;  2015 &lt;named list [2]&gt;</span></span>
 <span></span>
 <span><span class="co"># 6. Inspecting Query Results</span></span>
 <span><span class="co"># You can inspect the schema of a query result without converting it to a data frame.</span></span>
@@ -272,9 +272,6 @@ Plot of the graph structure created from Kuzu query results.
 <li><a href="https://cran.r-project.org/package=kuzuR" class="external-link"><img src="https://www.r-pkg.org/badges/version/kuzuR" alt="CRAN status"></a></li>
 <li><a href="https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/WickM/kuzuR" class="external-link"><img src="https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://app.codecov.io/gh/WickM/kuzuR" class="external-link"><img src="https://codecov.io/gh/WickM/kuzuR/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://app.codecov.io/gh/WickM/kuzuR" class="external-link"><img src="https://codecov.io/gh/WickM/kuzuR/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 
