@@ -1,8 +1,9 @@
+## Resubmission
+
+This is a resubmission of `kuzuR`. The version has been bumped to `0.2.0` due to a breaking change where the `install_kuzu()` function was replaced with `check_kuzu_installation()` to give users more control over their Python environment.
+
+Other changes in this version include a fix for a timezone-related test failure and the addition of standard GitHub Actions for R CMD checks.
+
 ## R CMD check results
 
-There are no ERRORs or WARNINGs.
-
-There is one NOTE regarding the license stub. I have ensured that the `DESCRIPTION` file specifies `License: MIT + file LICENSE` and that the `LICENSE` file contains the standard MIT license text.
-
-The `pdflatex` error during the check is a local environment issue and should not affect the package's integrity on CRAN.
-
+There are no ERRORs, WARNINGs or NOTEs.

@@ -1,3 +1,9 @@
+# kuzuR 0.2.0
+
+* The `install_kuzu()` helper function has been replaced with `check_kuzu_installation()`. The package no longer installs Python dependencies automatically, instead guiding the user to install them manually for greater environment control. This is a breaking change.
+* Fixed a test failure caused by timezone differences.
+* Added standard GitHub Actions for R CMD check.
+
 # kuzuR 0.1.0
 
 * Initial release of `kuzuR`.
@@ -11,5 +17,4 @@
     * Direct conversion to `igraph` objects with `as_igraph()`.
     * Direct conversion to `tidygraph` objects with `as_tidygraph()`.
     * Integration with `g6R` for interactive visualization via `igraph` objects.
-* The `install_kuzu()` helper function has been replaced with `check_kuzu_installation()`. The package no longer installs Python dependencies automatically, instead guiding the user to install them manually for greater environment control.
 * Added vignettes for installation, usage, and graph library integrations.
