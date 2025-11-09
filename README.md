@@ -12,11 +12,6 @@ status](https://www.r-pkg.org/badges/version/kuzuR)](https://cran.r-project.org/
 [![R-CMD-check](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
-[![Codecov test
-coverage](https://codecov.io/gh/WickM/kuzuR/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
-[![R-CMD-check](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/WickM/kuzuR/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
 <!-- badges: end -->
 
 ## Overview
@@ -96,12 +91,12 @@ schema_query_1 <- "CREATE NODE TABLE Person (
   PRIMARY KEY (name)
 )"
 kuzu_execute(con, schema_query_1)
-#> <kuzu.query_result.QueryResult object at 0x00000230F2280050>
+#> <kuzu.query_result.QueryResult object at 0x000001DDFFE00050>
 
 # Create a 'Knows' relationship table
 schema_query_2 <- "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"
 kuzu_execute(con, schema_query_2)
-#> <kuzu.query_result.QueryResult object at 0x00000230F2153D90>
+#> <kuzu.query_result.QueryResult object at 0x000001DDFFC97D90>
 
 # 3. Load data from R data frames
 # Create node data
@@ -139,10 +134,10 @@ graph_result <- kuzu_execute(con, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN
 # a) Convert to an igraph object
 g_igraph <- as_igraph(graph_result)
 print(g_igraph)
-#> IGRAPH 18d3706 DN-- 3 2 -- 
-#> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _id (e/x),
-#> | _dst (e/x), since (e/n), _label (e/c), _src (e/x)
-#> + edges from 18d3706 (vertex names):
+#> IGRAPH 6697a05 DN-- 3 2 -- 
+#> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _label (e/c),
+#> | _id (e/x), _dst (e/x), since (e/n), _src (e/x)
+#> + edges from 6697a05 (vertex names):
 #> [1] Person_Alice->Person_Bob   Person_Bob  ->Person_Carol
 plot(g_igraph)
 
@@ -161,10 +156,10 @@ print(g_tidy)
 #> 3 Person_Carol    50 TRUE   Person
 #> #
 #> # Edge Data: 2 × 7
-#>    from    to `_id`            `_dst`           since `_label` `_src`          
-#>   <int> <int> <list>           <list>           <dbl> <chr>    <list>          
-#> 1     1     2 <named list [2]> <named list [2]>  2010 Knows    <named list [2]>
-#> 2     2     3 <named list [2]> <named list [2]>  2015 Knows    <named list [2]>
+#>    from    to `_label` `_id`            `_dst`           since `_src`          
+#>   <int> <int> <chr>    <list>           <list>           <dbl> <list>          
+#> 1     1     2 Knows    <named list [2]> <named list [2]>  2010 <named list [2]>
+#> 2     2     3 Knows    <named list [2]> <named list [2]>  2015 <named list [2]>
 
 # 6. Inspecting Query Results
 # You can inspect the schema of a query result without converting it to a data frame.
