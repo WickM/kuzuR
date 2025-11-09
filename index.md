@@ -18,30 +18,41 @@ graph objects like `igraph` and `tidygraph`.
 
 ## Installation
 
-`kuzuR` requires a working Python installation. Once Python is
-available, you can install the package and its Python dependencies in
-two steps.
+`kuzuR` requires a working Python installation with the `kuzu`,
+`pandas`, and `networkx` packages.
 
-**Install the R package** from CRAN:
+1.  **Install the R Package**
 
-``` r
-#install.packages("kuzuR")
-```
-
-**Install the R package** from GitHub:
+You can install the development version from GitHub:
 
 ``` r
 # install.packages("pak")
 pak::pak("WickM/kuzuR")
 ```
 
-2.  **Install Python dependencies:** Use the built-in helper function to
-    install `kuzu`, `pandas`, and `networkx` into a dedicated
-    environment.
+Or the stable version from CRAN:
+
+``` r
+# install.packages("kuzuR")
+```
+
+2.  **Install Python Dependencies**
+
+After installing `kuzuR`, you must install the required Python packages.
+You can do this from your R console using `reticulate`:
 
 ``` r
 library(kuzuR)
-install_kuzu()
+reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)
+```
+
+3.  **Verify Installation**
+
+You can check that all dependencies are correctly installed by running:
+
+``` r
+check_kuzu_installation()
+#> The 'kuzu', 'pandas', and 'networkx' Python packages are installed and available.
 ```
 
 ## Usage
@@ -66,12 +77,12 @@ schema_query_1 <- "CREATE NODE TABLE Person (
   PRIMARY KEY (name)
 )"
 kuzu_execute(con, schema_query_1)
-#> <kuzu.query_result.QueryResult object at 0x000001D8ECF00050>
+#> <kuzu.query_result.QueryResult object at 0x00000230F2280050>
 
 # Create a 'Knows' relationship table
 schema_query_2 <- "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)"
 kuzu_execute(con, schema_query_2)
-#> <kuzu.query_result.QueryResult object at 0x000001D8ECA77390>
+#> <kuzu.query_result.QueryResult object at 0x00000230F2153D90>
 
 # 3. Load data from R data frames
 # Create node data
@@ -109,10 +120,10 @@ graph_result <- kuzu_execute(con, "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN
 # a) Convert to an igraph object
 g_igraph <- as_igraph(graph_result)
 print(g_igraph)
-#> IGRAPH a57e831 DN-- 3 2 -- 
-#> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _label (e/c),
-#> | since (e/n), _src (e/x), _id (e/x), _dst (e/x)
-#> + edges from a57e831 (vertex names):
+#> IGRAPH 18d3706 DN-- 3 2 -- 
+#> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _id (e/x),
+#> | _dst (e/x), since (e/n), _label (e/c), _src (e/x)
+#> + edges from 18d3706 (vertex names):
 #> [1] Person_Alice->Person_Bob   Person_Bob  ->Person_Carol
 plot(g_igraph)
 
@@ -131,10 +142,10 @@ print(g_tidy)
 #> 3 Person_Carol    50 TRUE   Person
 #> #
 #> # Edge Data: 2 × 7
-#>    from    to `_label` since `_src`           `_id`            `_dst`          
-#>   <int> <int> <chr>    <dbl> <list>           <list>           <list>          
-#> 1     1     2 Knows     2010 <named list [2]> <named list [2]> <named list [2]>
-#> 2     2     3 Knows     2015 <named list [2]> <named list [2]> <named list [2]>
+#>    from    to `_id`            `_dst`           since `_label` `_src`          
+#>   <int> <int> <list>           <list>           <dbl> <chr>    <list>          
+#> 1     1     2 <named list [2]> <named list [2]>  2010 Knows    <named list [2]>
+#> 2     2     3 <named list [2]> <named list [2]>  2015 Knows    <named list [2]>
 
 # 6. Inspecting Query Results
 # You can inspect the schema of a query result without converting it to a data frame.

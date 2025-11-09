@@ -37,9 +37,9 @@ con <- kuzu_connection(db_path)
 # Create schema for nodes and relationships
 kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
                         "PRIMARY KEY (name))"))
-#> <kuzu.query_result.QueryResult object at 0x7f4b11cbe210>
+#> <kuzu.query_result.QueryResult object at 0x7f71f7f9fc20>
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
-#> <kuzu.query_result.QueryResult object at 0x7f4b10aeb0e0>
+#> <kuzu.query_result.QueryResult object at 0x7f7205d86780>
 
 # Prepare data frames
 persons_data <- data.frame(
@@ -71,10 +71,10 @@ igraph_graph <- as_igraph(graph_query_result)
 
 # Print the igraph object summary
 print(igraph_graph)
-#> IGRAPH a14d34e DN-- 3 2 -- 
+#> IGRAPH 8a77c22 DN-- 3 2 -- 
 #> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _id (e/x),
-#> | since (e/n), _dst (e/x), _src (e/x), _label (e/c)
-#> + edges from a14d34e (vertex names):
+#> | since (e/n), _src (e/x), _label (e/c), _dst (e/x)
+#> + edges from 8a77c22 (vertex names):
 #> [1] Person_Alice->Person_Bob   Person_Bob  ->Person_Carol
 
 V(igraph_graph)$label <- igraph::V(igraph_graph)$name
@@ -116,10 +116,10 @@ print(tidygraph_graph)
 #> 3 Person_Carol    25 TRUE   Person
 #> #
 #> # Edge Data: 2 × 7
-#>    from    to `_id`            since `_dst`           `_src`           `_label`
-#>   <int> <int> <list>           <dbl> <list>           <list>           <chr>   
-#> 1     1     2 <named list [2]>  2010 <named list [2]> <named list [2]> Knows   
-#> 2     2     3 <named list [2]>  2015 <named list [2]> <named list [2]> Knows
+#>    from    to `_id`            since `_src`           `_label` `_dst`          
+#>   <int> <int> <list>           <dbl> <list>           <chr>    <list>          
+#> 1     1     2 <named list [2]>  2010 <named list [2]> Knows    <named list [2]>
+#> 2     2     3 <named list [2]>  2015 <named list [2]> Knows    <named list [2]>
 plot(tidygraph_graph)
 ```
 
