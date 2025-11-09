@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">kuzuR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,9 +39,15 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/WickM/kuzuR/blob/v0.1.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/WickM/kuzuR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="kuzur-020">kuzuR 0.2.0<a class="anchor" aria-label="anchor" href="#kuzur-020"></a></h2>
+<ul><li>The <code>install_kuzu()</code> helper function has been replaced with <code><a href="../reference/check_kuzu_installation.html">check_kuzu_installation()</a></code>. The package no longer installs Python dependencies automatically, instead guiding the user to install them manually for greater environment control. This is a breaking change.</li>
+<li>Fixed a test failure caused by timezone differences.</li>
+<li>Added standard GitHub Actions for R CMD check.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="kuzur-010">kuzuR 0.1.0<a class="anchor" aria-label="anchor" href="#kuzur-010"></a></h2>
 <ul><li>Initial release of <code>kuzuR</code>.</li>
@@ -57,10 +63,10 @@
 <li>Direct conversion to <code>tidygraph</code> objects with <code><a href="../reference/as_tidygraph.html">as_tidygraph()</a></code>.</li>
 <li>Integration with <code>g6R</code> for interactive visualization via <code>igraph</code> objects.</li>
 </ul></li>
-<li>Includes a helper function <code><a href="../reference/install_kuzu.html">install_kuzu()</a></code> to manage Python dependencies.</li>
 <li>Added vignettes for installation, usage, and graph library integrations.</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
