@@ -21,14 +21,6 @@ First, let’s set up a Kuzu database and load some sample graph data.
 ``` r
 library(kuzuR)
 library(igraph)
-#> 
-#> Attaching package: 'igraph'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     decompose, spectrum
-#> The following object is masked from 'package:base':
-#> 
-#>     union
 
 # Create a connection
 db_path <- tempfile()
@@ -37,9 +29,7 @@ con <- kuzu_connection(db_path)
 # Create schema for nodes and relationships
 kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
                         "PRIMARY KEY (name))"))
-#> <kuzu.query_result.QueryResult object at 0x7fb0178669f0>
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
-#> <kuzu.query_result.QueryResult object at 0x7fb00888fce0>
 
 # Prepare data frames
 persons_data <- data.frame(
@@ -71,18 +61,11 @@ igraph_graph <- as_igraph(graph_query_result)
 
 # Print the igraph object summary
 print(igraph_graph)
-#> IGRAPH ac9a491 DN-- 3 2 -- 
-#> + attr: name (v/c), age (v/n), Person (v/l), label (v/c), _id (e/x),
-#> | _dst (e/x), since (e/n), _label (e/c), _src (e/x)
-#> + edges from ac9a491 (vertex names):
-#> [1] Person_Alice->Person_Bob   Person_Bob  ->Person_Carol
 
 V(igraph_graph)$label <- igraph::V(igraph_graph)$name
 E(igraph_graph)$label <- "knows"
 plot(igraph_graph)
 ```
-
-![](graph-integrations_files/figure-html/unnamed-chunk-3-1.png)
 
 You can now perform standard `igraph` operations on `igraph_graph`.
 
@@ -104,26 +87,8 @@ tidygraph_graph <- as_tidygraph(graph_query_result)
 
 # Print the tidygraph object summary
 print(tidygraph_graph)
-#> # A tbl_graph: 3 nodes and 2 edges
-#> #
-#> # A rooted tree
-#> #
-#> # Node Data: 3 × 4 (active)
-#>   name           age Person label 
-#>   <chr>        <dbl> <lgl>  <chr> 
-#> 1 Person_Alice    35 TRUE   Person
-#> 2 Person_Bob      45 TRUE   Person
-#> 3 Person_Carol    25 TRUE   Person
-#> #
-#> # Edge Data: 2 × 7
-#>    from    to `_id`            `_dst`           since `_label` `_src`          
-#>   <int> <int> <list>           <list>           <dbl> <chr>    <list>          
-#> 1     1     2 <named list [2]> <named list [2]>  2010 Knows    <named list [2]>
-#> 2     2     3 <named list [2]> <named list [2]>  2015 Knows    <named list [2]>
 plot(tidygraph_graph)
 ```
-
-![](graph-integrations_files/figure-html/unnamed-chunk-4-1.png)
 
 ## Interactive Visualization with `g6R`
 
@@ -141,14 +106,6 @@ and edges for a more informative visualization.
 
 ``` r
 library(g6R)
-#> 
-#> Attaching package: 'g6R'
-#> The following object is masked from 'package:graphics':
-#> 
-#>     legend
-#> The following object is masked from 'package:utils':
-#> 
-#>     history
 graph_query_result <- kuzu_execute(con, paste("MATCH (p1:Person)-[k:Knows]->",
                                               "(p2:Person) RETURN p1, p2, k"))
 # Convert the Kuzu result to a g6R-compatible list

@@ -1,5 +1,21 @@
 # Changelog
 
+## kuzuR 0.2.1
+
+- **Python Integration Improvements**:
+  - Tests requiring the `kuzu` Python module are now skipped on CRAN
+    using
+    [`testthat::skip_on_cran()`](https://testthat.r-lib.org/reference/skip.html)
+    to ensure smooth CRAN checks.
+  - Enhanced CI workflows (`R-CMD-check.yaml`, `pkgdown.yaml`)
+    explicitly configure Python environments and install necessary
+    dependencies for robust integration testing.
+- **LaTeX Build Fix**:
+  - Resolved a LaTeX error
+    (`! Font T1/pcr/m/n/10=pcrr8t at 10.0pt not loadable: Metric (TFM) file not found.`)
+    that occurred during documentation and vignette building, ensuring
+    all required fonts are available.
+
 ## kuzuR 0.2.0
 
 - The `install_kuzu()` helper function has been replaced with

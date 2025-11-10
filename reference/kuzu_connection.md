@@ -28,6 +28,8 @@ A Python object representing the connection to the Kuzu database.
 conn <- kuzu_connection(":memory:")
 #> Downloading uv...
 #> Done!
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
 
 # Create or connect to an on-disk database
 if (FALSE) { # \dontrun{

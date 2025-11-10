@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">kuzuR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -179,15 +179,12 @@ schema:</p>
 <span>                        <span class="st">"age INT64, is_active BOOL, created_at TIMESTAMP,"</span>,</span>
 <span>                        <span class="st">"last_login DATE, notes STRING[],"</span>,</span>
 <span>                        <span class="st">"PRIMARY KEY (userID))"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f00a8786780&gt;</span></span>
 <span></span>
 <span><span class="co"># Create a node table for products</span></span>
 <span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE NODE TABLE Product(productID INT64, name STRING, PRIMARY KEY (productID))"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f00996ad310&gt;</span></span>
 <span></span>
 <span><span class="co"># Create a relationship table for user purchases</span></span>
-<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Buys(FROM User TO Product, purchase_date DATE)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;kuzu.query_result.QueryResult object at 0x7f00996ad3a0&gt;</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"CREATE REL TABLE Buys(FROM User TO Product, purchase_date DATE)"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -275,19 +272,11 @@ exhaust this iterator.</p>
 <code class="sourceCode R"><span><span class="co"># Convert to a data frame</span></span>
 <span><span class="va">df_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df_result</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   u.name p.name b.purchase_date</span></span>
-<span><span class="co">#&gt; 1  Alice Laptop      2023-02-20</span></span>
-<span><span class="co">#&gt; 2    Bob  Mouse      2023-03-15</span></span>
 <span></span>
 <span><span class="co"># Convert to a tibble</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="va">tibble_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tibble_result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
-<span><span class="co">#&gt;   u.name p.name b.purchase_date    </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Alice  Laptop 2023-02-20 <span style="color: #949494;">00:00:00</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Bob    Mouse  2023-03-15 <span style="color: #949494;">00:00:00</span></span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tibble_result</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="use-query-results-returned-as-list">Use Query Results returned as list<a class="anchor" aria-label="anchor" href="#use-query-results-returned-as-list"></a>
@@ -297,53 +286,16 @@ exhaust this iterator.</p>
 <span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_get_all.html">kuzu_get_all</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [[1]]$u.name</span></span>
-<span><span class="co">#&gt; [1] "Alice"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$p.name</span></span>
-<span><span class="co">#&gt; [1] "Laptop"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$b.purchase_date</span></span>
-<span><span class="co">#&gt; [1] "2023-02-20"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [[2]]$u.name</span></span>
-<span><span class="co">#&gt; [1] "Bob"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$p.name</span></span>
-<span><span class="co">#&gt; [1] "Mouse"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$b.purchase_date</span></span>
-<span><span class="co">#&gt; [1] "2023-03-15"</span></span>
 <span></span>
 <span><span class="co"># only fetch 1. result </span></span>
 <span><span class="va">query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (u:User)-[b:Buys]-&gt;(p:Product) RETURN u.name, p.name, b.purchase_date"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_get_n.html">kuzu_get_n</a></span><span class="op">(</span><span class="va">query_result</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [[1]]$u.name</span></span>
-<span><span class="co">#&gt; [1] "Alice"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$p.name</span></span>
-<span><span class="co">#&gt; [1] "Laptop"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$b.purchase_date</span></span>
-<span><span class="co">#&gt; [1] "2023-02-20"</span></span>
 <span></span>
 <span><span class="co">#Fetch next result</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_get_next.html">kuzu_get_next</a></span><span class="op">(</span><span class="va">query_result</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $u.name</span></span>
-<span><span class="co">#&gt; [1] "Bob"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $p.name</span></span>
-<span><span class="co">#&gt; [1] "Mouse"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $b.purchase_date</span></span>
-<span><span class="co">#&gt; [1] "2023-03-15"</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="convert-to-graph-objects">Convert to Graph Objects<a class="anchor" aria-label="anchor" href="#convert-to-graph-objects"></a>
@@ -357,40 +309,12 @@ relationship variables themselves, not just their properties.</p>
 <span><span class="va">graph_query_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"MATCH (u:User)-[b:Buys]-&gt;(p:Product) RETURN u, p, b"</span><span class="op">)</span></span>
 <span><span class="va">igraph_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_igraph.html">as_igraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">igraph_obj</span><span class="op">)</span></span>
-<span><span class="co">#&gt; IGRAPH 9b82853 DN-- 4 2 -- </span></span>
-<span><span class="co">#&gt; + attr: name (v/c), userID (v/x), age (v/n), is_active (v/x),</span></span>
-<span><span class="co">#&gt; | created_at (v/n), last_login (v/x), notes (v/x), User (v/x), label</span></span>
-<span><span class="co">#&gt; | (v/c), productID (v/n), Product (v/x), purchase_date (e/x), _id</span></span>
-<span><span class="co">#&gt; | (e/x), _label (e/c), _dst (e/x), _src (e/x)</span></span>
-<span><span class="co">#&gt; + edges from 9b82853 (vertex names):</span></span>
-<span><span class="co">#&gt; [1] User_a1b2c3d4-e5f6-7890-1234-567890abcdef-&gt;Product_101</span></span>
-<span><span class="co">#&gt; [2] User_b2c3d4e5-f6a7-8901-2345-67890abcdef0-&gt;Product_102</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">igraph_obj</span><span class="op">)</span></span></code></pre></div>
-<p><img src="installation-and-usage_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="700"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">igraph_obj</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Convert to a tidygraph object</span></span>
 <span><span class="va">tidygraph_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_tidygraph.html">as_tidygraph</a></span><span class="op">(</span><span class="va">graph_query_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tidygraph_obj</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tbl_graph: 4 nodes and 2 edges</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; # A rooted forest with 2 trees</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; # Node Data: 4 × 11 (active)</span></span></span>
-<span><span class="co">#&gt;   name    userID        age is_active created_at          last_login notes User </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> User_a… <span style="color: #949494;">&lt;uuid.UUID&gt;</span>    35 <span style="color: #949494;">&lt;lgl [1]&gt;</span> 2023-01-15 <span style="color: #949494;">10:30:00</span> <span style="color: #949494;">&lt;date [1]&gt;</span> <span style="color: #949494;">&lt;chr&gt;</span> <span style="color: #949494;">&lt;lgl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Produc… <span style="color: #949494;">&lt;dbl [1]&gt;</span>     <span style="color: #BB0000;">NaN</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #BB0000;">NA</span>                  <span style="color: #949494;">&lt;dbl [1]&gt;</span>  <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> User_b… <span style="color: #949494;">&lt;uuid.UUID&gt;</span>    45 <span style="color: #949494;">&lt;lgl [1]&gt;</span> 2022-11-20 <span style="color: #949494;">14:00:00</span> <span style="color: #949494;">&lt;date [1]&gt;</span> <span style="color: #949494;">&lt;chr&gt;</span> <span style="color: #949494;">&lt;lgl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Produc… <span style="color: #949494;">&lt;dbl [1]&gt;</span>     <span style="color: #BB0000;">NaN</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #BB0000;">NA</span>                  <span style="color: #949494;">&lt;dbl [1]&gt;</span>  <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: label &lt;chr&gt;, productID &lt;dbl&gt;, Product &lt;list&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#</span></span></span>
-<span><span class="co"><span style="color: #949494;">#&gt; # Edge Data: 2 × 7</span></span></span>
-<span><span class="co">#&gt;    from    to purchase_date `_id`            `_label` `_dst`       `_src`      </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     2 <span style="color: #949494;">&lt;date [1]&gt;</span>    <span style="color: #949494;">&lt;named list [2]&gt;</span> Buys     <span style="color: #949494;">&lt;named list&gt;</span> <span style="color: #949494;">&lt;named list&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     3     4 <span style="color: #949494;">&lt;date [1]&gt;</span>    <span style="color: #949494;">&lt;named list [2]&gt;</span> Buys     <span style="color: #949494;">&lt;named list&gt;</span> <span style="color: #949494;">&lt;named list&gt;</span></span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tidygraph_obj</span><span class="op">)</span></span></code></pre></div>
 </div>

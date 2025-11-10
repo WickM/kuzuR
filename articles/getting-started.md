@@ -44,9 +44,7 @@ simple schema with `Person` nodes and `Knows` relationships.
 ``` r
 kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
                         "PRIMARY KEY (name))"))
-#> <kuzu.query_result.QueryResult object at 0x7fe60a9d4380>
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
-#> <kuzu.query_result.QueryResult object at 0x7fe6096ad220>
 ```
 
 ### 3. Load Data
@@ -85,9 +83,6 @@ result <- kuzu_execute(con, paste("MATCH (a:Person)-[k:Knows]->(b:Person)",
 # Convert the result to a data frame
 df <- as.data.frame(result)
 print(df)
-#>   a.name b.name k.since
-#> 1  Alice    Bob    2010
-#> 2    Bob  Carol    2015
 ```
 
 This concludes the “Getting Started” guide. For more advanced topics,

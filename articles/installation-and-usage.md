@@ -47,15 +47,12 @@ kuzu_execute(con, paste("CREATE NODE TABLE User(userID UUID, name STRING,",
                         "age INT64, is_active BOOL, created_at TIMESTAMP,",
                         "last_login DATE, notes STRING[],",
                         "PRIMARY KEY (userID))"))
-#> <kuzu.query_result.QueryResult object at 0x7f00a8786780>
 
 # Create a node table for products
 kuzu_execute(con, "CREATE NODE TABLE Product(productID INT64, name STRING, PRIMARY KEY (productID))")
-#> <kuzu.query_result.QueryResult object at 0x7f00996ad310>
 
 # Create a relationship table for user purchases
 kuzu_execute(con, "CREATE REL TABLE Buys(FROM User TO Product, purchase_date DATE)")
-#> <kuzu.query_result.QueryResult object at 0x7f00996ad3a0>
 ```
 
 ## 3. Loading Data
@@ -149,19 +146,11 @@ and the graph conversion functions will exhaust this iterator.
 # Convert to a data frame
 df_result <- as.data.frame(query_result)
 print(df_result)
-#>   u.name p.name b.purchase_date
-#> 1  Alice Laptop      2023-02-20
-#> 2    Bob  Mouse      2023-03-15
 
 # Convert to a tibble
 library(tibble)
 tibble_result <- as_tibble(query_result)
 print(tibble_result)
-#> # A tibble: 2 × 3
-#>   u.name p.name b.purchase_date    
-#>   <chr>  <chr>  <dttm>             
-#> 1 Alice  Laptop 2023-02-20 00:00:00
-#> 2 Bob    Mouse  2023-03-15 00:00:00
 ```
 
 ### Use Query Results returned as list
@@ -171,53 +160,16 @@ query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u
 
 result <- kuzu_get_all(query_result)
 print(result)
-#> [[1]]
-#> [[1]]$u.name
-#> [1] "Alice"
-#> 
-#> [[1]]$p.name
-#> [1] "Laptop"
-#> 
-#> [[1]]$b.purchase_date
-#> [1] "2023-02-20"
-#> 
-#> 
-#> [[2]]
-#> [[2]]$u.name
-#> [1] "Bob"
-#> 
-#> [[2]]$p.name
-#> [1] "Mouse"
-#> 
-#> [[2]]$b.purchase_date
-#> [1] "2023-03-15"
 
 # only fetch 1. result 
 query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u.name, p.name, b.purchase_date")
 
 result <- kuzu_get_n(query_result, 1)
 print(result)
-#> [[1]]
-#> [[1]]$u.name
-#> [1] "Alice"
-#> 
-#> [[1]]$p.name
-#> [1] "Laptop"
-#> 
-#> [[1]]$b.purchase_date
-#> [1] "2023-02-20"
 
 #Fetch next result
 result <- kuzu_get_next(query_result)
 print(result)
-#> $u.name
-#> [1] "Bob"
-#> 
-#> $p.name
-#> [1] "Mouse"
-#> 
-#> $b.purchase_date
-#> [1] "2023-03-15"
 ```
 
 ### Convert to Graph Objects
@@ -232,43 +184,12 @@ themselves, not just their properties.
 graph_query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u, p, b")
 igraph_obj <- as_igraph(graph_query_result)
 print(igraph_obj)
-#> IGRAPH 9b82853 DN-- 4 2 -- 
-#> + attr: name (v/c), userID (v/x), age (v/n), is_active (v/x),
-#> | created_at (v/n), last_login (v/x), notes (v/x), User (v/x), label
-#> | (v/c), productID (v/n), Product (v/x), purchase_date (e/x), _id
-#> | (e/x), _label (e/c), _dst (e/x), _src (e/x)
-#> + edges from 9b82853 (vertex names):
-#> [1] User_a1b2c3d4-e5f6-7890-1234-567890abcdef->Product_101
-#> [2] User_b2c3d4e5-f6a7-8901-2345-67890abcdef0->Product_102
 
 plot(igraph_obj)
-```
-
-![](installation-and-usage_files/figure-html/unnamed-chunk-9-1.png)
-
-``` r
 
 # Convert to a tidygraph object
 tidygraph_obj <- as_tidygraph(graph_query_result)
 print(tidygraph_obj)
-#> # A tbl_graph: 4 nodes and 2 edges
-#> #
-#> # A rooted forest with 2 trees
-#> #
-#> # Node Data: 4 × 11 (active)
-#>   name    userID        age is_active created_at          last_login notes User 
-#>   <chr>   <list>      <dbl> <list>    <dttm>              <list>     <lis> <lis>
-#> 1 User_a… <uuid.UUID>    35 <lgl [1]> 2023-01-15 10:30:00 <date [1]> <chr> <lgl>
-#> 2 Produc… <dbl [1]>     NaN <dbl [1]> NA                  <dbl [1]>  <dbl> <dbl>
-#> 3 User_b… <uuid.UUID>    45 <lgl [1]> 2022-11-20 14:00:00 <date [1]> <chr> <lgl>
-#> 4 Produc… <dbl [1]>     NaN <dbl [1]> NA                  <dbl [1]>  <dbl> <dbl>
-#> # ℹ 3 more variables: label <chr>, productID <dbl>, Product <list>
-#> #
-#> # Edge Data: 2 × 7
-#>    from    to purchase_date `_id`            `_label` `_dst`       `_src`      
-#>   <int> <int> <list>        <list>           <chr>    <list>       <list>      
-#> 1     1     2 <date [1]>    <named list [2]> Buys     <named list> <named list>
-#> 2     3     4 <date [1]>    <named list [2]> Buys     <named list> <named list>
 
 plot(tidygraph_obj)
 ```
