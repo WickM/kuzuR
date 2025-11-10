@@ -7,11 +7,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+skip_vignette <- !reticulate::py_module_available("kuzu")
 ```
 
 ## Introduction
@@ -26,7 +27,7 @@ The `igraph` package is a powerful tool for graph manipulation and analysis in R
 
 First, let's set up a Kuzu database and load some sample graph data.
 
-```{r}
+```{r, eval=!skip_vignette}
 library(kuzuR)
 library(igraph)
 
@@ -58,7 +59,7 @@ kuzu_copy_from_df(con, knows_data, "Knows")
 
 Now, let's execute a query that returns graph data and convert it to an `igraph` object.
 
-```{r}
+```{r, eval=!skip_vignette}
 # Query to get all persons and their relationships
 graph_query_result <- kuzu_execute(con, paste("MATCH (p1:Person)-[k:Knows]->",
                                               "(p2:Person) RETURN p1, p2, k"))
@@ -84,7 +85,7 @@ The `tidygraph` package offers a tidy data approach to graph manipulation, integ
 
 Using the same Kuzu query result, we can convert it to a `tidygraph` object.
 
-```{r}
+```{r, eval=!skip_vignette}
 # Convert the Kuzu result to a tidygraph object
 tidygraph_graph <- as_tidygraph(graph_query_result)
 
@@ -101,7 +102,7 @@ The `g6R` package provides an R interface to the G6 JavaScript graph visualizati
 
 Building on the previous examples, we can convert the Kuzu query result into a `g6R` object. We can then customize the appearance of the nodes and edges for a more informative visualization.
 
-```{r}
+```{r, eval=!skip_vignette}
 library(g6R)
 graph_query_result <- kuzu_execute(con, paste("MATCH (p1:Person)-[k:Knows]->",
                                               "(p2:Person) RETURN p1, p2, k"))

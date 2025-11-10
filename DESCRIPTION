@@ -1,10 +1,9 @@
 Package: kuzuR
 Title: R Interface to Kuzu Graph Database
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person("Manuel", "Wick-Eckl", role = c("aut", "cre"), 
            email = "manuel.wick@gmail.com")
-Author: Manuel Wick-Eckl
 Maintainer: Manuel Wick-Eckl <manuel.wick@gmail.com>
 Description: Provides a high-performance R interface to the Kuzu graph database.
     It uses the 'reticulate' package to wrap the official Python client

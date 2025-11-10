@@ -1,6 +1,6 @@
-skip_if_not(reticulate::py_available(), "Python not available for testing")
-
 test_that("kuzu_copy_from_df works for node and rel tables", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   # Test Node Table
@@ -60,6 +60,8 @@ test_that("kuzu_copy_from_df works for node and rel tables", {
 })
 
 test_that("kuzu_copy_from_df handles various data types", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   # Create table with various Kuzu data types
@@ -148,6 +150,8 @@ test_that("kuzu_copy_from_df handles various data types", {
 })
 
 test_that("kuzu_copy_from_df handles empty data frames", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   # Create a simple table
@@ -182,6 +186,8 @@ test_that("kuzu_copy_from_df handles empty data frames", {
 })
 
 test_that("kuzu_merge_df works for insertion and update", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   kuzu_execute(
@@ -236,6 +242,8 @@ test_that("kuzu_merge_df works for insertion and update", {
 })
 
 test_that("kuzu_copy_from_csv loads data correctly", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   # Create table with corresponding Kuzu data types
@@ -298,6 +306,8 @@ create_temp_json <- function(file_path, content) {
 }
 
 test_that("kuzu_copy_from_json loads data correctly", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   # Create a JSON file with an array of objects
@@ -342,6 +352,8 @@ test_that("kuzu_copy_from_json loads data correctly", {
 })
 
 test_that("kuzu_copy_from_json handles empty JSON files", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   # Create an empty JSON file (empty array)
@@ -367,6 +379,8 @@ test_that("kuzu_copy_from_json handles empty JSON files", {
 
 
 test_that("kuzu handles data types DECIMAL and UUID", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   # Create table with various Kuzu data types

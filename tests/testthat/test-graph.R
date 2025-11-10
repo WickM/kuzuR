@@ -1,7 +1,8 @@
 # Tests for graph conversion functions
 
-test_that("Graph conversion functions work correctly with the new S3 method design",
- {
+test_that("Graph conversion functions work correctly with the new S3 method design", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   # Skip if packages are not installed
   skip_if_not_installed("igraph")
   skip_if_not_installed("tidygraph")

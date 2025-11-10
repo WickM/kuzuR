@@ -9,11 +9,11 @@
 #' @return A Python object representing the connection to the Kuzu database.
 #' @export
 #' @examples
+#' \dontrun{
 #' # Create an in-memory database and connection
 #' conn <- kuzu_connection(":memory:")
 #'
 #' # Create or connect to an on-disk database
-#' \dontrun{
 #' conn_disk <- kuzu_connection("my_kuzu_db")
 #' }
 kuzu_connection <- function(path) {

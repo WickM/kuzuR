@@ -7,11 +7,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+skip_vignette <- !reticulate::py_module_available("kuzu")
 ```
 
 This vignette provides a guide to `kuzuR` and performing basic operations, including creating a database, defining a schema, loading data from various sources, and executing Cypher queries.
@@ -20,7 +21,7 @@ This vignette provides a guide to `kuzuR` and performing basic operations, inclu
 
 First, load the `kuzuR` package and create a connection to a Kuzu database. You can create an in-memory database or specify a path to a database file on disk.
 
-```{r}
+```{r, eval=!skip_vignette}
 library(kuzuR)
 con <- kuzu_connection(":memory:")
 ```
@@ -48,7 +49,7 @@ Kuzu supports a rich set of data types. When creating a schema, you need to map 
 
 You can define a schema with node and relationship tables using `kuzu_execute()`. Here's an example of a more complex schema:
 
-```{r}
+```{r, eval=!skip_vignette}
 # Create a node table for users with various data types
 kuzu_execute(con, paste("CREATE NODE TABLE User(userID UUID, name STRING,",
                         "age INT64, is_active BOOL, created_at TIMESTAMP,",
@@ -70,7 +71,7 @@ You can load data into your Kuzu tables from R data frames or external files lik
 
 Use `kuzu_copy_from_df()` to load data from an R `data.frame`.
 
-```{r}
+```{r, eval=!skip_vignette}
 library(jsonlite)
 # Create data frames for nodes and relationships
 users <- data.frame(
@@ -106,7 +107,7 @@ kuzu_copy_from_df(con, buys, "Buys")
 
 Use `kuzu_copy_from_csv()` to load data from a CSV file. For this to work, the file should be in the current working directory.
 
-```{r}
+```{r, eval=!skip_vignette}
 # Create a CSV file in the project's root directory
 csv_filename <- "products.csv"
 write.csv(data.frame(productID = c(103, 104), name = c("Keyboard", "Monitor")),
@@ -123,7 +124,7 @@ unlink(csv_filename)
 
 You can execute Cypher queries using `kuzu_execute()` and convert the results into various R formats.
 
-```{r}
+```{r, eval=!skip_vignette}
 # Execute a query to get users and their purchases
 query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u.name, p.name, b.purchase_date")
 ```
@@ -134,7 +135,7 @@ The `QueryResult` object returned by `kuzu_execute()` acts as an iterator over t
 
 ### Convert to Data Frame or Tibble
 
-```{r}
+```{r, eval=!skip_vignette}
 # Convert to a data frame
 df_result <- as.data.frame(query_result)
 print(df_result)
@@ -147,7 +148,7 @@ print(tibble_result)
 
 ### Use Query Results returned as list
 
-```{r}
+```{r, eval=!skip_vignette}
 query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u.name, p.name, b.purchase_date")
 
 result <- kuzu_get_all(query_result)
@@ -168,7 +169,7 @@ print(result)
 
 For queries that return graph structures, you can convert the results into graph objects from packages like `igraph` or `tidygraph`. To do this, the query must return the node and relationship variables themselves, not just their properties.
 
-```{r}
+```{r, eval=!skip_vignette}
 # Execute a query that returns a graph structure 
 graph_query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u, p, b")
 igraph_obj <- as_igraph(graph_query_result)

@@ -7,11 +7,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+skip_vignette <- !reticulate::py_module_available("kuzu")
 ```
 
 ## Introduction
@@ -40,7 +41,7 @@ install.packages("kuzuR")
 
 The first step is to create a connection to a Kuzu database. You can create an in-memory database or connect to a database on disk.
 
-```{r}
+```{r, eval=!skip_vignette}
 library(kuzuR)
 
 # Create an in-memory database connection
@@ -51,7 +52,7 @@ con <- kuzu_connection(":memory:")
 
 Next, define your graph schema using Cypher queries. Let's create a simple schema with `Person` nodes and `Knows` relationships.
 
-```{r}
+```{r, eval=!skip_vignette}
 kuzu_execute(con, paste("CREATE NODE TABLE Person(name STRING, age INT64,",
                         "PRIMARY KEY (name))"))
 kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
@@ -61,7 +62,7 @@ kuzu_execute(con, "CREATE REL TABLE Knows(FROM Person TO Person, since INT64)")
 
 You can load data from R data frames directly into your Kuzu database.
 
-```{r}
+```{r, eval=!skip_vignette}
 # Create a data frame of persons
 persons_df <- data.frame(
   name = c("Alice", "Bob", "Carol"),
@@ -84,7 +85,7 @@ kuzu_copy_from_df(con, knows_df, "Knows")
 
 Finally, you can query your graph using Cypher and retrieve the results as an R data frame.
 
-```{r}
+```{r, eval=!skip_vignette}
 # Execute a query
 result <- kuzu_execute(con, paste("MATCH (a:Person)-[k:Knows]->(b:Person)",
                                   "RETURN a.name, b.name, k.since"))

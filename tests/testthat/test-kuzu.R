@@ -1,12 +1,14 @@
-skip_if_not(reticulate::py_available(), "Python not available for testing")
-
 test_that("Connection object is created", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
   expect_s3_class(conn, "kuzu.connection.Connection")
   rm(conn)
 })
 
 test_that("Queries execute and results can be converted", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   kuzu_execute(
@@ -27,6 +29,8 @@ test_that("Queries execute and results can be converted", {
 })
 
 test_that("Result schema functions work correctly", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   kuzu_execute(
@@ -56,6 +60,8 @@ test_that("Result schema functions work correctly", {
 })
 
 test_that("as_tibble.kuzu.query_result.QueryResult works correctly", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   skip_if_not_installed("tibble")
   conn <- kuzu_connection(":memory:")
 
@@ -76,6 +82,8 @@ test_that("as_tibble.kuzu.query_result.QueryResult works correctly", {
 })
 
 test_that("kuzu_get_all, kuzu_get_n, and kuzu_get_next work correctly", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
 
   kuzu_execute(
