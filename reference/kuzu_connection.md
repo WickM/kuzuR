@@ -24,15 +24,11 @@ A Python object representing the connection to the Kuzu database.
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
 # Create an in-memory database and connection
 conn <- kuzu_connection(":memory:")
-#> Downloading uv...
-#> Done!
-#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
-#> Run `reticulate::py_last_error()` for details.
 
 # Create or connect to an on-disk database
-if (FALSE) { # \dontrun{
 conn_disk <- kuzu_connection("my_kuzu_db")
 } # }
 ```
