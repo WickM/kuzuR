@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/WickM/kuzuR/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/WickM/kuzuR/blob/v0.2.2/DESCRIPTION)
 
 Wick-Eckl M (2025). *kuzuR: R Interface to Kuzu Graph Database*. R
 package version 0.2.2, <https://github.com/WickM/kuzuR>.
