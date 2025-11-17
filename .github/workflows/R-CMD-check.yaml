@@ -49,6 +49,15 @@ jobs:
           pip install kuzu pandas networkx
         shell: bash
 
+      - name: Diagnose Python Environment
+        run: |
+          which python
+          python --version
+          pip list
+          python -c "import sys; print(sys.path)"
+          python -c "try: import kuzu; print('Kuzu imported successfully from:', kuzu.__file__) except ImportError as e: print('Failed to import kuzu:', e)"
+        shell: bash
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck, local::.
