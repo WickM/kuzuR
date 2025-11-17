@@ -16,7 +16,7 @@ A character vector of column data types.
 Retrieves the data types of the columns in a Kuzu query result.
 }
 \examples{
-\dontrun{
+\donttest{
 conn <- kuzu_connection(":memory:")
 kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 PRIMARY KEY (name))")

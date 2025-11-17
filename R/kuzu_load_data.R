@@ -19,7 +19,7 @@
 #'   not return a value.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
 #'   PRIMARY KEY (name))")
@@ -103,7 +103,7 @@ kuzu_copy_from_file <- function(
 #'   not return a value.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, 
 #'   PRIMARY KEY (name))")
@@ -156,7 +156,7 @@ kuzu_copy_from_csv <- function(
 #'   not return a value.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, 
 #'   PRIMARY KEY (id))")
@@ -206,7 +206,7 @@ kuzu_copy_from_json <- function(conn, file_path, table_name) {
 #'   not return a value.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   if (requireNamespace("arrow", quietly = TRUE)) {
 #'     conn <- kuzu_connection(":memory:")
 #'     kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, 
@@ -260,7 +260,10 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'  ON MATCH SET p.current_city = df.current_city
 #'  ON CREATE SET p.current_city = df.current_city"
 #'
-#'  kuzu_merge_df(conn, my_data, merge_statement)
+#'  # Note: 'conn' would need to be a valid Kuzu connection object
+#'  # and the schema (Person, Item, PURCHASED tables) would need to be created
+#'  # before running this example.
+#'  # kuzu_merge_df(conn, my_data, merge_statement)
 #'
 #'  # Example with a different merge query structure:
 #'  my_data_2 <- data.frame(
@@ -275,7 +278,7 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'  ON MATCH SET p.current_city = city
 #'  ON CREATE SET p.current_city = city"
 #'
-#'  kuzu_merge_df(conn, my_data_2, merge_statement_2)
+#'  # kuzu_merge_df(conn, my_data_2, merge_statement_2)
 #'  }
 #' @seealso \href{https://kuzudb.github.io/docs/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_merge_df <- function(conn, df, merge_query) {

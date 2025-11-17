@@ -26,7 +26,7 @@ not return a value.
 Loads data from a CSV file into a specified table in the Kuzu database.
 }
 \examples{
-\dontrun{
+\donttest{
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, 
   PRIMARY KEY (name))")

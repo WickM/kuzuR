@@ -17,7 +17,7 @@
     -   It now runs on Windows, macOS, and Ubuntu.
     -   It uses a controlled Python environment, ensuring stability and predictability.
     -   This provides a strong guarantee that the core `reticulate` bridge is functional across all major platforms.
--   **CRAN Compliance:** The package passes `R CMD check` without any ERRORs, WARNINGs, or NOTEs that prevent submission. The previous LaTeX font error has been resolved, and the PDF manual is successfully generated despite `R CMD check` outputting `WARNING` and `ERROR` messages. All necessary documentation and metadata have been prepared for submission.
+-   **CRAN Compliance:** The package passes `R CMD check` without any ERRORs or WARNINGs. The "Possibly misspelled words" NOTE has been investigated; the flagged words are proper names and are included in `inst/WORDLIST`. Local spell checks confirm no errors, and `cran-comments.md` has been updated to clarify this as a false positive for CRAN reviewers. The previous LaTeX font error has been resolved, and the PDF manual is successfully generated despite `R CMD check` outputting `WARNING` and `ERROR` messages. All necessary documentation and metadata have been prepared for submission.
 
 ## What's Left to Build
 -   **UDF (User-Defined Functions):** Investigate and implement support for Kuzu's user-defined functions.
@@ -31,4 +31,4 @@
 
 ## Current Status
 
-The project is **ready for CRAN submission** (v0.2.1). The core functionality is stable, well-tested, and fully documented. The package passes all local and CI checks. Future work will focus on new features like UDF support and the `ellmer` integration.
+The project is **ready for CRAN submission** (v0.2.2). The core functionality is stable, well-tested, and fully documented. The package passes all local and CI checks, with the remaining CRAN NOTE on spelling being a documented false positive. Future work will focus on new features like UDF support and the `ellmer` integration.

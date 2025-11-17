@@ -19,7 +19,7 @@ Provides an S3 method to convert a Kuzu query result object into a
 \code{tibble}. This requires the \code{tibble} package to be installed.
 }
 \examples{
-\dontrun{
+\donttest{
 if (requireNamespace("tibble", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,

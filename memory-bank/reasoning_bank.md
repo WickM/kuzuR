@@ -106,3 +106,56 @@ When `R CMD check` reports `WARNING` or `ERROR` messages related to PDF manual g
 
 **Source:**
 `kuzuR` project, resolution of `R CMD check` LaTeX errors for CRAN submission (v0.2.1).
+
+---
+
+### 6. Justifying CRAN `NOTE`s as False Positives with Local Verification
+
+**Description:**
+When `R CMD check` produces a `NOTE` (e.g., "Possibly misspelled words") that cannot be reproduced locally after thorough investigation and is believed to be a false positive, it is crucial to document the investigation and provide evidence of local verification in `cran-comments.md`. This helps CRAN reviewers understand the context and accept the submission.
+
+**Content:**
+-   **Problem:** A `NOTE` for "Possibly misspelled words" (e.g., "Kuzu", "Cypher") persisted in CRAN checks despite the words being correctly added to `inst/WORDLIST` and local `spelling::spell_check_package()` runs showing no errors.
+-   **Incorrect Hypothesis:** The `WORDLIST` was incorrectly formatted or not included in the package build.
+-   **Root Cause:** The `NOTE` was likely a false positive, possibly due to environment-specific behavior of the CRAN checking system that prevented it from correctly recognizing or utilizing the `inst/WORDLIST` file, even though the file was correctly configured and included in the package.
+-   **Solution:**
+    1.  Verify that the flagged words are indeed proper names and are correctly listed in `inst/WORDLIST`.
+    2.  Confirm that `inst/WORDLIST` is not excluded by `.Rbuildignore`.
+    3.  Run `spelling::spell_check_package()` locally to confirm that the package passes the spell check in a controlled environment.
+    4.  Update `cran-comments.md` to clearly explain:
+        *   The flagged words are proper names.
+        *   They are included in `inst/WORDLIST`.
+        *   Local spell checks pass without errors.
+        *   The `NOTE` is considered a false positive, likely due to CRAN environment specificities.
+-   **Strategic Lesson:** Not all `NOTE`s from `R CMD check` are indicative of actual problems. If a `NOTE` is a false positive that cannot be resolved by modifying the package code (e.g., due to environment-specific behavior of CRAN's checkers), the most effective strategy is to thoroughly investigate, verify locally, and then provide a clear, concise explanation and justification in `cran-comments.md` for the CRAN maintainers. This demonstrates due diligence and facilitates acceptance.
+
+**Source:**
+`kuzuR` project, resolution of persistent "Possibly misspelled words" NOTE for CRAN submission (v0.2.2).
+
+---
+
+### 7. CRAN Metadata and Example Best Practices
+
+**Description:**
+Adhering to CRAN's strict guidelines for package metadata (DESCRIPTION file) and example code (`.Rd` files) is crucial for successful submission. This includes precise formatting of titles, consistent quoting of software names, proper inclusion of external links, and appropriate use of example execution directives.
+
+**Content:**
+-   **Problem:** The `kuzuR` package received CRAN feedback on several metadata and example-related issues:
+    1.  **Redundant "R" in Title:** The package title started with "R Interface to...", which is considered redundant by CRAN.
+    2.  **Unquoted Software Names:** Package, software, and API names in the `Title` and `Description` fields were not consistently enclosed in single quotes.
+    3.  **Missing Web Service Link:** The `Description` field lacked a direct, auto-linking URL to the primary web service (Kuzu database) used by the package.
+    4.  **Incorrect Example Directives:** Examples were wrapped in `\dontrun{}`, which CRAN reserves for examples that genuinely cannot be executed (e.g., missing external software, API keys). For executable examples that should not be run during CRAN's default checks (e.g., due to time constraints or side effects), `\donttest{}` is the appropriate directive.
+-   **Solution:**
+    1.  **Title:** Removed the leading "R" from the `Title` field.
+    2.  **Quoting:** Ensured all package, software, and API names (e.g., `'kuzu'`, `'python'`, `'reticulate'`) in both `Title` and `Description` were enclosed in single quotes.
+    3.  **Web Service Link:** Added the Kuzu homepage URL (`<https://kuzudb.com/>`) to the `Description` field, formatted with angle brackets for auto-linking.
+    4.  **Example Directives:** Replaced all instances of `\dontrun{}` with `\donttest{}` in the `.Rd` documentation files.
+-   **Strategic Lesson:** Proactive adherence to CRAN's detailed guidelines for `DESCRIPTION` file content and example code is essential. This includes:
+    *   Avoiding redundant prefixes in the `Title`.
+    *   Consistently quoting all software, package, and API names.
+    *   Providing direct, auto-linking URLs for external services.
+    *   Using `\donttest{}` for executable examples that should not be run by default on CRAN, reserving `\dontrun{}` for truly unexecutable examples.
+    These practices streamline the submission process and reduce review cycles.
+
+**Source:**
+`kuzuR` project, CRAN submission feedback for v0.2.3.

@@ -17,7 +17,7 @@ A \code{tbl_graph} object.
 Converts a Kuzu query result into a \code{tidygraph} \code{tbl_graph} object.
 }
 \examples{
-\dontrun{
+\donttest{
 if (requireNamespace("tidygraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 

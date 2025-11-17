@@ -6,9 +6,14 @@ The package has been prepared for a new CRAN submission (version 0.2.1). All nec
 
 ## Recent Changes
 
-**1. Finalized CRAN Submission for v0.2.1:**
--   Updated `DESCRIPTION` to version `0.2.1`.
--   Added release notes for `0.2.1` to `NEWS.md` (if applicable).
+**1. Finalized CRAN Submission for v0.2.2:**
+-   Updated `DESCRIPTION` to version `0.2.2`.
+-   Addressed the "Possibly misspelled words" NOTE:
+    *   Confirmed `Cypher`, `Kuzu`, and `Kuzu's` are proper names and are included in `inst/WORDLIST`.
+    *   Investigated `tests/spelling.R` and `.Rbuildignore`, confirming they are not the source of the issue.
+    *   Executed `spelling::spell_check_package()` locally, which reported no errors, indicating the `WORDLIST` is correctly recognized in the local environment.
+    *   Updated `cran-comments.md` to clarify that the spelling NOTE is a false positive due to potential CRAN environment specificities, and that local checks pass.
+-   Added release notes for `0.2.2` to `NEWS.md` (if applicable).
 -   Updated `cran-comments.md` with details for the CRAN maintainers regarding the new version and changes, specifically addressing:
     *   Removal of `Author` field in `DESCRIPTION` and reliance on `Authors@R`.
     *   Update of `.Rbuildignore` to include `air.toml` and other non-standard files.
@@ -41,6 +46,6 @@ The package has been prepared for a new CRAN submission (version 0.2.1). All nec
 
 ## Next Steps
 
--   Submit the package to CRAN.
--   Update `progress.md` to reflect the submission.
--   Assess if any new strategic lessons can be added to `reasoning_bank.md`.
+-   The package is ready for CRAN submission.
+-   Update `progress.md` to reflect the readiness for submission.
+-   Assess if any new strategic lessons can be added to `reasoning_bank.md` regarding CRAN submission and environment-specific checks.

@@ -18,7 +18,7 @@ A list of the first \code{n} rows.
 Fetches the first \code{n} rows from a Kuzu query result.
 }
 \examples{
-\dontrun{
+\donttest{
 conn <- kuzu_connection(":memory:")
 kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
 PRIMARY KEY (name))")
