@@ -30,7 +30,7 @@ the `kuzu_execute -> as_igraph` workflow.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 if (requireNamespace("igraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
@@ -50,5 +50,7 @@ if (requireNamespace("igraph", quietly = TRUE)) {
   print(g)
   rm(conn, res, g)
 }
-} # }
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
+# }
 ```

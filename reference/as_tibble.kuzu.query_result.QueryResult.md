@@ -27,7 +27,7 @@ A `tibble` containing the query results.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 if (requireNamespace("tibble", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
@@ -39,5 +39,7 @@ if (requireNamespace("tibble", quietly = TRUE)) {
   tbl <- tibble::as_tibble(result)
   print(tbl)
 }
-} # }
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
+# }
 ```

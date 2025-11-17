@@ -39,10 +39,13 @@ return a value.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
   conn <- kuzu_connection(":memory:")
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, 
   PRIMARY KEY (name))")
+#> Error: object 'conn' not found
 
   # Create a temporary CSV file
   csv_file <- tempfile(fileext = ".csv")
@@ -52,12 +55,15 @@ if (FALSE) { # \dontrun{
 
   # Load data from CSV
   kuzu_copy_from_csv(conn, csv_file, "City")
+#> Error: object 'conn' not found
 
   # Verify the data
   result <- kuzu_execute(conn, "MATCH (c:City) RETURN c.name, c.population")
+#> Error: object 'conn' not found
   print(as.data.frame(result))
+#> Error: object 'result' not found
 
   # Clean up the temporary file
   unlink(csv_file)
-} # }
+# }
 ```

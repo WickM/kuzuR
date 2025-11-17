@@ -19,7 +19,10 @@ dependencies and printing messages.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 check_kuzu_installation()
-} # }
+#> Error: The following required Python packages are not installed: kuzu, pandas, networkx 
+#> To install them, please run the following command in your R console: 
+#> reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)
+# }
 ```

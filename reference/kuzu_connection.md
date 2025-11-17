@@ -24,11 +24,32 @@ A Python object representing the connection to the Kuzu database.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Create an in-memory database and connection
 conn <- kuzu_connection(":memory:")
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
 
 # Create or connect to an on-disk database
-conn_disk <- kuzu_connection("my_kuzu_db")
-} # }
+temp_db_dir <- file.path(tempdir(), "kuzu_disk_example_db")
+db_path <- file.path(temp_db_dir, "kuzu_db")
+dir.create(temp_db_dir, recursive = TRUE, showWarnings = FALSE)
+
+# Establish connection
+conn_disk <- kuzu_connection(db_path)
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
+
+# Ensure the database is shut down and removed on exit
+on.exit({
+  # Access the 'db' object from the reticulate main module
+  main <- reticulate::import_main()
+  if (!is.null(main$db)) {
+    main$db$shutdown()
+  }
+  unlink(temp_db_dir, recursive = TRUE)
+})
+#> Error in py_get_attr(x, name, FALSE): AttributeError: module '__main__' has no attribute 'db'
+#> Run `reticulate::py_last_error()` for details.
+# }
 ```

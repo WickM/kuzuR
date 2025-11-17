@@ -28,17 +28,22 @@ A Python object representing the query result.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 conn <- kuzu_connection(":memory:")
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
 
 # Create a node table
 kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 PRIMARY KEY (name))")
+#> Error: object 'conn' not found
 
 # Insert data
 kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
+#> Error: object 'conn' not found
 
 # Query data
 result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
-} # }
+#> Error: object 'conn' not found
+# }
 ```

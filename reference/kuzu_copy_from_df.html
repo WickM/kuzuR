@@ -9,7 +9,7 @@ table in the Kuzu database."><meta property="og:image" content="https://wickm.gi
 
     <a class="navbar-brand me-2" href="../index.html">kuzuR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@ table in the Kuzu database."><meta property="og:image" content="https://wickm.gi
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Load Data from a Data Frame or Tibble into a Kuzu Table</h1>
-      <small class="dont-index">Source: <a href="https://github.com/WickM/kuzuR/blob/v0.2.2/R/kuzu_load_data.R" class="external-link"><code>R/kuzu_load_data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/WickM/kuzuR/blob/main/R/kuzu_load_data.R" class="external-link"><code>R/kuzu_load_data.R</code></a></small>
       <div class="d-none name"><code>kuzu_copy_from_df.Rd</code></div>
     </div>
 
@@ -92,29 +92,40 @@ TO Node Column: The primary key of the TO nodes.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="kuzu_connection.html">kuzu_connection</a></span><span class="op">(</span><span class="st">":memory:"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_run_string_impl(code, local, convert):</span> ModuleNotFoundError: No module named 'kuzu'</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
 <span class="r-in"><span>  <span class="fu"><a href="kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"CREATE NODE TABLE User(name STRING, age INT64, </span></span></span>
 <span class="r-in"><span><span class="st">  PRIMARY KEY (name))"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'conn' not found</span>
 <span class="r-in"><span>  <span class="fu"><a href="kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"CREATE REL TABLE Knows(FROM User TO User)"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'conn' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Load from a data.frame</span></span></span>
 <span class="r-in"><span>  <span class="va">users_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Carol"</span>, <span class="st">"Dan"</span><span class="op">)</span>, age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">35</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">kuzu_copy_from_df</span><span class="op">(</span><span class="va">conn</span>, <span class="va">users_df</span>, <span class="st">"User"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'conn' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Load from a tibble (requires pre-existing nodes)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"CREATE (u:User {name: 'Alice'}), (v:User {name: 'Bob'})"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'conn' not found</span>
 <span class="r-in"><span>  <span class="va">knows_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from_person <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alice"</span>, <span class="st">"Bob"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>  to_person <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bob"</span>, <span class="st">"Carol"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">kuzu_copy_from_df</span><span class="op">(</span><span class="va">conn</span>, <span class="va">knows_df</span>, <span class="st">"Knows"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'conn' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"MATCH (a:User) RETURN a.name, a.age"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'conn' not found</span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">result_rel</span> <span class="op">&lt;-</span> <span class="fu"><a href="kuzu_execute.html">kuzu_execute</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"MATCH (a:User)-[k:Knows]-&gt;(b:User) </span></span></span>
 <span class="r-in"><span><span class="st">  RETURN a.name, b.name"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'conn' not found</span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">result_rel</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result_rel' not found</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

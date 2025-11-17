@@ -37,10 +37,13 @@ JSON Extension](https://kuzudb.github.io/docs/extensions/json/)
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
   conn <- kuzu_connection(":memory:")
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, 
   PRIMARY KEY (id))")
+#> Error: object 'conn' not found
 
   # Create a temporary JSON file
   json_file <- tempfile(fileext = ".json")
@@ -49,12 +52,17 @@ if (FALSE) { # \dontrun{
 
   # Load data from JSON
   kuzu_copy_from_json(conn, json_file, "Product")
+#> Warning: Could not install or load JSON extension. Please check your internet connection and Kuzu setup.
+#> Warning: restarting interrupted promise evaluation
+#> Error: object 'conn' not found
 
   # Verify the data
   result <- kuzu_execute(conn, "MATCH (p:Product) RETURN p.id, p.name")
+#> Error: object 'conn' not found
   print(as.data.frame(result))
+#> Error: object 'result' not found
 
   # Clean up the temporary file
   unlink(json_file)
-} # }
+# }
 ```

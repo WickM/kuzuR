@@ -13,7 +13,7 @@ user on how to install them manually."><meta property="og:image" content="https:
 
     <a class="navbar-brand me-2" href="../index.html">kuzuR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,7 @@ user on how to install them manually."><meta property="og:image" content="https:
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Check for Kuzu Python Dependencies</h1>
-      <small class="dont-index">Source: <a href="https://github.com/WickM/kuzuR/blob/v0.2.2/R/install.R" class="external-link"><code>R/install.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/WickM/kuzuR/blob/main/R/install.R" class="external-link"><code>R/install.R</code></a></small>
       <div class="d-none name"><code>check_kuzu_installation.Rd</code></div>
     </div>
 
@@ -69,9 +69,12 @@ checking dependencies and printing messages.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">check_kuzu_installation</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> The following required Python packages are not installed: kuzu, pandas, networkx </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> To install them, please run the following command in your R console: </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

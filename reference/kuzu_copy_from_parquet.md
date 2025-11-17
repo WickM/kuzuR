@@ -35,7 +35,7 @@ return a value.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
   if (requireNamespace("arrow", quietly = TRUE)) {
     conn <- kuzu_connection(":memory:")
     kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, 
@@ -56,5 +56,7 @@ if (FALSE) { # \dontrun{
     # Clean up the temporary file
     unlink(parquet_file)
   }
-} # }
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
+# }
 ```

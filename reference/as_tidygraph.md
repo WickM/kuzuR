@@ -23,7 +23,7 @@ A `tbl_graph` object.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 if (requireNamespace("tidygraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
@@ -34,5 +34,7 @@ if (requireNamespace("tidygraph", quietly = TRUE)) {
   print(g_tidy)
   rm(conn, res, g_tidy)
 }
-} # }
+#> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
+#> Run `reticulate::py_last_error()` for details.
+# }
 ```
