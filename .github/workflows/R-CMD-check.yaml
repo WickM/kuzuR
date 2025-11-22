@@ -5,7 +5,7 @@ on:
     branches: [main, master]
   pull_request:
 
-name: R-CMD-check.yaml
+name: R CMD check
 
 permissions: read-all
 
@@ -41,6 +41,7 @@ jobs:
           use-public-rspm: true
 
       - uses: actions/setup-python@v4
+        id: setup-python
         with:
           python-version: '3.9'
 
@@ -55,7 +56,7 @@ jobs:
           python --version
           pip list
           python -c "import sys; print(sys.path)"
-          python -c "try: import kuzu; print('Kuzu imported successfully from:', kuzu.__file__) except ImportError as e: print('Failed to import kuzu:', e)"
+          python -c "import kuzu; print('Kuzu imported successfully')"
         shell: bash
 
       - uses: r-lib/actions/setup-r-dependencies@v2
@@ -64,6 +65,8 @@ jobs:
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
+        env:
+          RETICULATE_PYTHON: ${{ steps.setup-python.outputs.python-path }}
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
