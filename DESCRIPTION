@@ -1,6 +1,6 @@
 Package: kuzuR
 Title: Interface to 'kuzu' Graph Database
-Version: 0.2.3
+Version: 0.2.4
 Authors@R: 
     person("Manuel", "Wick-Eckl", role = c("aut", "cre"), 
            email = "manuel.wick@gmail.com")
