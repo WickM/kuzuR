@@ -25,7 +25,7 @@ Loads data from a Parquet file into a specified table in the Kuzu database.
 \donttest{
   if (requireNamespace("arrow", quietly = TRUE)) {
     conn <- kuzu_connection(":memory:")
-    kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING, 
+    kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING,
     PRIMARY KEY (name))")
 
     # Create a temporary Parquet file

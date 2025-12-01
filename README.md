@@ -47,7 +47,7 @@ pak::pak("WickM/kuzuR")
 Or the stable version from CRAN:
 
 ``` r
-# install.packages("kuzuR")
+install.packages("kuzuR")
 ```
 
 2.  **Install Python Dependencies**

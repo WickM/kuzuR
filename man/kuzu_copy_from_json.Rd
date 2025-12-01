@@ -25,7 +25,7 @@ This function also ensures the JSON extension is loaded and available.
 \examples{
 \donttest{
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, 
+  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING,
   PRIMARY KEY (id))")
 
   # Create a temporary JSON file

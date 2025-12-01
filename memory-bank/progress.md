@@ -31,4 +31,4 @@
 
 ## Current Status
 
-The project is **ready for CRAN submission** (v0.2.2). The core functionality is stable, well-tested, and fully documented. The package passes all local and CI checks, with the remaining CRAN NOTE on spelling being a documented false positive. Future work will focus on new features like UDF support and the `ellmer` integration.
+The project is **Published on CRAN** (v0.2.3). The core functionality is stable, well-tested, and fully documented. The package has been accepted by CRAN and is available for public download. Future work will focus on new features like UDF support and the `ellmer` integration.
