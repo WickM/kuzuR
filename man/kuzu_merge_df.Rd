@@ -36,7 +36,10 @@ my_data <- data.frame(
  ON MATCH SET p.current_city = df.current_city
  ON CREATE SET p.current_city = df.current_city"
 
- kuzu_merge_df(conn, my_data, merge_statement)
+ # Note: 'conn' would need to be a valid Kuzu connection object
+ # and the schema (Person, Item, PURCHASED tables) would need to be created
+ # before running this example.
+ # kuzu_merge_df(conn, my_data, merge_statement)
 
  # Example with a different merge query structure:
  my_data_2 <- data.frame(
@@ -51,7 +54,7 @@ my_data <- data.frame(
  ON MATCH SET p.current_city = city
  ON CREATE SET p.current_city = city"
 
- kuzu_merge_df(conn, my_data_2, merge_statement_2)
+ # kuzu_merge_df(conn, my_data_2, merge_statement_2)
  }
 }
 \seealso{

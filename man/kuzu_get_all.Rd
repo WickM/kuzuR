@@ -17,7 +17,7 @@ Fetches all rows from a Kuzu query result and returns them as a list of
 lists.
 }
 \examples{
-\dontrun{
+\donttest{
 conn <- kuzu_connection(":memory:")
 kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 PRIMARY KEY (name))")

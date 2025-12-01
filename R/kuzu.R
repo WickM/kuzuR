@@ -9,12 +9,27 @@
 #' @return A Python object representing the connection to the Kuzu database.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create an in-memory database and connection
 #' conn <- kuzu_connection(":memory:")
 #'
 #' # Create or connect to an on-disk database
-#' conn_disk <- kuzu_connection("my_kuzu_db")
+#' temp_db_dir <- file.path(tempdir(), "kuzu_disk_example_db")
+#' db_path <- file.path(temp_db_dir, "kuzu_db")
+#' dir.create(temp_db_dir, recursive = TRUE, showWarnings = FALSE)
+#'
+#' # Establish connection
+#' conn_disk <- kuzu_connection(db_path)
+#'
+#' # Ensure the database is shut down and removed on exit
+#' on.exit({
+#'   # Access the 'db' object from the reticulate main module
+#'   main <- reticulate::import_main()
+#'   if (!is.null(main$db)) {
+#'     main$db$shutdown()
+#'   }
+#'   unlink(temp_db_dir, recursive = TRUE)
+#' })
 #' }
 kuzu_connection <- function(path) {
   main <- reticulate::import_main()
@@ -37,7 +52,7 @@ kuzu_connection <- function(path) {
 #' @return A Python object representing the query result.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #'
 #' # Create a node table
@@ -69,7 +84,7 @@ kuzu_execute <- function(conn, query) {
 #' @method as.data.frame kuzu.query_result.QueryResult
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -104,7 +119,7 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @method as_tibble kuzu.query_result.QueryResult
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' if (requireNamespace("tibble", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
@@ -144,7 +159,7 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @return A list where each element is a list representing a row of results.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -169,7 +184,7 @@ kuzu_get_all <- function(result) {
 #' @return A list of the first `n` rows.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
 #' PRIMARY KEY (name))")
@@ -197,7 +212,7 @@ kuzu_get_n <- function(result, n) {
 #' available.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -226,7 +241,7 @@ kuzu_get_next <- function(result) {
 #' @return A character vector of column data types.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -246,7 +261,7 @@ kuzu_get_column_data_types <- function(result) {
 #' @return A character vector of column names.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -266,7 +281,7 @@ kuzu_get_column_names <- function(result) {
 #' @return A named list where names are column names and values are data types.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")

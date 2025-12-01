@@ -79,7 +79,7 @@ edges_df = nx.to_pandas_edgelist(nx_graph)
 #' @importFrom igraph graph_from_data_frame
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' if (requireNamespace("igraph", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
@@ -116,7 +116,7 @@ as_igraph <- function(query_result) {
 #' @importFrom tidygraph tbl_graph
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' if (requireNamespace("tidygraph", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 

@@ -17,7 +17,7 @@ packages are missing, it provides a clear, actionable message guiding the
 user on how to install them manually.
 }
 \examples{
-\dontrun{
+\donttest{
 check_kuzu_installation()
 }
 }

@@ -26,14 +26,14 @@ not return a value.
 Loads data from a CSV file into a specified table in the Kuzu database.
 }
 \examples{
-\dontrun{
+\donttest{
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, 
+  kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64,
   PRIMARY KEY (name))")
 
   # Create a temporary CSV file
   csv_file <- tempfile(fileext = ".csv")
-  write.csv(data.frame(name = c("Berlin", "London"), 
+  write.csv(data.frame(name = c("Berlin", "London"),
   population = c(3645000, 8982000)),
             csv_file, row.names = FALSE)
 

@@ -16,7 +16,7 @@ A named list where names are column names and values are data types.
 Retrieves the schema (column names and data types) of a Kuzu query result.
 }
 \examples{
-\dontrun{
+\donttest{
 conn <- kuzu_connection(":memory:")
 kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 PRIMARY KEY (name))")

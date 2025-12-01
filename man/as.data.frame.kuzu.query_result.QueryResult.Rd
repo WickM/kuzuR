@@ -19,7 +19,7 @@ Provides an S3 method to seamlessly convert a Kuzu query result object into a
 standard R \code{data.frame}.
 }
 \examples{
-\dontrun{
+\donttest{
 conn <- kuzu_connection(":memory:")
 kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 PRIMARY KEY (name))")

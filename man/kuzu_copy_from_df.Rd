@@ -30,9 +30,9 @@ FROM Node Column: The primary key of the FROM nodes.
 TO Node Column: The primary key of the TO nodes.
 }
 \examples{
-\dontrun{
+\donttest{
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+  kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
   PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM User TO User)")
 
@@ -42,14 +42,14 @@ TO Node Column: The primary key of the TO nodes.
 
   # Load from a tibble (requires pre-existing nodes)
   kuzu_execute(conn, "CREATE (u:User {name: 'Alice'}), (v:User {name: 'Bob'})")
-  knows_df <- data.frame(from_person = c("Alice", "Bob"), 
+  knows_df <- data.frame(from_person = c("Alice", "Bob"),
   to_person = c("Bob", "Carol"))
   kuzu_copy_from_df(conn, knows_df, "Knows")
 
   result <- kuzu_execute(conn, "MATCH (a:User) RETURN a.name, a.age")
   print(as.data.frame(result))
 
-  result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User) 
+  result_rel <- kuzu_execute(conn, "MATCH (a:User)-[k:Knows]->(b:User)
   RETURN a.name, b.name")
   print(as.data.frame(result_rel))
 }

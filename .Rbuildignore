@@ -1,6 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENCE\.md$
+^LICENSE\.md$
+^docs/
+^memory-bank/
+^memory_prompt\.md$
+^pkgdown/
 ^README\.Rmd$
 ^README\.html$
 ^NEWS\.md$
@@ -10,3 +15,4 @@
 ^\.lintr$
 ^\.github/
 ^\.vscode/
+^CRAN-SUBMISSION$
