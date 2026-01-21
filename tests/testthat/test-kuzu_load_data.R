@@ -421,3 +421,201 @@ test_that("kuzu handles data types DECIMAL and UUID", {
   )
   expect_equal(as.character(all_results[[1]]$m.price) |> as.numeric(), 99.99)
 })
+
+# --- Tests for kuzu_copy_from_csv with optional parameters ---
+
+test_that("kuzu_copy_from_csv handles semicolon delimiter", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  conn <- kuzu_connection(":memory:")
+
+  # Create table
+  kuzu_execute(
+    conn,
+    "CREATE NODE TABLE SemicolonTable(
+    id INT64,
+    name STRING,
+    value DOUBLE,
+    PRIMARY KEY (id)
+  )"
+  )
+
+  temp_csv_path <- test_path("temp_semicolon.csv")
+
+  # Load data from CSV with semicolon delimiter
+  kuzu_copy_from_csv(
+    conn,
+    file_path = temp_csv_path,
+    table_name = "SemicolonTable",
+    optional_csv_parameter = list(delim = "';'")
+  )
+
+  # Query and verify data
+  result <- kuzu_execute(
+    conn,
+    "MATCH (s:SemicolonTable) RETURN s.id, s.name, s.value ORDER BY s.id"
+  )
+  df_check <- as.data.frame(result)
+
+  expect_equal(nrow(df_check), 2)
+  expect_equal(df_check$s.id, c(10, 11))
+  expect_equal(df_check$s.name, c("Semicolon Item", "Another Semicolon"))
+  expect_equal(df_check$s.value, c(100.50, 200.75))
+})
+
+test_that("kuzu_copy_from_csv handles comma delimiter explicitly", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  conn <- kuzu_connection(":memory:")
+
+  # Create table
+  kuzu_execute(
+    conn,
+    "CREATE NODE TABLE CommaTable(
+    id INT64,
+    name STRING,
+    value DOUBLE,
+    PRIMARY KEY (id)
+  )"
+  )
+
+  temp_csv_path <- test_path("temp_comma.csv")
+
+  # Load data from CSV with explicit comma delimiter
+  kuzu_copy_from_csv(
+    conn,
+    file_path = temp_csv_path,
+    table_name = "CommaTable",
+    optional_csv_parameter = list(delim = "','")
+  )
+
+  # Query and verify data
+  result <- kuzu_execute(
+    conn,
+    "MATCH (c:CommaTable) RETURN c.id, c.name, c.value ORDER BY c.id"
+  )
+  df_check <- as.data.frame(result)
+
+  expect_equal(nrow(df_check), 2)
+  expect_equal(df_check$c.id, c(10, 11))
+  expect_equal(df_check$c.name, c("Comma Item", "Another Comma"))
+  expect_equal(df_check$c.value, c(100.50, 200.75))
+})
+
+test_that("kuzu_copy_from_csv handles header option", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  conn <- kuzu_connection(":memory:")
+
+  # Create table
+  kuzu_execute(
+    conn,
+    "CREATE NODE TABLE HeaderTable(
+    id INT64,
+    name STRING,
+    value DOUBLE,
+    PRIMARY KEY (id)
+  )"
+  )
+
+  temp_csv_path <- test_path("temp_comma.csv")
+
+  # Load data from CSV with explicit header option
+  kuzu_copy_from_csv(
+    conn,
+    file_path = temp_csv_path,
+    table_name = "HeaderTable",
+    optional_csv_parameter = list(header = "true")
+  )
+
+  # Query and verify data
+  result <- kuzu_execute(
+    conn,
+    "MATCH (h:HeaderTable) RETURN h.id, h.name, h.value ORDER BY h.id"
+  )
+  df_check <- as.data.frame(result)
+
+  expect_equal(nrow(df_check), 2)
+  expect_equal(df_check$h.id, c(10, 11))
+})
+
+# --- Tests for kuzu_copy_from_parquet ---
+
+test_that("kuzu_copy_from_parquet loads data correctly", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  skip_if_not_installed("arrow")
+
+  conn <- kuzu_connection(":memory:")
+
+  # Create table
+  kuzu_execute(
+    conn,
+    "CREATE NODE TABLE ParquetTable(
+    name STRING,
+    code STRING,
+    population INT64,
+    PRIMARY KEY (name)
+  )"
+  )
+
+  # Create a temporary Parquet file
+  parquet_file <- tempfile(fileext = ".parquet")
+  country_df <- data.frame(
+    name = c("USA", "Canada", "Mexico"),
+    code = c("US", "CA", "MX"),
+    population = c(331000000L, 38000000L, 128000000L)
+  )
+  arrow::write_parquet(country_df, parquet_file)
+
+  # Load data from Parquet
+  kuzu_copy_from_parquet(conn, parquet_file, "ParquetTable")
+
+  # Query and verify data
+  result <- kuzu_execute(
+    conn,
+    "MATCH (p:ParquetTable) RETURN p.name, p.code, p.population ORDER BY p.name"
+  )
+  df_check <- as.data.frame(result)
+
+  expect_equal(nrow(df_check), 3)
+  expect_equal(df_check$p.name, c("Canada", "Mexico", "USA"))
+  expect_equal(df_check$p.code, c("CA", "MX", "US"))
+  expect_equal(df_check$p.population, c(38000000L, 128000000L, 331000000L))
+
+  # Clean up
+  unlink(parquet_file)
+})
+
+test_that("kuzu_copy_from_parquet handles empty parquet files", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  skip_if_not_installed("arrow")
+
+  conn <- kuzu_connection(":memory:")
+
+  # Create table
+  kuzu_execute(
+    conn,
+    "CREATE NODE TABLE EmptyParquetTable(
+    id INT64,
+    name STRING,
+    PRIMARY KEY (id)
+  )"
+  )
+
+  # Create an empty Parquet file
+  parquet_file <- tempfile(fileext = ".parquet")
+  empty_df <- data.frame(id = integer(0), name = character(0))
+  arrow::write_parquet(empty_df, parquet_file)
+
+  # Load data from empty Parquet
+  kuzu_copy_from_parquet(conn, parquet_file, "EmptyParquetTable")
+
+  # Query and verify that the table is empty
+  result <- kuzu_execute(conn, "MATCH (e:EmptyParquetTable) RETURN count(e)")
+  expect_equal(as.data.frame(result)[[1]], 0)
+
+  # Clean up
+  unlink(parquet_file)
+})
