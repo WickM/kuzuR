@@ -47,7 +47,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install kuzu pandas networkx
+          pip install kuzu
         shell: bash
 
       - name: Diagnose Python Environment

@@ -13,7 +13,6 @@ Tibble
 igraph
 integrations
 kuzu
-networkx
 reticulate
 tibble
 tibbles

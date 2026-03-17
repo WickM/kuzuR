@@ -44,19 +44,50 @@
 #' }
 #' @seealso \href{https://kuzudb.github.io/docs/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_copy_from_df <- function(conn, df, table_name) {
+  # Validate table_name to prevent Cypher injection
+  if (!grepl("^[A-Za-z_][A-Za-z0-9_]*$", table_name)) {
+    stop(
+      "table_name must be a valid identifier (letters, digits, underscores only).",
+      call. = FALSE
+    )
+  }
+
   # Coerce factor columns to character, as they are not directly supported by Kuzu
   df[] <- lapply(df, function(x) {
     if (is.factor(x)) as.character(x) else x
   })
 
-  main <- reticulate::import_main()
-  main$conn <- conn
-  main$df_to_copy <- df
+  # Create temporary CSV file and ensure it is cleaned up even on error
+  temp_file <- tempfile(fileext = ".csv")
+  on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
 
-  query <- paste0("COPY ", table_name, " FROM df_to_copy")
-  
-  main$query <- query
-  reticulate::py_run_string("conn.execute(query)", convert = FALSE)
+  # Replace NA values with empty strings for Kuzu compatibility
+  # Kuzu doesn't support NA in DOUBLE/INT columns - empty string becomes NULL
+  df_clean <- lapply(df, function(col) {
+    if (is.numeric(col)) {
+      ifelse(is.na(col), "", col)
+    } else {
+      col
+    }
+  })
+  df_clean <- as.data.frame(df_clean, stringsAsFactors = FALSE)
+
+  # Write data frame to CSV without row names
+  utils::write.csv(df_clean, file = temp_file, row.names = FALSE)
+
+  # Convert Windows backslashes to forward slashes for Kuzu compatibility
+  temp_file_escaped <- gsub("\\\\", "/", temp_file)
+
+  # Use COPY FROM CSV to load data - avoids Python dependency
+  query <- paste0(
+    "COPY ",
+    table_name,
+    " FROM '",
+    temp_file_escaped,
+    "' (header=true)"
+  )
+
+  kuzu_execute(conn, query)
 
   invisible(NULL)
 }
@@ -109,7 +140,7 @@ kuzu_copy_from_file <- function(
 #' @examples
 #' \donttest{
 #'   conn <- kuzu_connection(":memory:")
-#'   
+#'
 #'   my_df <- data.frame(
 #'     name = c("Alice", "Bob"),
 #'     age = c(25L, 30L),
@@ -117,25 +148,26 @@ kuzu_copy_from_file <- function(
 #'     is_student = c(TRUE, FALSE),
 #'     birth_date = as.Date(c("1999-01-01", "1994-05-15"))
 #'   )
-#'   
+#'
 #'   kuzu_create_table_from_df(conn, my_df, "Person", primary_key = "name")
-#'   
+#'
 #'   # Now you can load data into the created table
 #'   kuzu_copy_from_df(conn, my_df, "Person")
-#'   
+#'
 #'   result <- kuzu_execute(conn, "MATCH (p:Person) RETURN *")
 #'   print(as.data.frame(result))
 #' }
 kuzu_create_table_from_df <- function(conn, df, table_name, primary_key) {
   # Helper function to map R types to Kuzu types
   map_type <- function(type) {
-    switch(type,
-      "integer"   = "INT64",
-      "numeric"   = "DOUBLE",
+    switch(
+      type,
+      "integer" = "INT64",
+      "numeric" = "DOUBLE",
       "character" = "STRING",
-      "logical"   = "BOOLEAN",
-      "Date"      = "DATE",
-      "factor"    = {
+      "logical" = "BOOLEAN",
+      "Date" = "DATE",
+      "factor" = {
         warning("Coercing 'factor' to 'STRING'.")
         "STRING"
       },
@@ -149,21 +181,30 @@ kuzu_create_table_from_df <- function(conn, df, table_name, primary_key) {
   # Get column names and types from the data frame
   col_names <- names(df)
   col_types <- sapply(df, function(x) class(x)[1])
-  
+
   # Check if the primary key exists in the data frame
   if (!primary_key %in% col_names) {
-    stop(paste("Primary key '", primary_key, "' not found in data frame.", sep = ""))
+    stop(paste(
+      "Primary key '",
+      primary_key,
+      "' not found in data frame.",
+      sep = ""
+    ))
   }
 
   # Generate column definitions for the CREATE TABLE query
-  col_defs <- mapply(function(name, type) {
-    paste0(name, " ", map_type(type))
-  }, col_names, col_types)
-  
+  col_defs <- mapply(
+    function(name, type) {
+      paste0(name, " ", map_type(type))
+    },
+    col_names,
+    col_types
+  )
+
   # Add the primary key definition
   pk_def <- paste0("PRIMARY KEY (", primary_key, ")")
   all_defs <- c(col_defs, pk_def)
-  
+
   # Construct the full CREATE TABLE query
   query <- paste0(
     "CREATE NODE TABLE ",
@@ -172,10 +213,10 @@ kuzu_create_table_from_df <- function(conn, df, table_name, primary_key) {
     paste(all_defs, collapse = ", "),
     ")"
   )
-  
+
   # Execute the query
   kuzu_execute(conn, query)
-  
+
   invisible(NULL)
 }
 

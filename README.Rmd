@@ -29,7 +29,7 @@ The primary goal of `kuzuR` is to provide an idiomatic R experience for: - Creat
 
 ## Installation
 
-`kuzuR` requires a working Python installation with the `kuzu`, `pandas`, and `networkx` packages.
+`kuzuR` requires a working Python installation with the `kuzu` package.
 
 1.  **Install the R Package**
 
@@ -50,7 +50,7 @@ After installing `kuzuR`, you must install the required Python packages. You can
 
 ```r
 library(kuzuR)
-reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)
+reticulate::py_install("kuzu", pip = TRUE)
 ```
 
 3.  **Verify Installation**
@@ -58,7 +58,7 @@ reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)
 You can check that all dependencies are correctly installed by running:
 ```r
 check_kuzu_installation()
-#> The 'kuzu', 'pandas', and 'networkx' Python packages are installed and available.
+#> The 'kuzu' Python package is installed and available.
 ```
 
 ## Usage
