@@ -204,11 +204,6 @@ test_that("kuzu_copy_from_df handles empty data frames", {
 
 test_that("kuzu_merge_df works for insertion and update", {
   testthat::skip_on_cran()
-  # Skip if pandas is not properly installed (LOAD FROM requires pandas internally)
-  testthat::skip_if(
-    !reticulate::py_module_available("pandas"),
-    "pandas required for LOAD FROM operations"
-  )
   testthat::skip_if_not(
     reticulate::py_module_available("kuzu"),
     "kuzu python module not available for testing"

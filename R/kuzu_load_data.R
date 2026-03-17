@@ -416,11 +416,29 @@ kuzu_copy_from_parquet <- function(conn, file_path, table_name) {
 #'  }
 #' @seealso \href{https://kuzudb.github.io/docs/import/copy-from-dataframe/}{Kuzu Copy from DataFrame}
 kuzu_merge_df <- function(conn, df, merge_query) {
-  main <- reticulate::import_main()
-  main$conn <- conn
-  main$df <- df
-  query <- paste0("LOAD FROM df ", merge_query)
-  main$query <- query
-  reticulate::py_run_string("conn.execute(query)", convert = FALSE)
+  # Create temporary CSV file - avoids pandas dependency from LOAD FROM df
+  temp_file <- tempfile(fileext = ".csv")
+  on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
+
+  # Handle NA values similar to kuzu_copy_from_df
+  df_clean <- lapply(df, function(col) {
+    if (is.numeric(col)) {
+      ifelse(is.na(col), "", col)
+    } else {
+      col
+    }
+  })
+  df_clean <- as.data.frame(df_clean, stringsAsFactors = FALSE)
+
+  # Write to CSV
+  utils::write.csv(df_clean, file = temp_file, row.names = FALSE)
+
+  # Convert Windows backslashes to forward slashes for Kuzu compatibility
+  temp_file_escaped <- gsub("\\\\", "/", temp_file)
+
+  # Use LOAD FROM CSV file instead of LOAD FROM df (avoids pandas)
+  query <- paste0("LOAD FROM '", temp_file_escaped, "' ", merge_query)
+  kuzu_execute(conn, query)
+
   invisible(NULL)
 }
