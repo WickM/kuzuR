@@ -326,6 +326,10 @@ kuzu_get_schema <- function(result) {
 #' @return An R-compatible value
 #' @keywords internal
 convert_python_to_r <- function(x) {
+  # Handle NULL values from Python - convert to NA
+  if (is.null(x)) {
+    return(NA)
+  }
   if (inherits(x, "python.builtin.object")) {
     # Handle Python Decimal by converting via string to avoid precision loss
     if (inherits(x, "decimal.Decimal")) {

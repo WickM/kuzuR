@@ -23,7 +23,8 @@ Imports:
     reticulate,
     igraph,
     tibble,
-    tidygraph
+    tidygraph,
+    digest
 Suggests:
     g6R,
     jsonlite,

@@ -1,4 +1,6 @@
 # Graph Conversion Functions for kuzuR
+#' @importFrom digest sha1
+#' @importFrom stats setNames
 
 # Cache environment for graph data extraction
 .kuzu_graph_cache_env <- new.env(parent = emptyenv())

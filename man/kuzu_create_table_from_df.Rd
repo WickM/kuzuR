@@ -27,7 +27,7 @@ NODE table in the Kuzu database.
 \examples{
 \donttest{
   conn <- kuzu_connection(":memory:")
-  
+
   my_df <- data.frame(
     name = c("Alice", "Bob"),
     age = c(25L, 30L),
@@ -35,12 +35,12 @@ NODE table in the Kuzu database.
     is_student = c(TRUE, FALSE),
     birth_date = as.Date(c("1999-01-01", "1994-05-15"))
   )
-  
+
   kuzu_create_table_from_df(conn, my_df, "Person", primary_key = "name")
-  
+
   # Now you can load data into the created table
   kuzu_copy_from_df(conn, my_df, "Person")
-  
+
   result <- kuzu_execute(conn, "MATCH (p:Person) RETURN *")
   print(as.data.frame(result))
 }
