@@ -335,23 +335,18 @@ convert_python_to_r <- function(x) {
     if (inherits(x, "uuid.UUID")) {
       return(reticulate::py_str(x))
     }
-    # Handle Kuzu node/relationship objects - convert to string representation
-    if (inherits(x, "kuzu.common.Node") || 
-        inherits(x, "kuzu.common.Rel") ||
-        inherits(x, "kuzu.common.NodeID") ||
-        inherits(x, "kuzu.common.Path")) {
-      return(reticulate::py_str(x))
-    }
+    # NOTE: We intentionally do NOT convert Node/Rel objects to strings here.
+    # They will be automatically converted by reticulate to R lists with
+    # their properties (_id, _label, _src, _dst, etc.) which is needed for
+    # graph conversion via as_igraph() and as_tidygraph().
+    # Do NOT add special handling for kuzu.common.Node or kuzu.common.Rel.
+    
     # Handle other Python objects by converting to string
     return(reticulate::py_str(x))
   }
   # Handle nested lists (e.g., from node/relationship objects that are already converted)
   if (is.list(x)) {
-    # If it's a named list with special Kuzu fields, convert to string
-    if (!is.null(names(x)) && any(c("_id", "_label") %in% names(x))) {
-      return(paste0("<", x[["_label"]], ":", x[["_id"]]$table, "_", x[["_id"]]$offset, ">"))
-    }
-    # Otherwise, recursively convert each element
+    # Recursively convert each element in the list
     return(lapply(x, convert_python_to_r))
   }
   x

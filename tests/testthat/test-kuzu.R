@@ -1,6 +1,9 @@
 test_that("Connection object is created", {
   testthat::skip_on_cran()
-  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
   conn <- kuzu_connection(":memory:")
   expect_s3_class(conn, "kuzu.connection.Connection")
   rm(conn)
@@ -8,7 +11,10 @@ test_that("Connection object is created", {
 
 test_that("Queries execute and results can be converted", {
   testthat::skip_on_cran()
-  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
   conn <- kuzu_connection(":memory:")
 
   kuzu_execute(
@@ -30,7 +36,10 @@ test_that("Queries execute and results can be converted", {
 
 test_that("Result schema functions work correctly", {
   testthat::skip_on_cran()
-  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
   conn <- kuzu_connection(":memory:")
 
   kuzu_execute(
@@ -61,7 +70,10 @@ test_that("Result schema functions work correctly", {
 
 test_that("as_tibble.kuzu.query_result.QueryResult works correctly", {
   testthat::skip_on_cran()
-  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
   skip_if_not_installed("tibble")
   conn <- kuzu_connection(":memory:")
 
@@ -83,7 +95,10 @@ test_that("as_tibble.kuzu.query_result.QueryResult works correctly", {
 
 test_that("kuzu_get_all, kuzu_get_n, and kuzu_get_next work correctly", {
   testthat::skip_on_cran()
-  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
   conn <- kuzu_connection(":memory:")
 
   kuzu_execute(
@@ -153,4 +168,67 @@ test_that("kuzu_get_all, kuzu_get_n, and kuzu_get_next work correctly", {
     row3,
     row_null
   )
+})
+
+test_that("convert_python_to_r handles node objects in query results", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
+  conn <- kuzu_connection(":memory:")
+
+  # Test with node objects - returned when querying node properties
+  kuzu_execute(
+    conn,
+    "CREATE NODE TABLE Person(name STRING, age INT64, PRIMARY KEY (name))"
+  )
+  kuzu_execute(conn, "CREATE (:Person {name: 'Alice', age: 30})")
+
+  # Query that returns node objects (by returning the node itself, not just properties)
+  result <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")
+
+  df <- as.data.frame(result)
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 1)
+  # The node should be expanded into columns with its properties
+  expect_true("p._label" %in% names(df))
+  expect_true("p.name" %in% names(df))
+  expect_equal(df$p._label, "Person")
+  expect_equal(df$p.name, "Alice")
+
+  rm(conn, result, df)
+})
+
+test_that("kuzu_execute handles relationship queries", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
+  conn <- kuzu_connection(":memory:")
+
+  kuzu_execute(
+    conn,
+    "CREATE NODE TABLE Person(name STRING, PRIMARY KEY (name))"
+  )
+  kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)")
+  kuzu_execute(conn, "CREATE (:Person {name: 'Alice'})")
+  kuzu_execute(conn, "CREATE (:Person {name: 'Bob'})")
+  kuzu_execute(
+    conn,
+    "MATCH (a:Person), (b:Person) WHERE a.name='Alice' AND b.name='Bob' CREATE (a)-[:Knows]->(b)"
+  )
+
+  # Query that returns relationship objects
+  result <- kuzu_execute(
+    conn,
+    "MATCH (a:Person)-[k:Knows]->(b:Person) RETURN k"
+  )
+
+  df <- as.data.frame(result)
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 1)
+
+  rm(conn, result, df)
 })

@@ -33,6 +33,11 @@ extract_graph_data <- function(query_result) {
 
   all_rows_values <- query_result$get_all()
 
+  # Convert Python objects to R before processing
+  all_rows_values <- lapply(all_rows_values, function(row) {
+    lapply(row, convert_python_to_r)
+  })
+
   # Named list keyed by composite "label:name" — O(1) deduplication
   nodes_map <- list()
   edges <- list()

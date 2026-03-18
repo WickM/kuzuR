@@ -142,6 +142,7 @@ print(df_result)
 
 # Convert to a tibble
 library(tibble)
+query_result <- kuzu_execute(con, "MATCH (u:User)-[b:Buys]->(p:Product) RETURN u.name, p.name, b.purchase_date")
 tibble_result <- as_tibble(query_result)
 print(tibble_result)
 ```
