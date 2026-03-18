@@ -22,10 +22,10 @@ An `igraph` object.
 
 ## Details
 
-This function takes a `kuzu_query_result` object, converts it to a
-`networkx` graph in Python, extracts the nodes and edges into R data
-frames, and then constructs an `igraph` object. It is the final step in
-the `kuzu_execute -> as_igraph` workflow.
+This function takes a `kuzu_query_result` object and extracts nodes and
+edges directly from the query results, then constructs an `igraph`
+object. It is the final step in the `kuzu_execute -> as_igraph`
+workflow.
 
 ## Examples
 
@@ -33,18 +33,18 @@ the `kuzu_execute -> as_igraph` workflow.
 # \donttest{
 if (requireNamespace("igraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
+  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING,
   PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE REL TABLE Knows(FROM Person TO Person)")
-  kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}), 
+  kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'}),
   (q:Person {name: 'Bob'})")
   kuzu_execute(conn, "MATCH (a:Person), (b:Person) WHERE
-                                                    a.name='Alice' AND 
+                                                    a.name='Alice' AND
                                                     b.name='Bob'
                                                     CREATE (a)-[:Knows]->(b)"
 )
 
-  res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person) 
+  res <- kuzu_execute(conn, "MATCH (p:Person)-[k:Knows]->(q:Person)
   RETURN p, k, q")
   g <- as_igraph(res)
   print(g)

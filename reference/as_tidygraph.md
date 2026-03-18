@@ -26,7 +26,7 @@ A `tbl_graph` object.
 # \donttest{
 if (requireNamespace("tidygraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
-  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING, 
+  kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING,
   PRIMARY KEY (name))")
   kuzu_execute(conn, "CREATE (p:Person {name: 'Alice'})")
   res <- kuzu_execute(conn, "MATCH (p:Person) RETURN p")

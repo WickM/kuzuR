@@ -29,6 +29,8 @@
   : Convert a Kuzu Query Result to a Tibble
 - [`kuzu_copy_from_df()`](https://wickm.github.io/kuzuR/reference/kuzu_copy_from_df.md)
   : Load Data from a Data Frame or Tibble into a Kuzu Table
+- [`kuzu_create_table_from_df()`](https://wickm.github.io/kuzuR/reference/kuzu_create_table_from_df.md)
+  : Create a Kuzu Table from a Data Frame
 - [`kuzu_copy_from_json()`](https://wickm.github.io/kuzuR/reference/kuzu_copy_from_json.md)
   : Load Data from a JSON File into a Kuzu Table
 - [`kuzu_copy_from_parquet()`](https://wickm.github.io/kuzuR/reference/kuzu_copy_from_parquet.md)

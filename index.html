@@ -19,8 +19,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Interface to kuzu Graph Database">
-<meta name="description" content="Provides a high-performance R interface to the kuzu graph database. It uses the reticulate package to wrap the official Python client (kuzu, pandas, and networkx), allowing users to interact with kuzu seamlessly from within R. Key features include managing database connections, executing Cypher queries, and efficiently loading data from R data frames. It also provides seamless integration with the R ecosystem by converting query results directly into popular R data structures, including tibble, igraph, tidygraph, and g6R objects, making kuzus powerful graph computation capabilities readily available for data analysis and visualization workflows in R. The kuzu documentation can be found at &lt;https://kuzudb.github.io/docs/&gt;.">
-<meta property="og:description" content="Provides a high-performance R interface to the kuzu graph database. It uses the reticulate package to wrap the official Python client (kuzu, pandas, and networkx), allowing users to interact with kuzu seamlessly from within R. Key features include managing database connections, executing Cypher queries, and efficiently loading data from R data frames. It also provides seamless integration with the R ecosystem by converting query results directly into popular R data structures, including tibble, igraph, tidygraph, and g6R objects, making kuzus powerful graph computation capabilities readily available for data analysis and visualization workflows in R. The kuzu documentation can be found at &lt;https://kuzudb.github.io/docs/&gt;.">
+<meta name="description" content="Provides a high-performance R interface to the kuzu graph database. It uses the reticulate package to wrap the official Python client (kuzu), allowing users to interact with kuzu seamlessly from within R. Key features include managing database connections, executing Cypher queries, and efficiently loading data from R data frames. It also provides seamless integration with the R ecosystem by converting query results directly into popular R data structures, including tibble, igraph, tidygraph, and g6R objects, making kuzus powerful graph computation capabilities readily available for data analysis and visualization workflows in R. The kuzu documentation can be found at &lt;https://kuzudb.github.io/docs/&gt;.">
+<meta property="og:description" content="Provides a high-performance R interface to the kuzu graph database. It uses the reticulate package to wrap the official Python client (kuzu), allowing users to interact with kuzu seamlessly from within R. Key features include managing database connections, executing Cypher queries, and efficiently loading data from R data frames. It also provides seamless integration with the R ecosystem by converting query results directly into popular R data structures, including tibble, igraph, tidygraph, and g6R objects, making kuzus powerful graph computation capabilities readily available for data analysis and visualization workflows in R. The kuzu documentation can be found at &lt;https://kuzudb.github.io/docs/&gt;.">
 <meta property="og:image" content="https://wickm.github.io/kuzuR/logo.png">
 </head>
 <body>
@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">kuzuR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><code>kuzuR</code> requires a working Python installation with the <code>kuzu</code>, <code>pandas</code>, and <code>networkx</code> packages.</p>
+<p><code>kuzuR</code> requires a working Python installation with the <code>kuzu</code> package.</p>
 <ol style="list-style-type: decimal">
 <li><strong>Install the R Package</strong></li>
 </ol>
@@ -93,21 +93,21 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"WickM/kuzuR"</span><span class="op">)</span></span></code></pre></div>
 <p>Or the stable version from CRAN:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("kuzuR")</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"kuzuR"</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Install Python Dependencies</strong></li>
 </ol>
 <p>After installing <code>kuzuR</code>, you must install the required Python packages. You can do this from your R console using <code>reticulate</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WickM/kuzuR" class="external-link">kuzuR</a></span><span class="op">)</span></span>
-<span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_install.html" class="external-link">py_install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"kuzu"</span>, <span class="st">"pandas"</span>, <span class="st">"networkx"</span><span class="op">)</span>, pip <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_install.html" class="external-link">py_install</a></span><span class="op">(</span><span class="st">"kuzu"</span>, pip <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Verify Installation</strong></li>
 </ol>
 <p>You can check that all dependencies are correctly installed by running:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/check_kuzu_installation.html">check_kuzu_installation</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; The 'kuzu', 'pandas', and 'networkx' Python packages are installed and available.</span></span></code></pre></div>
+<span><span class="co">#&gt; The 'kuzu' Python package is installed and available.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -237,6 +237,7 @@ Plot of the graph structure created from Kuzu query results.
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=kuzuR" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/WickM/kuzuR/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/WickM/kuzuR/issues" class="external-link">Report a bug</a></li>
 </ul>

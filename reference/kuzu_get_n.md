@@ -29,7 +29,7 @@ A list of the first `n` rows.
 conn <- kuzu_connection(":memory:")
 #> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
 #> Run `reticulate::py_last_error()` for details.
-kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 PRIMARY KEY (name))")
 #> Error: object 'conn' not found
 kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">kuzuR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,22 @@
       <small>Source: <a href="https://github.com/WickM/kuzuR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.4" id="kuzur-024">kuzuR 0.2.4<a class="anchor" aria-label="anchor" href="#kuzur-024"></a></h2>
+<ul><li>
+<strong>Removed Python Package Dependencies</strong>:
+<ul><li>Removed <code>pandas</code> and <code>networkx</code> from user-facing documentation and installation instructions.</li>
+<li>The package now only requires the <code>kuzu</code> Python package.</li>
+<li>Updated GitHub Actions workflows to only install <code>kuzu</code>.</li>
+</ul></li>
+<li>
+<strong>Bug Fixes</strong>:
+<ul><li>Fixed NA value handling in <code><a href="../reference/kuzu_copy_from_df.html">kuzu_copy_from_df()</a></code> - NA values are now properly converted to empty strings for Kuzu compatibility.</li>
+<li>Fixed timezone handling in tests for better cross-platform compatibility.</li>
+<li>Fixed INT64 data type mismatch in test expectations.</li>
+<li>Rewrote <code><a href="../reference/kuzu_merge_df.html">kuzu_merge_df()</a></code> to use temporary CSV files instead of <code>LOAD FROM df</code>, eliminating internal pandas dependency.</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.1" id="kuzur-021">kuzuR 0.2.1<a class="anchor" aria-label="anchor" href="#kuzur-021"></a></h2>
 <ul><li>

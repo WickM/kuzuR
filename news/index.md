@@ -1,5 +1,25 @@
 # Changelog
 
+## kuzuR 0.2.4
+
+- **Removed Python Package Dependencies**:
+  - Removed `pandas` and `networkx` from user-facing documentation and
+    installation instructions.
+  - The package now only requires the `kuzu` Python package.
+  - Updated GitHub Actions workflows to only install `kuzu`.
+- **Bug Fixes**:
+  - Fixed NA value handling in
+    [`kuzu_copy_from_df()`](https://wickm.github.io/kuzuR/reference/kuzu_copy_from_df.md) -
+    NA values are now properly converted to empty strings for Kuzu
+    compatibility.
+  - Fixed timezone handling in tests for better cross-platform
+    compatibility.
+  - Fixed INT64 data type mismatch in test expectations.
+  - Rewrote
+    [`kuzu_merge_df()`](https://wickm.github.io/kuzuR/reference/kuzu_merge_df.md)
+    to use temporary CSV files instead of `LOAD FROM df`, eliminating
+    internal pandas dependency.
+
 ## kuzuR 0.2.1
 
 - **Python Integration Improvements**:

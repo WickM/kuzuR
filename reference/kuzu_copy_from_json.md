@@ -41,7 +41,7 @@ JSON Extension](https://kuzudb.github.io/docs/extensions/json/)
   conn <- kuzu_connection(":memory:")
 #> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
 #> Run `reticulate::py_last_error()` for details.
-  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING, 
+  kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING,
   PRIMARY KEY (id))")
 #> Error: object 'conn' not found
 

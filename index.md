@@ -18,8 +18,7 @@ graph objects like `igraph` and `tidygraph`.
 
 ## Installation
 
-`kuzuR` requires a working Python installation with the `kuzu`,
-`pandas`, and `networkx` packages.
+`kuzuR` requires a working Python installation with the `kuzu` package.
 
 1.  **Install the R Package**
 
@@ -33,7 +32,7 @@ pak::pak("WickM/kuzuR")
 Or the stable version from CRAN:
 
 ``` r
-# install.packages("kuzuR")
+install.packages("kuzuR")
 ```
 
 2.  **Install Python Dependencies**
@@ -43,7 +42,7 @@ You can do this from your R console using `reticulate`:
 
 ``` r
 library(kuzuR)
-reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)
+reticulate::py_install("kuzu", pip = TRUE)
 ```
 
 3.  **Verify Installation**
@@ -52,7 +51,7 @@ You can check that all dependencies are correctly installed by running:
 
 ``` r
 check_kuzu_installation()
-#> The 'kuzu', 'pandas', and 'networkx' Python packages are installed and available.
+#> The 'kuzu' Python package is installed and available.
 ```
 
 ## Usage

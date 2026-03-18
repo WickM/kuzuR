@@ -43,13 +43,13 @@ return a value.
   conn <- kuzu_connection(":memory:")
 #> Error in py_run_string_impl(code, local, convert): ModuleNotFoundError: No module named 'kuzu'
 #> Run `reticulate::py_last_error()` for details.
-  kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64, 
+  kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64,
   PRIMARY KEY (name))")
 #> Error: object 'conn' not found
 
   # Create a temporary CSV file
   csv_file <- tempfile(fileext = ".csv")
-  write.csv(data.frame(name = c("Berlin", "London"), 
+  write.csv(data.frame(name = c("Berlin", "London"),
   population = c(3645000, 8982000)),
             csv_file, row.names = FALSE)
 
