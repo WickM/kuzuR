@@ -57,8 +57,7 @@ jobs:
 
       - name: Run coverage
         run: |
-          # Use codecov() to handle the upload preparation automatically
-          covr::codecov(quiet = FALSE)
-        shell: R
+          Rscript -e 'covr::codecov(quiet = FALSE)'
+        shell: bash
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
