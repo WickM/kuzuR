@@ -19,6 +19,7 @@ skip_vignette <- !reticulate::py_module_available("kuzu")
 <!-- badges: start -->
 
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental) [![CRAN status](https://www.r-pkg.org/badges/version/kuzuR)](https://cran.r-project.org/package=kuzuR) [![R-CMD-check](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml) [![Codecov test coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
+
 <!-- badges: end -->
 
 ## Overview
@@ -29,18 +30,19 @@ The primary goal of `kuzuR` is to provide an idiomatic R experience for: - Creat
 
 ## Installation
 
-`kuzuR` requires a working Python installation with the `kuzu`, `pandas`, and `networkx` packages.
+`kuzuR` requires a working Python installation with the `kuzu` package.
 
 1.  **Install the R Package**
 
 You can install the development version from GitHub:
 
-```r
+``` r
 pak::pak("WickM/kuzuR")
 ```
 
 Or the stable version from CRAN:
-```r
+
+``` r
 install.packages("kuzuR")
 ```
 
@@ -48,17 +50,18 @@ install.packages("kuzuR")
 
 After installing `kuzuR`, you must install the required Python packages. You can do this from your R console using `reticulate`:
 
-```r
+``` r
 library(kuzuR)
-reticulate::py_install(c("kuzu", "pandas", "networkx"), pip = TRUE)
+reticulate::py_install("kuzu", pip = TRUE)
 ```
 
 3.  **Verify Installation**
 
 You can check that all dependencies are correctly installed by running:
-```r
+
+``` r
 check_kuzu_installation()
-#> The 'kuzu', 'pandas', and 'networkx' Python packages are installed and available.
+#> The 'kuzu' Python package is installed and available.
 ```
 
 ## Usage

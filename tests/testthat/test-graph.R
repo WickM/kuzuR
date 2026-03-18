@@ -2,14 +2,13 @@
 
 test_that("Graph conversion functions work correctly with the new S3 method design", {
   testthat::skip_on_cran()
-  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
+  testthat::skip_if_not(
+    reticulate::py_module_available("kuzu"),
+    "kuzu python module not available for testing"
+  )
   # Skip if packages are not installed
   skip_if_not_installed("igraph")
   skip_if_not_installed("tidygraph")
-  skip_if_not(
-    reticulate::py_module_available("networkx"),
-    "networkx Python package not available"
-  )
 
   # 1. Set up an in-memory database and connection
   conn <- kuzu_connection(":memory:")
@@ -27,8 +26,10 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
   kuzu_execute(conn, "CREATE (p:Person {name: 'Bob', age: 40})")
   kuzu_execute(
     conn,
-    paste("MATCH (a:Person), (b:Person) WHERE a.name = 'Alice' AND b.name =",
-          "'Bob' CREATE (a)-[:Knows {since: 2021}]->(b)")
+    paste(
+      "MATCH (a:Person), (b:Person) WHERE a.name = 'Alice' AND b.name =",
+      "'Bob' CREATE (a)-[:Knows {since: 2021}]->(b)"
+    )
   )
 
   # 3. Execute a query that returns a graph
@@ -43,8 +44,8 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
   expect_equal(igraph::vcount(g_igraph), 2)
   expect_equal(igraph::ecount(g_igraph), 1)
   node_df_igraph <- igraph::as_data_frame(g_igraph, "vertices")
-  # networkx combines table name and primary key for the node ID
-  expect_equal(sort(node_df_igraph$name), c("Person_Alice", "Person_Bob"))
+  # The new R implementation uses "label:name" format
+  expect_equal(sort(node_df_igraph$name), c("Person:Alice", "Person:Bob"))
 
   # 5. Test as_tidygraph()
   g_tidy <- as_tidygraph(query_res)
@@ -60,11 +61,4 @@ test_that("Graph conversion functions work correctly with the new S3 method desi
 
   # 7. Clean up
   rm(conn, query_res, g_igraph, g_tidy)
-})
-
-test_that("as_networkx throws error for invalid input", {
-  expect_error(
-    as_networkx("not a query result"),
-    "Input must be a kuzu_query_result object."
-  )
 })

@@ -11,10 +11,10 @@ check_kuzu_installation()
 checking dependencies and printing messages.
 }
 \description{
-This function checks if the required Python packages (\code{kuzu}, \code{pandas},
-\code{networkx}) are available in the user's \code{reticulate} environment. If any
-packages are missing, it provides a clear, actionable message guiding the
-user on how to install them manually.
+This function checks if the required Python package (\code{kuzu}) is available
+in the user's \code{reticulate} environment. If the package is missing, it
+provides a clear, actionable message guiding the user on how to install
+it manually.
 }
 \examples{
 \donttest{

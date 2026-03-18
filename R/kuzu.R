@@ -96,15 +96,27 @@ kuzu_execute <- function(conn, query) {
 #' print(df)
 #' }
 as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
-  if (!reticulate::py_module_available("pandas")) {
-    stop(
-      "The 'pandas' Python package is required to convert results to a ",
-      "data.frame. ",
-      "Please install it using reticulate::py_install('pandas', pip = TRUE).",
-      call. = FALSE
+  col_names <- x$get_column_names()
+  all_rows_values <- x$get_all()
+
+  # Convert list of lists to named lists, converting Python objects to R values
+  df_list <- lapply(all_rows_values, function(row) {
+    converted_row <- lapply(row, convert_python_to_r)
+    stats::setNames(converted_row, col_names)
+  })
+
+  # Handle empty results
+  if (length(df_list) == 0) {
+    as.data.frame(setNames(list(), col_names), stringsAsFactors = FALSE)
+  } else {
+    # Convert to data.frame by rbinding named lists
+    do.call(
+      rbind,
+      lapply(df_list, function(x) {
+        as.data.frame(x, stringsAsFactors = FALSE, check.names = FALSE)
+      })
     )
   }
-  x$get_as_df()
 }
 
 #' Convert a Kuzu Query Result to a Tibble
@@ -134,20 +146,35 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
 #' }
 as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
   if (!requireNamespace("tibble", quietly = TRUE)) {
+    #TODO not nescesary tibble is a dependency
     stop(
       "The 'tibble' package is required to use as_tibble(). Please install it.",
       call. = FALSE
     )
   }
-  if (!reticulate::py_module_available("pandas")) {
-    stop(
-      "The 'pandas' Python package is required to convert results to a ",
-      "tibble. ",
-      "Please install it using reticulate::py_install('pandas', pip = TRUE).",
-      call. = FALSE
-    )
+  #TODO whix not use the data frame function and convert the data frame to tibble
+  #-> reduces code duplication
+  col_names <- x$get_column_names()
+  all_rows_values <- x$get_all()
+
+  # Convert list of lists to named lists, converting Python objects to R values
+  df_list <- lapply(all_rows_values, function(row) {
+    converted_row <- lapply(row, convert_python_to_r)
+    stats::setNames(converted_row, col_names)
+  })
+
+  # Handle empty results
+  if (length(df_list) == 0) {
+    tibble::as_tibble(setNames(list(), col_names))
+  } else {
+    # Convert to tibble by rbinding named lists
+    tibble::as_tibble(do.call(
+      rbind,
+      lapply(df_list, function(x) {
+        as.data.frame(x, stringsAsFactors = FALSE, check.names = FALSE)
+      })
+    ))
   }
-  tibble::as_tibble(x$get_as_df())
 }
 
 #' Retrieve All Rows from a Query Result
@@ -186,7 +213,7 @@ kuzu_get_all <- function(result) {
 #' @examples
 #' \donttest{
 #' conn <- kuzu_connection(":memory:")
-#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64, 
+#' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Alice', age: 25})")
 #' kuzu_execute(conn, "CREATE (:User {name: 'Bob', age: 30})")
@@ -230,8 +257,6 @@ kuzu_get_next <- function(result) {
   row_values <- result$get_next()
   stats::setNames(row_values, col_names)
 }
-
-#TODO UDF
 
 #' Get Column Data Types from a Query Result
 #'
@@ -293,4 +318,41 @@ kuzu_get_schema <- function(result) {
   result$get_schema()
 }
 
-#TODO Create helper function to deal with DEZIMAL and UUID
+#' Convert Python Objects to R Values
+#'
+#' Internal helper function to convert Python objects (like Decimal, UUID, nodes) to R values
+#'
+#' @param x A value that might be a Python object
+#' @return An R-compatible value
+#' @keywords internal
+convert_python_to_r <- function(x) {
+  # Handle NULL values from Python - convert to NA
+  if (is.null(x)) {
+    return(NA)
+  }
+  if (inherits(x, "python.builtin.object")) {
+    # Handle Python Decimal by converting via string to avoid precision loss
+    if (inherits(x, "decimal.Decimal")) {
+      return(as.numeric(as.character(reticulate::py_str(x))))
+    }
+    # Handle UUID as string
+    if (inherits(x, "uuid.UUID")) {
+      return(reticulate::py_str(x))
+    }
+    # NOTE: We intentionally do NOT convert Node/Rel objects to strings here.
+    # They will be automatically converted by reticulate to R lists with
+    # their properties (_id, _label, _src, _dst, etc.) which is needed for
+    # graph conversion via as_igraph() and as_tidygraph().
+    # Do NOT add special handling for kuzu.common.Node or kuzu.common.Rel.
+    
+    # Handle other Python objects by converting to string
+    return(reticulate::py_str(x))
+  }
+  # Handle nested lists (e.g., from node/relationship objects that are already converted)
+  if (is.list(x)) {
+    # Recursively convert each element in the list
+    return(lapply(x, convert_python_to_r))
+  }
+  x
+}
+

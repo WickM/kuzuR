@@ -1,31 +1,17 @@
 kuzu <- NULL
-pandas <- NULL
-networkx <- NULL
 
 .onLoad <- function(libname, pkgname) {
   # Use a delayed binding to avoid loading Python until it's needed
   kuzu <<- reticulate::import("kuzu", delay_load = TRUE)
-  pandas <<- reticulate::import("pandas", delay_load = TRUE)
-  networkx <<- reticulate::import("networkx", delay_load = TRUE)
 }
 
 .onAttach <- function(libname, pkgname) {
-  # Check for kuzu and pandas and provide a helpful message if they're not found
+  # Check for kuzu and provide a helpful message if it's not found
   if (interactive()) {
-    pkgs <- c("kuzu", "pandas", "networkx")
-    installed_status <- sapply(pkgs, reticulate::py_module_available)
-    missing_pkgs <- names(installed_status[!installed_status])
-
-    if (length(missing_pkgs) > 0) {
-      install_cmd <- sprintf(
-        'reticulate::py_install(c("%s"), pip = TRUE)',
-        paste(missing_pkgs, collapse = '", "')
-      )
+    if (!reticulate::py_module_available("kuzu")) {
       msg <- paste(
-        "Required Python packages are not installed:",
-        paste(missing_pkgs, collapse = ", "),
-        "\nPlease run the following command to install them:\n",
-        install_cmd
+        "The 'kuzu' Python package is not installed.",
+        "\nPlease install it using: reticulate::py_install('kuzu', pip = TRUE)"
       )
       packageStartupMessage(msg)
     }

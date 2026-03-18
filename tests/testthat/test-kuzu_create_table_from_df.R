@@ -1,6 +1,8 @@
 # Test suite for kuzu_create_table_from_df
 
 test_that("kuzu_create_table_from_df creates a table with correct schema", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
   
   test_df <- data.frame(
@@ -27,6 +29,8 @@ test_that("kuzu_create_table_from_df creates a table with correct schema", {
 })
 
 test_that("kuzu_create_table_from_df handles unsupported types", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
   
   test_df <- data.frame(
@@ -48,6 +52,8 @@ test_that("kuzu_create_table_from_df handles unsupported types", {
 })
 
 test_that("kuzu_create_table_from_df handles NA values", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
   
   test_df <- data.frame(
@@ -65,6 +71,8 @@ test_that("kuzu_create_table_from_df handles NA values", {
 })
 
 test_that("kuzu_create_table_from_df stops if primary key is invalid", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not(reticulate::py_module_available("kuzu"), "kuzu python module not available for testing")
   conn <- kuzu_connection(":memory:")
   
   test_df <- data.frame(id = 1:2, value = c("a", "b"))
