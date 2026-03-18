@@ -52,6 +52,7 @@ reference:
   - as.data.frame.kuzu.query_result.QueryResult
   - as_tibble.kuzu.query_result.QueryResult
   - kuzu_copy_from_df
+  - kuzu_create_table_from_df
   - kuzu_copy_from_json
   - kuzu_copy_from_parquet
   - kuzu_merge_df
