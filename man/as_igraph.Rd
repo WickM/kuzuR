@@ -22,7 +22,15 @@ directly from the query results, then constructs an \code{igraph} object. It is
 the final step in the \code{kuzu_execute -> as_igraph} workflow.
 }
 \examples{
-\donttest{
+\dontrun{
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
 if (requireNamespace("igraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING,

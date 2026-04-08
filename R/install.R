@@ -9,7 +9,7 @@
 #' @return `NULL` invisibly. The function is called for its side effect of
 #'   checking dependencies and printing messages.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' check_kuzu_installation()
 #' }
 check_kuzu_installation <- function() {

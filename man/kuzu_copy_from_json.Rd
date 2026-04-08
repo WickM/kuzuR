@@ -23,7 +23,15 @@ Loads data from a JSON file into a specified table in the Kuzu database.
 This function also ensures the JSON extension is loaded and available.
 }
 \examples{
-\donttest{
+\dontrun{
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING,
   PRIMARY KEY (id))")

@@ -26,7 +26,15 @@ not return a value.
 Loads data from a CSV file into a specified table in the Kuzu database.
 }
 \examples{
-\donttest{
+\dontrun{
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64,
   PRIMARY KEY (name))")

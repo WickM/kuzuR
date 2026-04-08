@@ -19,7 +19,11 @@ at the specified path, it will be created. This function combines the
 database initialization and connection steps into a single call.
 }
 \examples{
-\donttest{
+\dontrun{
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
 # Create an in-memory database and connection
 conn <- kuzu_connection(":memory:")
 

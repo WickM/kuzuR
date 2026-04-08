@@ -17,7 +17,15 @@ A \code{tbl_graph} object.
 Converts a Kuzu query result into a \code{tidygraph} \code{tbl_graph} object.
 }
 \examples{
-\donttest{
+\dontrun{
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
 if (requireNamespace("tidygraph", quietly = TRUE)) {
   conn <- kuzu_connection(":memory:")
   kuzu_execute(conn, "CREATE NODE TABLE Person(name STRING,

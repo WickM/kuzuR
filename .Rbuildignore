@@ -16,3 +16,7 @@
 ^\.github/
 ^\.vscode/
 ^CRAN-SUBMISSION$
+^doc$
+^Meta$
+^CRAN_SUBMISSION_REPORT\.md$
+^\.kilo/

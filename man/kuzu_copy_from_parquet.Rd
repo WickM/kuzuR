@@ -22,7 +22,15 @@ not return a value.
 Loads data from a Parquet file into a specified table in the Kuzu database.
 }
 \examples{
-\donttest{
+\dontrun{
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
   if (requireNamespace("arrow", quietly = TRUE)) {
     conn <- kuzu_connection(":memory:")
     kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING,

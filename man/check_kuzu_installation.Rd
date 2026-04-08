@@ -17,7 +17,7 @@ provides a clear, actionable message guiding the user on how to install
 it manually.
 }
 \examples{
-\donttest{
+\dontrun{
 check_kuzu_installation()
 }
 }

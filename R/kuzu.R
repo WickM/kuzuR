@@ -9,7 +9,11 @@
 #' @return A Python object representing the connection to the Kuzu database.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' # Create an in-memory database and connection
 #' conn <- kuzu_connection(":memory:")
 #'
@@ -52,7 +56,11 @@ kuzu_connection <- function(path) {
 #' @return A Python object representing the query result.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #'
 #' # Create a node table
@@ -84,7 +92,11 @@ kuzu_execute <- function(conn, query) {
 #' @method as.data.frame kuzu.query_result.QueryResult
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -131,7 +143,11 @@ as.data.frame.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @method as_tibble kuzu.query_result.QueryResult
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' if (requireNamespace("tibble", quietly = TRUE)) {
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
@@ -186,7 +202,11 @@ as_tibble.kuzu.query_result.QueryResult <- function(x, ...) {
 #' @return A list where each element is a list representing a row of results.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -211,7 +231,11 @@ kuzu_get_all <- function(result) {
 #' @return A list of the first `n` rows.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -239,7 +263,11 @@ kuzu_get_n <- function(result, n) {
 #' available.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -266,7 +294,11 @@ kuzu_get_next <- function(result) {
 #' @return A character vector of column data types.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -286,7 +318,11 @@ kuzu_get_column_data_types <- function(result) {
 #' @return A character vector of column names.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")
@@ -306,7 +342,11 @@ kuzu_get_column_names <- function(result) {
 #' @return A named list where names are column names and values are data types.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #' conn <- kuzu_connection(":memory:")
 #' kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #' PRIMARY KEY (name))")

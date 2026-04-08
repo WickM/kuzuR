@@ -25,7 +25,15 @@ Infers a schema from an R \code{data.frame} or \code{tibble} and creates a corre
 NODE table in the Kuzu database.
 }
 \examples{
-\donttest{
+\dontrun{
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
+if (!reticulate::py_module_available("kuzu")) {
+  message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+  return()
+}
   conn <- kuzu_connection(":memory:")
 
   my_df <- data.frame(

@@ -19,7 +19,15 @@
 #'   not return a value.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE User(name STRING, age INT64,
 #'   PRIMARY KEY (name))")
@@ -138,7 +146,15 @@ kuzu_copy_from_file <- function(
 #'   does not return a value.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #'   conn <- kuzu_connection(":memory:")
 #'
 #'   my_df <- data.frame(
@@ -235,7 +251,15 @@ kuzu_create_table_from_df <- function(conn, df, table_name, primary_key) {
 #'   not return a value.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE City(name STRING, population INT64,
 #'   PRIMARY KEY (name))")
@@ -288,7 +312,15 @@ kuzu_copy_from_csv <- function(
 #'   not return a value.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #'   conn <- kuzu_connection(":memory:")
 #'   kuzu_execute(conn, "CREATE NODE TABLE Product(id INT64, name STRING,
 #'   PRIMARY KEY (id))")
@@ -340,7 +372,15 @@ kuzu_copy_from_json <- function(conn, file_path, table_name) {
 #'   not return a value.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
+#' if (!reticulate::py_module_available("kuzu")) {
+#'   message("kuzu Python package required. Install with: reticulate::py_install('kuzu', pip = TRUE)")
+#'   return()
+#' }
 #'   if (requireNamespace("arrow", quietly = TRUE)) {
 #'     conn <- kuzu_connection(":memory:")
 #'     kuzu_execute(conn, "CREATE NODE TABLE Country(name STRING, code STRING,
