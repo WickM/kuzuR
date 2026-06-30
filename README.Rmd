@@ -22,6 +22,9 @@ skip_vignette <- !reticulate::py_module_available("kuzu")
 
 <!-- badges: end -->
 
+> **DEPRECATION NOTICE**
+> The upstream Python package `kuzu` has been archived. As a result, `kuzuR` can no longer be used and will be archived as well. Please use `lbugr` instead.
+
 ## Overview
 
 `kuzuR` provides an R interface to the [Kuzu Graph Database](https://kuzudb.github.io/docs/), a high-performance, embedded graph database. The package acts as a wrapper around the official Python `kuzu` client, using the `reticulate` package to bridge the two languages. This allows you to interact with Kuzu seamlessly within your R environment, integrating its powerful graph computation capabilities into your existing data analysis workflows.

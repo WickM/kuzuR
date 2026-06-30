@@ -1,3 +1,9 @@
+# kuzuR 0.2.5
+
+*   **Deprecation Notice**: The upstream Python package `kuzu` has been archived.
+    As a result, `kuzuR` can no longer be used and will be archived as well.
+    Please use `lbugr` instead. A deprecation message is now shown on package load.
+
 # kuzuR 0.2.4
 
 *   **Removed Python Package Dependencies**:

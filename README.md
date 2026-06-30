@@ -14,6 +14,9 @@ status](https://www.r-pkg.org/badges/version/kuzuR)](https://cran.r-project.org/
 coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
 <!-- badges: end -->
 
+> **DEPRECATION NOTICE**
+> The upstream Python package `kuzu` has been archived. As a result, `kuzuR` can no longer be used and will be archived as well. Please use `lbugr` instead.
+
 ## Overview
 
 `kuzuR` provides an R interface to the [Kuzu Graph

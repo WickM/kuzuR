@@ -6,7 +6,12 @@ kuzu <- NULL
 }
 
 .onAttach <- function(libname, pkgname) {
-  # Check for kuzu and provide a helpful message if it's not found
+  packageStartupMessage(
+    "NOTE: The Python package 'kuzu' has been archived. ",
+    "As a result, 'kuzuR' can no longer be used and will be archived as well. ",
+    "Please use 'lbugr' instead."
+  )
+
   if (interactive()) {
     if (!reticulate::py_module_available("kuzu")) {
       msg <- paste(
