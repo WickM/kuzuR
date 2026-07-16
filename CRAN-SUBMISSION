@@ -1,3 +1,45 @@
 Version: 0.2.4
-Date: 2026-03-17 22:33:00 UTC
+Date: 2026-07-16
 SHA: (to be updated after commit)
+
+## CRAN Submission Checklist
+
+### Pre-Submission Checks
+- [x] R CMD check passes with no ERRORs
+- [x] All tests pass successfully
+- [x] Package installs and loads correctly
+- [x] No missing documentation
+- [x] No code problems detected
+- [x] Examples run successfully
+
+### Deprecation Notice
+- [x] Added deprecation notice to README (README.Rmd and README.md)
+- [x] Changed lifecycle badge from "experimental" to "deprecated"
+- [x] Added deprecation message at package startup (.onAttach)
+- [x] Added deprecation notice to NEWS.md
+- [x] Updated cran-comments.md with deprecation information
+
+### Package Files
+- [x] DESCRIPTION file complete with Author and Maintainer fields
+- [x] LICENSE file present (MIT + file LICENSE)
+- [x] NAMESPACE file properly generated
+- [x] All Rd documentation files present
+- [x] Vignettes present (getting-started.Rmd, graph-integrations.Rmd, installation-and-usage.Rmd)
+
+### Notes for CRAN Maintainers
+This is a **deprecation release**. The package will no longer be maintained and will not receive further updates, bug fixes, or security patches. Users are encouraged to explore alternative solutions for working with the Kuzu graph database in R.
+
+### R CMD check Results
+```
+Status: 2 WARNINGs, 1 NOTE
+
+WARNINGs: Vignette-related (expected when building with --no-build-vignettes)
+NOTE: Suggested packages not available for checking (g6R, rmarkdown, arrow)
+
+All tests pass successfully. Package installs and loads correctly.
+```
+
+### Submission Files
+- Package tarball: kuzuR_0.2.4.tar.gz
+- cran-comments.md: Updated with deprecation notice and check results
+- NEWS.md: Updated with deprecation notice

@@ -6,6 +6,12 @@ kuzu <- NULL
 }
 
 .onAttach <- function(libname, pkgname) {
+  packageStartupMessage(
+    "NOTE: 'kuzuR' is deprecated and no longer maintained.\n",
+    "This package will not receive further updates, bug fixes, or security patches.\n",
+    "Please consider alternative solutions for working with Kuzu graph database in R."
+  )
+  
   # Check for kuzu and provide a helpful message if it's not found
   if (interactive()) {
     if (!reticulate::py_module_available("kuzu")) {

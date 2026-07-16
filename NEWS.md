@@ -1,5 +1,6 @@
 # kuzuR 0.2.4
 
+*   **DEPRECATION NOTICE**: This package is deprecated and no longer maintained. It will not receive further updates, bug fixes, or security patches. Users are encouraged to explore alternative solutions for working with the Kuzu graph database in R.
 *   **Removed Python Package Dependencies**:
     *   Removed `pandas` and `networkx` from user-facing documentation and installation instructions.
     *   The package now only requires the `kuzu` Python package.

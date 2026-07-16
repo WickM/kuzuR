@@ -6,13 +6,19 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+deprecated](https://img.shields.io/badge/lifecycle-deprecated-red.svg)](https://lifecycle.r-lib.org/articles/stages.html#deprecated)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/kuzuR)](https://cran.r-project.org/package=kuzuR)
 [![R-CMD-check](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WickM/kuzuR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/WickM/kuzuR)
 <!-- badges: end -->
+
+## ⚠️ Deprecation Notice
+
+**This package is deprecated and no longer maintained.** 
+
+`kuzuR` has been superseded and will not receive further updates, bug fixes, or security patches. Users are encouraged to explore alternative solutions for working with the Kuzu graph database in R.
 
 ## Overview
 
