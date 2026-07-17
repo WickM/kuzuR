@@ -6,7 +6,7 @@ This is a resubmission of `kuzuR` version `0.2.4` with a **deprecation notice**.
 
 **This package is deprecated and no longer maintained.** 
 
-The package will not receive further updates, bug fixes, or security patches. Users are encouraged to explore alternative solutions for working with the Kuzu graph database in R.
+The Kuzu graph database and its Python client library (`kuzu`) are no longer maintained and no longer available. As a result, `kuzuR` cannot function and will not receive further updates, bug fixes, or security patches.
 
 ### Changes in This Submission
 

@@ -18,7 +18,7 @@ coverage](https://codecov.io/gh/WickM/kuzuR/branch/main/graph/badge.svg)](https:
 
 **This package is deprecated and no longer maintained.** 
 
-`kuzuR` has been superseded and will not receive further updates, bug fixes, or security patches. Users are encouraged to explore alternative solutions for working with the Kuzu graph database in R.
+`kuzuR` depends on the Kuzu graph database and its Python client library. Both the Kuzu project and the `kuzu` Python package are no longer maintained and are no longer available. As a result, `kuzuR` cannot function and will not receive further updates, bug fixes, or security patches.
 
 ## Overview
 
